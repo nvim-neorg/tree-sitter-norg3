@@ -1,5 +1,19 @@
 [
   {
+    "type": "nestable_modifiers",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "ordered_list",
+        "named": true
+      },
+      {
+        "type": "unordered_list",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "non_structural",
     "named": true,
     "subtypes": [
@@ -31,6 +45,14 @@
       "types": [
         {
           "type": "heading",
+          "named": true
+        },
+        {
+          "type": "nestable_modifiers",
+          "named": true
+        },
+        {
+          "type": "non_structural",
           "named": true
         }
       ]
@@ -68,11 +90,53 @@
           "named": true
         },
         {
+          "type": "nestable_modifiers",
+          "named": true
+        },
+        {
           "type": "non_structural",
           "named": true
         },
         {
           "type": "title",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "ordered_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "ordered_list_item",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "ordered_list_item",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "ordered_list",
+          "named": true
+        },
+        {
+          "type": "ordered_list_prefix",
+          "named": true
+        },
+        {
+          "type": "paragraph",
           "named": true
         }
       ]
@@ -109,6 +173,44 @@
     }
   },
   {
+    "type": "unordered_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "unordered_list_item",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "unordered_list_item",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "paragraph",
+          "named": true
+        },
+        {
+          "type": "unordered_list",
+          "named": true
+        },
+        {
+          "type": "unordered_list_prefix",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "\u0000",
     "named": false
   },
@@ -134,6 +236,14 @@
   },
   {
     "type": "heading_stars",
+    "named": true
+  },
+  {
+    "type": "ordered_list_prefix",
+    "named": true
+  },
+  {
+    "type": "unordered_list_prefix",
     "named": true
   }
 ]

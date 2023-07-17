@@ -13,12 +13,14 @@ enum TokenType : char {
     WHITESPACE,
 
     HEADING,
+    UNORDERED_LIST,
+    ORDERED_LIST,
     DEDENT,
 };
 
 struct Scanner {
     TSLexer* lexer;
-    std::vector<int16_t> headings;
+    std::unordered_map<char, std::vector<int16_t>> indents;
 
     bool scan(const bool *valid_symbols) {
         if (lexer->eof(lexer))
@@ -37,12 +39,13 @@ struct Scanner {
             }
         }
 
-        // TODO: Generalize
-        if (valid_symbols[HEADING] && lexer->lookahead == '*') {
+        if ((valid_symbols[HEADING] && lexer->lookahead == '*') || (valid_symbols[UNORDERED_LIST] && lexer->lookahead == '-') || (valid_symbols[ORDERED_LIST] && lexer->lookahead == '~')) {
+            int32_t character = lexer->lookahead;
+            auto& indent_vector = indents[lexer->lookahead];
             size_t count = 0;
             lexer->mark_end(lexer);
 
-            while (lexer->lookahead == '*') {
+            while (lexer->lookahead == character) {
                 count++;
                 advance();
             }
@@ -50,14 +53,18 @@ struct Scanner {
             if (!iswspace(lexer->lookahead))
                 return false;
 
-            if (valid_symbols[DEDENT] && count <= headings.back()) {
-                headings.pop_back();
+            if (valid_symbols[DEDENT] && !indent_vector.empty() && count <= indent_vector.back()) {
+                indent_vector.pop_back();
                 lexer->result_symbol = DEDENT;
                 return true;
             } else {
-                headings.push_back(count);
+                indent_vector.push_back(count);
                 lexer->mark_end(lexer);
-                lexer->result_symbol = HEADING;
+                switch (character) {
+                    case '*': lexer->result_symbol = HEADING; break;
+                    case '-': lexer->result_symbol = UNORDERED_LIST; break;
+                    case '~': lexer->result_symbol = ORDERED_LIST; break;
+                }
                 return true;
             }
         }
@@ -87,8 +94,17 @@ extern "C" {
             char *buffer) {
         auto scanner = static_cast<Scanner*>(payload);
 
-        size_t total_size = scanner->headings.size() * sizeof(int16_t);
-        std::memcpy(buffer, scanner->headings.data(), total_size);
+        size_t total_size = 0;
+
+        for (const auto& kv : scanner->indents) {
+            int16_t size = kv.second.size();
+            buffer[total_size] = kv.first;
+
+            std::memcpy(&buffer[total_size + 1], &size, sizeof(size));
+            std::memcpy(&buffer[total_size + 3], kv.second.data(), size * sizeof(size));
+
+            total_size += (size * sizeof(size)) + 3;
+        }
 
         return total_size;
     }
@@ -100,7 +116,17 @@ extern "C" {
             return;
 
         auto scanner = static_cast<Scanner*>(payload);
-        scanner->headings.resize(length / sizeof(int16_t));
-        std::memcpy(scanner->headings.data(), buffer, length);
+
+        size_t head = 0;
+
+        while (head < length) {
+            char key = buffer[head];
+            int16_t len = 0;
+            std::memcpy(&len, &buffer[head + 1], sizeof(len));
+
+            scanner->indents[key].resize(len);
+            std::memcpy(scanner->indents[key].data(), &buffer[head + 3], len * sizeof(int16_t));
+            head += (len * sizeof(int16_t)) + 3;
+        }
     }
 }
