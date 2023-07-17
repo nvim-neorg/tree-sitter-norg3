@@ -20,13 +20,22 @@ module.exports = grammar({
 
     inlines: ($) => [],
 
-    supertypes: ($) => [$.non_structural, $.nestable_modifiers],
+    supertypes: ($) => [
+        $.non_structural,
+        $.nestable_modifiers,
+        $.rangeable_detached_modifiers,
+    ],
 
     rules: {
-        document: ($) =>
-            repeat(choice($.non_structural, $.heading, $.nestable_modifiers)),
+        document: ($) => repeat(choice($.non_structural, $.heading)),
 
-        non_structural: ($) => choice($.paragraph, newline),
+        non_structural: ($) =>
+            choice(
+                $.paragraph,
+                newline,
+                $.nestable_modifiers,
+                $.rangeable_detached_modifiers,
+            ),
 
         _character: (_) => token(/[^\s]/),
         _word: ($) => prec.right(repeat1($._character)),
@@ -52,13 +61,7 @@ module.exports = grammar({
                     $.heading_stars,
                     alias(repeat1($._paragraph_inner), $.title),
                     newline_or_eof,
-                    repeat(
-                        choice(
-                            $.heading,
-                            $.non_structural,
-                            $.nestable_modifiers,
-                        ),
-                    ),
+                    repeat(choice($.heading, $.non_structural)),
                     optional($._dedent),
                 ),
             ),
@@ -87,6 +90,77 @@ module.exports = grammar({
                     $.paragraph,
                     repeat($.ordered_list),
                     optional($._dedent),
+                ),
+            ),
+
+        rangeable_detached_modifiers: ($) =>
+            choice($.definition_list, $.footnote_list, $.table),
+
+        definition_list: ($) =>
+            choice($.definition_list_single, $.definition_list_multi),
+
+        definition_list_single: ($) =>
+            seq(
+                "$",
+                $._whitespace,
+                alias($._paragraph_inner, $.title),
+                repeat1(newline),
+                $.paragraph,
+            ),
+
+        definition_list_multi: ($) =>
+            prec.right(
+                seq(
+                    "$$",
+                    $._whitespace,
+                    alias($._paragraph_inner, $.title),
+                    repeat($.non_structural),
+                    "$$",
+                ),
+            ),
+
+        footnote_list: ($) =>
+            choice($.footnote_list_single, $.footnote_list_multi),
+
+        footnote_list_single: ($) =>
+            seq(
+                "^",
+                $._whitespace,
+                alias($._paragraph_inner, $.title),
+                repeat1(newline),
+                $.paragraph,
+            ),
+
+        footnote_list_multi: ($) =>
+            prec.right(
+                seq(
+                    "^^",
+                    $._whitespace,
+                    alias($._paragraph_inner, $.title),
+                    repeat($.non_structural),
+                    "^^",
+                ),
+            ),
+
+        table: ($) => choice($.table_cell_single, $.table_cell_multi),
+
+        table_cell_single: ($) =>
+            seq(
+                ":",
+                $._whitespace,
+                alias($._paragraph_inner, $.title),
+                repeat1(newline),
+                $.paragraph,
+            ),
+
+        table_cell_multi: ($) =>
+            prec.right(
+                seq(
+                    "::",
+                    $._whitespace,
+                    alias($._paragraph_inner, $.title),
+                    repeat($.non_structural),
+                    "::",
                 ),
             ),
     },
