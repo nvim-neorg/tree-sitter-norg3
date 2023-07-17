@@ -7,6 +7,13 @@
 
 #include "tree_sitter/parser.h"
 
+/// GENERAL NOTES ABOUT THIS FILE
+///
+/// 1. The code may look dated in terms of C++ coding style. This is surprisingly a feature, not a bug.
+///    MacOS suffers from terrible compiler compatibility, requiring us to write pre-C++11 code. Ouchie.
+/// 2. Quotes, lists and headings (the "nestable detached modifiers") are parsed in this scanner to allow for
+///    "infinite" nesting (in reality the cap is at the 16 bit integer limit).
+
 using namespace std;
 
 enum TokenType : char {
@@ -21,13 +28,12 @@ enum TokenType : char {
 
 struct Scanner {
     TSLexer* lexer;
-    std::unordered_map<char, std::vector<int16_t>> indents;
+    std::unordered_map<char, std::vector<uint16_t>> indents;
 
     bool scan(const bool *valid_symbols) {
         if (lexer->eof(lexer))
             return false;
 
-        // TODO: Maybe remove this part from the scanner? Is it doable?
         if (lexer->get_column(lexer) == 0) {
             const bool found_whitespace = iswspace(lexer->lookahead) && lexer->lookahead != '\n' && lexer->lookahead != '\r';
 
@@ -42,7 +48,7 @@ struct Scanner {
 
         if ((valid_symbols[HEADING] && lexer->lookahead == '*') || (valid_symbols[UNORDERED_LIST] && lexer->lookahead == '-') || (valid_symbols[ORDERED_LIST] && lexer->lookahead == '~') || (valid_symbols[QUOTE] && lexer->lookahead == '>')) {
             int32_t character = lexer->lookahead;
-            auto& indent_vector = indents[lexer->lookahead];
+            std::vector<uint16_t>& indent_vector = indents[lexer->lookahead];
             size_t count = 0;
             lexer->mark_end(lexer);
 
@@ -94,12 +100,12 @@ extern "C" {
 
     unsigned tree_sitter_norg_external_scanner_serialize(void *payload,
             char *buffer) {
-        auto scanner = static_cast<Scanner*>(payload);
+        Scanner* scanner = static_cast<Scanner*>(payload);
 
         size_t total_size = 0;
 
-        for (const auto& kv : scanner->indents) {
-            int16_t size = kv.second.size();
+        for (const std::pair<char, std::vector<uint16_t>>& kv : scanner->indents) {
+            uint16_t size = kv.second.size();
             buffer[total_size] = kv.first;
 
             std::memcpy(&buffer[total_size + 1], &size, sizeof(size));
@@ -117,18 +123,18 @@ extern "C" {
         if (length == 0)
             return;
 
-        auto scanner = static_cast<Scanner*>(payload);
+        Scanner* scanner = static_cast<Scanner*>(payload);
 
         size_t head = 0;
 
         while (head < length) {
             char key = buffer[head];
-            int16_t len = 0;
+            uint16_t len = 0;
             std::memcpy(&len, &buffer[head + 1], sizeof(len));
 
             scanner->indents[key].resize(len);
-            std::memcpy(scanner->indents[key].data(), &buffer[head + 3], len * sizeof(int16_t));
-            head += (len * sizeof(int16_t)) + 3;
+            std::memcpy(scanner->indents[key].data(), &buffer[head + 3], len * sizeof(uint16_t));
+            head += (len * sizeof(uint16_t)) + 3;
         }
     }
 }

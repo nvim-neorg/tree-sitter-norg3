@@ -1,6 +1,9 @@
 let newline = choice("\n", "\r", "\r\n");
 let newline_or_eof = choice("\n", "\r", "\r\n", "\0");
 
+/// General TODOS:
+//  - Abstract repeating patterns (e.g. nestable detached modifiers) into Javascript functions.
+
 module.exports = grammar({
     name: "norg",
 
@@ -182,5 +185,3 @@ module.exports = grammar({
             ),
     },
 });
-
-function nestable_detached_modifier($, prefix_type, chr) {}
