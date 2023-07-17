@@ -8,6 +8,10 @@
         "named": true
       },
       {
+        "type": "quote",
+        "named": true
+      },
+      {
         "type": "unordered_list",
         "named": true
       }
@@ -260,7 +264,7 @@
       "required": true,
       "types": [
         {
-          "type": "ordered_list",
+          "type": "ordered_list_item",
           "named": true
         },
         {
@@ -284,6 +288,44 @@
       "types": [
         {
           "type": "escape_sequence",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "quote",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "quote_item",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "quote_item",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "paragraph",
+          "named": true
+        },
+        {
+          "type": "quote_item",
+          "named": true
+        },
+        {
+          "type": "quote_prefix",
           "named": true
         }
       ]
@@ -389,7 +431,7 @@
           "named": true
         },
         {
-          "type": "unordered_list",
+          "type": "unordered_list_item",
           "named": true
         },
         {
@@ -453,6 +495,10 @@
   },
   {
     "type": "ordered_list_prefix",
+    "named": true
+  },
+  {
+    "type": "quote_prefix",
     "named": true
   },
   {

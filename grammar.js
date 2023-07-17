@@ -9,8 +9,11 @@ module.exports = grammar({
     externals: ($) => [
         $._preceding_whitespace,
         $.heading_stars,
+
         $.unordered_list_prefix,
         $.ordered_list_prefix,
+        $.quote_prefix,
+
         $._dedent,
     ],
 
@@ -66,10 +69,9 @@ module.exports = grammar({
                 ),
             ),
 
-        nestable_modifiers: ($) => choice($.unordered_list, $.ordered_list),
+        nestable_modifiers: ($) => choice($.unordered_list, $.ordered_list, $.quote),
 
         unordered_list: ($) => prec.right(repeat1($.unordered_list_item)),
-        ordered_list: ($) => prec.right(repeat1($.ordered_list_item)),
 
         unordered_list_item: ($) =>
             prec.right(
@@ -77,10 +79,12 @@ module.exports = grammar({
                     $.unordered_list_prefix,
                     $._whitespace,
                     $.paragraph,
-                    repeat($.unordered_list),
+                    repeat($.unordered_list_item),
                     optional($._dedent),
                 ),
             ),
+
+        ordered_list: ($) => prec.right(repeat1($.ordered_list_item)),
 
         ordered_list_item: ($) =>
             prec.right(
@@ -88,7 +92,20 @@ module.exports = grammar({
                     $.ordered_list_prefix,
                     $._whitespace,
                     $.paragraph,
-                    repeat($.ordered_list),
+                    repeat($.ordered_list_item),
+                    optional($._dedent),
+                ),
+            ),
+
+        quote: ($) => prec.right(repeat1($.quote_item)),
+
+        quote_item: ($) =>
+            prec.right(
+                seq(
+                    $.quote_prefix,
+                    $._whitespace,
+                    $.paragraph,
+                    repeat($.quote_item),
                     optional($._dedent),
                 ),
             ),

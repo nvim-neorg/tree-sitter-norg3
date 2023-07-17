@@ -15,6 +15,7 @@ enum TokenType : char {
     HEADING,
     UNORDERED_LIST,
     ORDERED_LIST,
+    QUOTE,
     DEDENT,
 };
 
@@ -39,7 +40,7 @@ struct Scanner {
             }
         }
 
-        if ((valid_symbols[HEADING] && lexer->lookahead == '*') || (valid_symbols[UNORDERED_LIST] && lexer->lookahead == '-') || (valid_symbols[ORDERED_LIST] && lexer->lookahead == '~')) {
+        if ((valid_symbols[HEADING] && lexer->lookahead == '*') || (valid_symbols[UNORDERED_LIST] && lexer->lookahead == '-') || (valid_symbols[ORDERED_LIST] && lexer->lookahead == '~') || (valid_symbols[QUOTE] && lexer->lookahead == '>')) {
             int32_t character = lexer->lookahead;
             auto& indent_vector = indents[lexer->lookahead];
             size_t count = 0;
@@ -64,6 +65,7 @@ struct Scanner {
                     case '*': lexer->result_symbol = HEADING; break;
                     case '-': lexer->result_symbol = UNORDERED_LIST; break;
                     case '~': lexer->result_symbol = ORDERED_LIST; break;
+                    case '>': lexer->result_symbol = QUOTE; break;
                 }
                 return true;
             }
