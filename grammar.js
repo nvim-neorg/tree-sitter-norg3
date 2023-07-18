@@ -11,8 +11,8 @@ module.exports = grammar({
     extras: ($) => [$._preceding_whitespace],
     externals: ($) => [
         $._preceding_whitespace,
-        $.heading_stars,
 
+        $.heading_stars,
         $.unordered_list_prefix,
         $.ordered_list_prefix,
         $.quote_prefix,
@@ -30,6 +30,7 @@ module.exports = grammar({
         $.non_structural,
         $.nestable_modifiers,
         $.rangeable_detached_modifiers,
+        $.tag,
     ],
 
     rules: {
@@ -41,6 +42,7 @@ module.exports = grammar({
                 newline,
                 $.nestable_modifiers,
                 $.rangeable_detached_modifiers,
+                $.tag,
             ),
 
         _character: (_) => token(/[^\s]/),
@@ -72,7 +74,8 @@ module.exports = grammar({
                 ),
             ),
 
-        nestable_modifiers: ($) => choice($.unordered_list, $.ordered_list, $.quote),
+        nestable_modifiers: ($) =>
+            choice($.unordered_list, $.ordered_list, $.quote),
 
         unordered_list: ($) => prec.right(repeat1($.unordered_list_item)),
 
@@ -182,6 +185,100 @@ module.exports = grammar({
                     repeat($.non_structural),
                     "::",
                 ),
+            ),
+
+        tag: ($) => choice($.verbatim_ranged_tag, $.ranged_tag, $.infirm_tag),
+
+        tag_name: ($) =>
+            seq(
+                alias(repeat1(token(prec(1, /[a-zA-Z]/))), $.identifier),
+                repeat(
+                    seq(
+                        ".",
+                        alias(
+                            repeat1(token(prec(1, /[a-zA-Z]/))),
+                            $.identifier,
+                        ),
+                    ),
+                ),
+            ),
+
+        verbatim_ranged_tag: ($) =>
+            seq(
+                "@",
+                $.tag_name,
+                optional(
+                    seq(
+                        $._whitespace,
+                        optional(
+                            seq(
+                                repeat1(alias($._word, $.parameter)),
+                                repeat(
+                                    seq(
+                                        $._whitespace,
+                                        optional(alias($._word, $.parameter)),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                newline,
+                alias(
+                    repeat(choice($._word, $._whitespace, newline)),
+                    $.verbatim_content,
+                ),
+                newline,
+                "@end",
+            ),
+
+        ranged_tag: ($) =>
+            seq(
+                token("|"),
+                $.tag_name,
+                optional(
+                    seq(
+                        $._whitespace,
+                        optional(
+                            seq(
+                                repeat1(alias($._word, $.parameter)),
+                                repeat(
+                                    seq(
+                                        $._whitespace,
+                                        optional(alias($._word, $.parameter)),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                newline,
+                alias(repeat(choice($.non_structural, $.heading)), $.content),
+                "|end",
+            ),
+
+        infirm_tag: ($) =>
+            seq(
+                ".",
+                $.tag_name,
+
+                optional(
+                    seq(
+                        $._whitespace,
+                        optional(
+                            seq(
+                                repeat1(alias($._word, $.parameter)),
+                                repeat(
+                                    seq(
+                                        $._whitespace,
+                                        optional(alias($._word, $.parameter)),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                newline,
             ),
     },
 });

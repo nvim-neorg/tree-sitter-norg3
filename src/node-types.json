@@ -44,6 +44,10 @@
       {
         "type": "rangeable_detached_modifiers",
         "named": true
+      },
+      {
+        "type": "tag",
+        "named": true
       }
     ]
   },
@@ -64,6 +68,43 @@
         "named": true
       }
     ]
+  },
+  {
+    "type": "tag",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "infirm_tag",
+        "named": true
+      },
+      {
+        "type": "ranged_tag",
+        "named": true
+      },
+      {
+        "type": "verbatim_ranged_tag",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "content",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "heading",
+          "named": true
+        },
+        {
+          "type": "non_structural",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "definition_list",
@@ -241,6 +282,30 @@
     }
   },
   {
+    "type": "identifier",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "infirm_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "parameter",
+          "named": true
+        },
+        {
+          "type": "tag_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "ordered_list",
     "named": true,
     "fields": {},
@@ -294,6 +359,11 @@
     }
   },
   {
+    "type": "parameter",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "quote",
     "named": true,
     "fields": {},
@@ -326,6 +396,29 @@
         },
         {
           "type": "quote_prefix",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "ranged_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "content",
+          "named": true
+        },
+        {
+          "type": "parameter",
+          "named": true
+        },
+        {
+          "type": "tag_name",
           "named": true
         }
       ]
@@ -389,6 +482,21 @@
     }
   },
   {
+    "type": "tag_name",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "title",
     "named": true,
     "fields": {},
@@ -442,6 +550,34 @@
     }
   },
   {
+    "type": "verbatim_content",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "verbatim_ranged_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "parameter",
+          "named": true
+        },
+        {
+          "type": "tag_name",
+          "named": true
+        },
+        {
+          "type": "verbatim_content",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "\u0000",
     "named": false
   },
@@ -466,11 +602,23 @@
     "named": false
   },
   {
+    "type": ".",
+    "named": false
+  },
+  {
     "type": ":",
     "named": false
   },
   {
     "type": "::",
+    "named": false
+  },
+  {
+    "type": "@",
+    "named": false
+  },
+  {
+    "type": "@end",
     "named": false
   },
   {
@@ -504,5 +652,13 @@
   {
     "type": "unordered_list_prefix",
     "named": true
+  },
+  {
+    "type": "|",
+    "named": false
+  },
+  {
+    "type": "|end",
+    "named": false
   }
 ]
