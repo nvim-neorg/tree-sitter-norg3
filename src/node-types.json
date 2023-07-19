@@ -100,6 +100,60 @@
     ]
   },
   {
+    "type": "todo_item",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "todo_item_cancelled",
+        "named": true
+      },
+      {
+        "type": "todo_item_done",
+        "named": true
+      },
+      {
+        "type": "todo_item_due_date",
+        "named": true
+      },
+      {
+        "type": "todo_item_on_hold",
+        "named": true
+      },
+      {
+        "type": "todo_item_pending",
+        "named": true
+      },
+      {
+        "type": "todo_item_priority",
+        "named": true
+      },
+      {
+        "type": "todo_item_recurring",
+        "named": true
+      },
+      {
+        "type": "todo_item_start_date",
+        "named": true
+      },
+      {
+        "type": "todo_item_timestamp",
+        "named": true
+      },
+      {
+        "type": "todo_item_uncertain",
+        "named": true
+      },
+      {
+        "type": "todo_item_undone",
+        "named": true
+      },
+      {
+        "type": "todo_item_urgent",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "content",
     "named": true,
     "fields": {},
@@ -146,6 +200,10 @@
       "required": true,
       "types": [
         {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
+        {
           "type": "non_structural",
           "named": true
         },
@@ -165,11 +223,30 @@
       "required": true,
       "types": [
         {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
+        {
           "type": "paragraph",
           "named": true
         },
         {
           "type": "title",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "detached_modifier_extension",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "todo_item",
           "named": true
         }
       ]
@@ -237,6 +314,10 @@
       "required": true,
       "types": [
         {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
+        {
           "type": "non_structural",
           "named": true
         },
@@ -256,6 +337,10 @@
       "required": true,
       "types": [
         {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
+        {
           "type": "paragraph",
           "named": true
         },
@@ -274,6 +359,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
         {
           "type": "heading",
           "named": true
@@ -364,6 +453,10 @@
       "required": true,
       "types": [
         {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
+        {
           "type": "ordered_list_item",
           "named": true
         },
@@ -425,6 +518,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
         {
           "type": "paragraph",
           "named": true
@@ -510,6 +607,10 @@
       "required": true,
       "types": [
         {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
+        {
           "type": "non_structural",
           "named": true
         },
@@ -528,6 +629,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
         {
           "type": "paragraph",
           "named": true
@@ -555,6 +660,11 @@
     }
   },
   {
+    "type": "timestamp",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "title",
     "named": true,
     "fields": {},
@@ -564,6 +674,76 @@
       "types": [
         {
           "type": "escape_sequence",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "todo_item_due_date",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "timestamp",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "todo_item_on_hold",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "todo_item_priority",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "todo_item_recurring",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "timestamp",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "todo_item_start_date",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "timestamp",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "todo_item_timestamp",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "timestamp",
           "named": true
         }
       ]
@@ -592,6 +772,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
         {
           "type": "paragraph",
           "named": true
@@ -683,6 +867,14 @@
     "named": false
   },
   {
+    "type": "(",
+    "named": false
+  },
+  {
+    "type": ")",
+    "named": false
+  },
+  {
     "type": "+",
     "named": false
   },
@@ -699,11 +891,19 @@
     "named": false
   },
   {
+    "type": "<",
+    "named": false
+  },
+  {
     "type": "=",
     "named": false
   },
   {
     "type": "=end",
+    "named": false
+  },
+  {
+    "type": ">",
     "named": false
   },
   {
@@ -740,6 +940,30 @@
   },
   {
     "type": "quote_prefix",
+    "named": true
+  },
+  {
+    "type": "todo_item_cancelled",
+    "named": true
+  },
+  {
+    "type": "todo_item_done",
+    "named": true
+  },
+  {
+    "type": "todo_item_pending",
+    "named": true
+  },
+  {
+    "type": "todo_item_uncertain",
+    "named": true
+  },
+  {
+    "type": "todo_item_undone",
+    "named": true
+  },
+  {
+    "type": "todo_item_urgent",
     "named": true
   },
   {

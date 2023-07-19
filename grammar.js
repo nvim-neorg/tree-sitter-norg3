@@ -31,6 +31,7 @@ module.exports = grammar({
         $.nestable_modifiers,
         $.rangeable_detached_modifiers,
         $.tag,
+        $.todo_item,
     ],
 
     rules: {
@@ -47,7 +48,7 @@ module.exports = grammar({
 
         _character: (_) => token(/[^\s]/),
         _word: ($) => prec.right(repeat1($._character)),
-        _whitespace: (_) => token(/[\t                　]+/),
+        _whitespace: (_) => token(prec(1, /[\t                　]+/)),
 
         escape_sequence: ($) => seq("\\", alias(prec(10, /./), $.escape_char)),
 
@@ -80,6 +81,8 @@ module.exports = grammar({
             prec.right(
                 seq(
                     $.heading_stars,
+                    $._whitespace,
+                    optional(seq($.detached_modifier_extension, $._whitespace)),
                     alias(repeat1($._paragraph_inner), $.title),
                     newline_or_eof,
                     repeat(choice($.heading, $.non_structural)),
@@ -97,6 +100,7 @@ module.exports = grammar({
                 seq(
                     $.unordered_list_prefix,
                     $._whitespace,
+                    optional(seq($.detached_modifier_extension, $._whitespace)),
                     $.paragraph,
                     repeat($.unordered_list_item),
                     optional($._dedent),
@@ -110,6 +114,7 @@ module.exports = grammar({
                 seq(
                     $.ordered_list_prefix,
                     $._whitespace,
+                    optional(seq($.detached_modifier_extension, $._whitespace)),
                     $.paragraph,
                     repeat($.ordered_list_item),
                     optional($._dedent),
@@ -123,6 +128,7 @@ module.exports = grammar({
                 seq(
                     $.quote_prefix,
                     $._whitespace,
+                    optional(seq($.detached_modifier_extension, $._whitespace)),
                     $.paragraph,
                     repeat($.quote_item),
                     optional($._dedent),
@@ -139,6 +145,7 @@ module.exports = grammar({
             seq(
                 "$",
                 $._whitespace,
+                optional(seq($.detached_modifier_extension, $._whitespace)),
                 alias($._paragraph_inner, $.title),
                 repeat1(newline),
                 $.paragraph,
@@ -149,6 +156,7 @@ module.exports = grammar({
                 seq(
                     "$$",
                     $._whitespace,
+                    optional(seq($.detached_modifier_extension, $._whitespace)),
                     alias($._paragraph_inner, $.title),
                     repeat($.non_structural),
                     "$$",
@@ -162,6 +170,7 @@ module.exports = grammar({
             seq(
                 "^",
                 $._whitespace,
+                optional(seq($.detached_modifier_extension, $._whitespace)),
                 alias($._paragraph_inner, $.title),
                 repeat1(newline),
                 $.paragraph,
@@ -172,6 +181,7 @@ module.exports = grammar({
                 seq(
                     "^^",
                     $._whitespace,
+                    optional(seq($.detached_modifier_extension, $._whitespace)),
                     alias($._paragraph_inner, $.title),
                     repeat($.non_structural),
                     "^^",
@@ -184,6 +194,7 @@ module.exports = grammar({
             seq(
                 ":",
                 $._whitespace,
+                optional(seq($.detached_modifier_extension, $._whitespace)),
                 alias($._paragraph_inner, $.title),
                 repeat1(newline),
                 $.paragraph,
@@ -194,6 +205,7 @@ module.exports = grammar({
                 seq(
                     "::",
                     $._whitespace,
+                    optional(seq($.detached_modifier_extension, $._whitespace)),
                     alias($._paragraph_inner, $.title),
                     repeat($.non_structural),
                     "::",
@@ -373,6 +385,76 @@ module.exports = grammar({
                     ),
                 ),
                 newline,
+            ),
+
+        todo_item_done: ($) => "x",
+        todo_item_undone: ($) => " ",
+        todo_item_uncertain: ($) => "?",
+        todo_item_urgent: ($) => "!",
+        todo_item_pending: ($) => "-",
+        todo_item_on_hold: ($) => "=",
+        todo_item_cancelled: ($) => "_",
+        todo_item_recurring: ($) =>
+            seq(
+                "+",
+                optional(
+                    seq(
+                        $._whitespace,
+                        alias(
+                            repeat(choice($._word, $._whitespace)),
+                            $.timestamp,
+                        ),
+                    ),
+                ),
+            ),
+        todo_item_priority: ($) => seq("#", $._whitespace, $._word),
+        todo_item_timestamp: ($) =>
+            seq(
+                "@",
+                seq(
+                    $._whitespace,
+                    alias(repeat1(choice($._word, $._whitespace)), $.timestamp),
+                ),
+            ),
+        todo_item_start_date: ($) =>
+            seq(
+                ">",
+                seq(
+                    $._whitespace,
+                    alias(repeat1(choice($._word, $._whitespace)), $.timestamp),
+                ),
+            ),
+        todo_item_due_date: ($) =>
+            seq(
+                "<",
+                seq(
+                    $._whitespace,
+                    alias(repeat1(choice($._word, $._whitespace)), $.timestamp),
+                ),
+            ),
+
+        todo_item: ($) =>
+            choice(
+                $.todo_item_done,
+                $.todo_item_undone,
+                $.todo_item_uncertain,
+                $.todo_item_urgent,
+                $.todo_item_pending,
+                $.todo_item_on_hold,
+                $.todo_item_cancelled,
+                $.todo_item_recurring,
+                $.todo_item_priority,
+                $.todo_item_timestamp,
+                $.todo_item_start_date,
+                $.todo_item_due_date,
+            ),
+
+        detached_modifier_extension: ($) =>
+            seq(
+                "(",
+                $.todo_item,
+                repeat(seq(token(prec(1, "|")), $.todo_item)),
+                ")",
             ),
     },
 });
