@@ -58,7 +58,20 @@ module.exports = grammar({
             prec.right(
                 seq(
                     repeat1($._paragraph_inner),
-                    repeat(seq(newline, repeat1($._paragraph_inner))),
+                    repeat(
+                        seq(
+                            newline,
+                            repeat1(
+                                choice(
+                                    $._paragraph_inner,
+                                    seq(
+                                        $.weak_carryover_tag,
+                                        $._paragraph_inner,
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
                     newline_or_eof,
                 ),
             ),
@@ -187,7 +200,15 @@ module.exports = grammar({
                 ),
             ),
 
-        tag: ($) => choice($.verbatim_ranged_tag, $.ranged_tag, $.infirm_tag),
+        tag: ($) =>
+            choice(
+                $.verbatim_ranged_tag,
+                $.ranged_tag,
+                $.infirm_tag,
+                $.strong_carryover_tag,
+                $.weak_carryover_tag,
+                $.macro_tag,
+            ),
 
         tag_name: ($) =>
             seq(
@@ -257,9 +278,82 @@ module.exports = grammar({
                 "|end",
             ),
 
+        macro_tag: ($) =>
+            seq(
+                token("="),
+                $.tag_name,
+                optional(
+                    seq(
+                        $._whitespace,
+                        optional(
+                            seq(
+                                repeat1(alias($._word, $.parameter)),
+                                repeat(
+                                    seq(
+                                        $._whitespace,
+                                        optional(alias($._word, $.parameter)),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                newline,
+                alias(repeat(choice($.non_structural, $.heading)), $.content),
+                "=end",
+            ),
+
         infirm_tag: ($) =>
             seq(
                 ".",
+                $.tag_name,
+
+                optional(
+                    seq(
+                        $._whitespace,
+                        optional(
+                            seq(
+                                repeat1(alias($._word, $.parameter)),
+                                repeat(
+                                    seq(
+                                        $._whitespace,
+                                        optional(alias($._word, $.parameter)),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                newline,
+            ),
+
+        strong_carryover_tag: ($) =>
+            seq(
+                "#",
+                $.tag_name,
+
+                optional(
+                    seq(
+                        $._whitespace,
+                        optional(
+                            seq(
+                                repeat1(alias($._word, $.parameter)),
+                                repeat(
+                                    seq(
+                                        $._whitespace,
+                                        optional(alias($._word, $.parameter)),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                newline,
+            ),
+
+        weak_carryover_tag: ($) =>
+            seq(
+                "+",
                 $.tag_name,
 
                 optional(
