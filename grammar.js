@@ -17,33 +17,44 @@ module.exports = grammar({
         $.ordered_list_prefix,
         $.quote_prefix,
 
+        $.weak_delimiting_modifier,
+
         $._dedent,
     ],
 
     conflicts: ($) => [],
 
-    precedences: ($) => [],
+    precedences: ($) => [[$.heading, $.delimiting_modifier]],
 
     inlines: ($) => [],
 
     supertypes: ($) => [
         $.non_structural,
-        $.nestable_modifiers,
-        $.rangeable_detached_modifiers,
+        $.nestable_modifier,
+        $.rangeable_detached_modifier,
         $.tag,
         $.todo_item,
+        $.delimiting_modifier,
     ],
 
     rules: {
-        document: ($) => repeat(choice($.non_structural, $.heading)),
+        document: ($) =>
+            repeat(
+                choice(
+                    $.non_structural,
+                    $.heading,
+                    $.strong_delimiting_modifier,
+                ),
+            ),
 
         non_structural: ($) =>
             choice(
                 $.paragraph,
                 newline,
-                $.nestable_modifiers,
-                $.rangeable_detached_modifiers,
+                $.nestable_modifier,
+                $.rangeable_detached_modifier,
                 $.tag,
+                $.delimiting_modifier,
             ),
 
         _character: (_) => token(/[^\s]/),
@@ -86,11 +97,11 @@ module.exports = grammar({
                     alias(repeat1($._paragraph_inner), $.title),
                     newline_or_eof,
                     repeat(choice($.heading, $.non_structural)),
-                    optional($._dedent),
+                    optional(choice($._dedent, $.weak_delimiting_modifier)),
                 ),
             ),
 
-        nestable_modifiers: ($) =>
+        nestable_modifier: ($) =>
             choice($.unordered_list, $.ordered_list, $.quote),
 
         unordered_list: ($) => prec.right(repeat1($.unordered_list_item)),
@@ -135,7 +146,7 @@ module.exports = grammar({
                 ),
             ),
 
-        rangeable_detached_modifiers: ($) =>
+        rangeable_detached_modifier: ($) =>
             choice($.definition_list, $.footnote_list, $.table),
 
         definition_list: ($) =>
@@ -456,5 +467,14 @@ module.exports = grammar({
                 repeat(seq(token(prec(1, "|")), $.todo_item)),
                 ")",
             ),
+
+        delimiting_modifier: ($) =>
+            choice($.weak_delimiting_modifier, $.horizontal_line),
+
+        strong_delimiting_modifier: ($) =>
+            prec.right(seq("==", repeat("="), newline_or_eof)),
+
+        horizontal_line: ($) =>
+            prec.right(seq("_", repeat1("_"), newline_or_eof)),
     },
 });

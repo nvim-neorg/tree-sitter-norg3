@@ -23,6 +23,9 @@ enum TokenType : char {
     UNORDERED_LIST,
     ORDERED_LIST,
     QUOTE,
+
+    WEAK_DELIMITING_MODIFIER,
+
     DEDENT,
 };
 
@@ -57,8 +60,17 @@ struct Scanner {
                 advance();
             }
 
-            if (!iswspace(lexer->lookahead))
+            if (!iswspace(lexer->lookahead) || lexer->lookahead == '\n' || lexer->lookahead == '\r') {
+                if (character == '-' && count >= 2 && (lexer->lookahead == '\n' || lexer->lookahead == '\r')) {
+                    // Advance past the newline as well.
+                    advance();
+                    lexer->mark_end(lexer);
+                    lexer->result_symbol = WEAK_DELIMITING_MODIFIER;
+                    return true;
+                }
+
                 return false;
+            }
 
             if (valid_symbols[DEDENT] && !indent_vector.empty() && count <= indent_vector.back()) {
                 indent_vector.pop_back();

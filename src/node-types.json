@@ -1,6 +1,20 @@
 [
   {
-    "type": "nestable_modifiers",
+    "type": "delimiting_modifier",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "horizontal_line",
+        "named": true
+      },
+      {
+        "type": "weak_delimiting_modifier",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "nestable_modifier",
     "named": true,
     "subtypes": [
       {
@@ -34,7 +48,11 @@
         "named": false
       },
       {
-        "type": "nestable_modifiers",
+        "type": "delimiting_modifier",
+        "named": true
+      },
+      {
+        "type": "nestable_modifier",
         "named": true
       },
       {
@@ -42,7 +60,7 @@
         "named": true
       },
       {
-        "type": "rangeable_detached_modifiers",
+        "type": "rangeable_detached_modifier",
         "named": true
       },
       {
@@ -52,7 +70,7 @@
     ]
   },
   {
-    "type": "rangeable_detached_modifiers",
+    "type": "rangeable_detached_modifier",
     "named": true,
     "subtypes": [
       {
@@ -267,6 +285,10 @@
         {
           "type": "non_structural",
           "named": true
+        },
+        {
+          "type": "strong_delimiting_modifier",
+          "named": true
         }
       ]
     }
@@ -378,9 +400,18 @@
         {
           "type": "title",
           "named": true
+        },
+        {
+          "type": "weak_delimiting_modifier",
+          "named": true
         }
       ]
     }
+  },
+  {
+    "type": "horizontal_line",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "identifier",
@@ -580,6 +611,11 @@
     }
   },
   {
+    "type": "strong_delimiting_modifier",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "table",
     "named": true,
     "fields": {},
@@ -678,6 +714,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "todo_item_cancelled",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "todo_item_due_date",
@@ -899,6 +940,10 @@
     "named": false
   },
   {
+    "type": "==",
+    "named": false
+  },
+  {
     "type": "=end",
     "named": false
   },
@@ -927,6 +972,10 @@
     "named": false
   },
   {
+    "type": "_",
+    "named": false
+  },
+  {
     "type": "escape_char",
     "named": true
   },
@@ -940,10 +989,6 @@
   },
   {
     "type": "quote_prefix",
-    "named": true
-  },
-  {
-    "type": "todo_item_cancelled",
     "named": true
   },
   {
@@ -968,6 +1013,10 @@
   },
   {
     "type": "unordered_list_prefix",
+    "named": true
+  },
+  {
+    "type": "weak_delimiting_modifier",
     "named": true
   },
   {
