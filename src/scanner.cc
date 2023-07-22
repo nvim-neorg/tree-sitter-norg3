@@ -4,6 +4,7 @@
 #include <cstring>
 #include <unordered_map>
 #include <vector>
+#include <list>
 
 #include "tree_sitter/parser.h"
 
@@ -26,22 +27,58 @@ enum TokenType : char {
 
     WEAK_DELIMITING_MODIFIER,
 
+    BOLD_OPEN,
+    ITALIC_OPEN,
+    STRIKETHROUGH_OPEN,
+    UNDERLINE_OPEN,
+    SPOILER_OPEN,
+    SUPERSCRIPT_OPEN,
+    SUBSCRIPT_OPEN,
+    VERBATIM_OPEN,
+    NULL_MODIFIER_OPEN,
+    INLINE_MATH_OPEN,
+    INLINE_MACRO_OPEN,
+
+    BOLD_CLOSE,
+    ITALIC_CLOSE,
+    STRIKETHROUGH_CLOSE,
+    UNDERLINE_CLOSE,
+    SPOILER_CLOSE,
+    SUPERSCRIPT_CLOSE,
+    SUBSCRIPT_CLOSE,
+    VERBATIM_CLOSE,
+    NULL_MODIFIER_CLOSE,
+    INLINE_MATH_CLOSE,
+    INLINE_MACRO_CLOSE,
+
     DEDENT,
 };
 
 struct Scanner {
     TSLexer* lexer;
     std::unordered_map<char, std::vector<uint16_t>> indents;
+    std::unordered_map<int32_t, TokenType> attached_modifiers = { {'*', BOLD_OPEN}, {'/', ITALIC_OPEN}, {'_', UNDERLINE_OPEN}, {'-', STRIKETHROUGH_OPEN}, {'%', NULL_MODIFIER_OPEN}, {'!', SPOILER_OPEN}, {'&', INLINE_MACRO_OPEN} };
+
+    bool is_whitespace(int32_t character) {
+        return iswspace(character) && character != '\n' && character != '\r';
+    }
+
+    int32_t get_valid_symbol(const bool* valid_symbols, size_t start, size_t end) {
+        for (; start <= end; start++) {
+            if (valid_symbols[start])
+                return start;
+        }
+
+        return -1;
+    }
 
     bool scan(const bool *valid_symbols) {
         if (lexer->eof(lexer))
             return false;
 
         if (lexer->get_column(lexer) == 0) {
-            const bool found_whitespace = iswspace(lexer->lookahead) && lexer->lookahead != '\n' && lexer->lookahead != '\r';
-
-            if (found_whitespace) {
-                while (iswspace(lexer->lookahead) && lexer->lookahead != '\n' && lexer->lookahead != '\r')
+            if (is_whitespace(lexer->lookahead)) {
+                while (is_whitespace(lexer->lookahead))
                     advance();
 
                 lexer->result_symbol = WHITESPACE;
@@ -60,13 +97,22 @@ struct Scanner {
                 advance();
             }
 
-            if (!iswspace(lexer->lookahead) || lexer->lookahead == '\n' || lexer->lookahead == '\r') {
+            if (!is_whitespace(lexer->lookahead)) {
                 if (character == '-' && count >= 2 && (lexer->lookahead == '\n' || lexer->lookahead == '\r')) {
                     // Advance past the newline as well.
                     advance();
                     lexer->mark_end(lexer);
                     lexer->result_symbol = WEAK_DELIMITING_MODIFIER;
                     return true;
+                }
+                else {
+                    std::unordered_map<int32_t, TokenType>::iterator iter = attached_modifiers.find(character);
+
+                    if (iter != attached_modifiers.end() && count == 1) {
+                        lexer->mark_end(lexer);
+                        lexer->result_symbol = iter->second;
+                        return true;
+                    }
                 }
 
                 return false;
@@ -87,6 +133,57 @@ struct Scanner {
                 }
                 return true;
             }
+        }
+
+        int32_t valid_closing_symbol = get_valid_symbol(valid_symbols, BOLD_CLOSE, INLINE_MACRO_CLOSE);
+
+        if (valid_closing_symbol != -1 && !is_whitespace(lexer->lookahead)) {
+            std::unordered_map<int32_t, TokenType>::iterator iter = attached_modifiers.find(lexer->lookahead);
+
+            if (iter == attached_modifiers.end()) {
+                advance();
+                iter = attached_modifiers.find(lexer->lookahead);
+            }
+
+            if (iter != attached_modifiers.end()) {
+
+                advance();
+
+                if (iswspace(lexer->lookahead) || iswpunct(lexer->lookahead)) {
+                    lexer->mark_end(lexer);
+                    lexer->result_symbol = iter->second + (INLINE_MACRO_OPEN - BOLD_OPEN) + 1;
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
+        }
+
+        int32_t valid_opening_symbol = get_valid_symbol(valid_symbols, BOLD_OPEN, INLINE_MACRO_OPEN);
+
+        if (valid_opening_symbol != -1 && (is_whitespace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
+            std::unordered_map<int32_t, TokenType>::iterator iter = attached_modifiers.find(lexer->lookahead);
+
+            if (iter == attached_modifiers.end()) {
+                advance();
+                iter = attached_modifiers.find(lexer->lookahead);
+            }
+
+            if (iter != attached_modifiers.end()) {
+                advance();
+
+                if (!is_whitespace(lexer->lookahead)) {
+                    lexer->result_symbol = iter->second;
+                    lexer->mark_end(lexer);
+                    return true;
+                }
+
+                return false;
+            }
+
+            return false;
         }
 
         return false;

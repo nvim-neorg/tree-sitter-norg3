@@ -128,6 +128,14 @@
         {
           "type": "SYMBOL",
           "name": "escape_sequence"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "attached_modifier"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "_attached_modifier_conflict"
         }
       ]
     },
@@ -2191,6 +2199,80 @@
           }
         ]
       }
+    },
+    "attached_modifier": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "bold"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "italic"
+        }
+      ]
+    },
+    "_attached_modifier_conflict": {
+      "type": "CHOICE",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "bold_open"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "italic_open"
+        }
+      ]
+    },
+    "bold": {
+      "type": "PREC_DYNAMIC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "bold_open"
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_paragraph_inner"
+            }
+          },
+          {
+            "type": "SYMBOL",
+            "name": "bold_close"
+          }
+        ]
+      }
+    },
+    "italic": {
+      "type": "PREC_DYNAMIC",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "italic_open"
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "SYMBOL",
+              "name": "_paragraph_inner"
+            }
+          },
+          {
+            "type": "SYMBOL",
+            "name": "italic_close"
+          }
+        ]
+      }
     }
   },
   "extras": [
@@ -2199,7 +2281,16 @@
       "name": "_preceding_whitespace"
     }
   ],
-  "conflicts": [],
+  "conflicts": [
+    [
+      "bold",
+      "_attached_modifier_conflict"
+    ],
+    [
+      "italic",
+      "_attached_modifier_conflict"
+    ]
+  ],
   "precedences": [
     [
       {
@@ -2239,6 +2330,94 @@
     },
     {
       "type": "SYMBOL",
+      "name": "bold_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "italic_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "strikethrough_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "underline_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "spoiler_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "superscript_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "subscript_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "verbatim_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "null_modifier_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "inline_math_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "inline_macro_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "bold_close"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "italic_close"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "strikethrough_close"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "underline_close"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "spoiler_close"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "superscript_close"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "subscript_close"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "verbatim_close"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "null_modifier_close"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "inline_math_close"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "inline_macro_close"
+    },
+    {
+      "type": "SYMBOL",
       "name": "_dedent"
     }
   ],
@@ -2249,7 +2428,9 @@
     "rangeable_detached_modifier",
     "tag",
     "todo_item",
-    "delimiting_modifier"
+    "delimiting_modifier",
+    "attached_modifier",
+    "_attached_modifier_conflict"
   ]
 }
 

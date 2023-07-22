@@ -19,10 +19,37 @@ module.exports = grammar({
 
         $.weak_delimiting_modifier,
 
+        $.bold_open,
+        $.italic_open,
+        $.strikethrough_open,
+        $.underline_open,
+        $.spoiler_open,
+        $.superscript_open,
+        $.subscript_open,
+        $.verbatim_open,
+        $.null_modifier_open,
+        $.inline_math_open,
+        $.inline_macro_open,
+
+        $.bold_close,
+        $.italic_close,
+        $.strikethrough_close,
+        $.underline_close,
+        $.spoiler_close,
+        $.superscript_close,
+        $.subscript_close,
+        $.verbatim_close,
+        $.null_modifier_close,
+        $.inline_math_close,
+        $.inline_macro_close,
+
         $._dedent,
     ],
 
-    conflicts: ($) => [],
+    conflicts: ($) => [
+        [$.bold, $._attached_modifier_conflict],
+        [$.italic, $._attached_modifier_conflict],
+    ],
 
     precedences: ($) => [[$.heading, $.delimiting_modifier]],
 
@@ -35,6 +62,8 @@ module.exports = grammar({
         $.tag,
         $.todo_item,
         $.delimiting_modifier,
+        $.attached_modifier,
+        $._attached_modifier_conflict,
     ],
 
     rules: {
@@ -63,8 +92,18 @@ module.exports = grammar({
 
         escape_sequence: ($) => seq("\\", alias(prec(10, /./), $.escape_char)),
 
+        // TODO: Move $.attached_modifier out of here, as other things like headings, footnotes etc.
+        // use it as their "title". In fact it would be even better to make those use another construct
+        // like a "paragraph_segment" that uses "bold_single_line" (don't allow the bold to overflow across
+        // lines!!).
         _paragraph_inner: ($) =>
-            choice($._word, $._whitespace, $.escape_sequence),
+            choice(
+                $._word,
+                $._whitespace,
+                $.escape_sequence,
+                $.attached_modifier,
+                $._attached_modifier_conflict,
+            ),
 
         paragraph: ($) =>
             prec.right(
@@ -476,5 +515,21 @@ module.exports = grammar({
 
         horizontal_line: ($) =>
             prec.right(seq("_", repeat1("_"), newline_or_eof)),
+
+        attached_modifier: ($) => choice($.bold, $.italic),
+
+        _attached_modifier_conflict: ($) => choice($.bold_open, $.italic_open),
+
+        bold: ($) =>
+            prec.dynamic(
+                1,
+                seq($.bold_open, repeat1($._paragraph_inner), $.bold_close),
+            ),
+
+        italic: ($) =>
+            prec.dynamic(
+                1,
+                seq($.italic_open, repeat1($._paragraph_inner), $.italic_close),
+            ),
     },
 });
