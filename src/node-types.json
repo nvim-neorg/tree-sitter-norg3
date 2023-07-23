@@ -1,6 +1,6 @@
 [
   {
-    "type": "_attached_modifier_conflict",
+    "type": "_attached_modifier_conflict_open",
     "named": true,
     "subtypes": [
       {
@@ -208,11 +208,7 @@
       "required": true,
       "types": [
         {
-          "type": "_attached_modifier_conflict",
-          "named": true
-        },
-        {
-          "type": "attached_modifier",
+          "type": "_attached_modifier_conflict_open",
           "named": true
         },
         {
@@ -221,6 +217,10 @@
         },
         {
           "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "italic",
           "named": true
         }
       ]
@@ -501,11 +501,11 @@
       "required": true,
       "types": [
         {
-          "type": "_attached_modifier_conflict",
+          "type": "_attached_modifier_conflict_open",
           "named": true
         },
         {
-          "type": "attached_modifier",
+          "type": "bold",
           "named": true
         },
         {
@@ -593,7 +593,7 @@
       "required": false,
       "types": [
         {
-          "type": "_attached_modifier_conflict",
+          "type": "_attached_modifier_conflict_open",
           "named": true
         },
         {
@@ -798,14 +798,6 @@
       "multiple": true,
       "required": false,
       "types": [
-        {
-          "type": "_attached_modifier_conflict",
-          "named": true
-        },
-        {
-          "type": "attached_modifier",
-          "named": true
-        },
         {
           "type": "escape_sequence",
           "named": true

@@ -140,6 +140,13 @@ struct Scanner {
         if (valid_closing_symbol != -1 && !is_whitespace(lexer->lookahead)) {
             std::unordered_map<int32_t, TokenType>::iterator iter = attached_modifiers.find(lexer->lookahead);
 
+            // NOTE: It's possible that this gets executed despite the next character not being tied to the "expected"
+            // valid_symbol from the valid_symbols list. I.e. we could be looking ahead to a `*` but succeeding in parsing
+            // this because valid_symbols[ITALIC_CLOSE] is valid.
+            // This is also why we get errors on a single closing bold modifier. It shouldn't be being parsed, but because
+            // we are already in the context of e.g. an italic then we are theoretically looking for any valid attached modifier
+            // character.
+
             if (iter == attached_modifiers.end()) {
                 advance();
                 iter = attached_modifiers.find(lexer->lookahead);
@@ -174,7 +181,9 @@ struct Scanner {
             if (iter != attached_modifiers.end()) {
                 advance();
 
-                if (!is_whitespace(lexer->lookahead)) {
+                // The second check also ensures that a double modifier is not considered valid.
+                // Recall that it should be dismissed in all cases as per the specification.
+                if (!is_whitespace(lexer->lookahead) && lexer->lookahead != iter->first) {
                     lexer->result_symbol = iter->second;
                     lexer->mark_end(lexer);
                     return true;
