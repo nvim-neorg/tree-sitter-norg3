@@ -46,6 +46,10 @@ bool was_attached_close_mod(TokenType token) {
     return token >= BOLD_OPEN && token < LINK_MODIFIER && (token % 2 == BOLD_CLOSE % 2);
 }
 
+bool is_word(char c) {
+    return !iswspace(c) && !iswpunct(c);
+}
+
 struct Scanner {
     TSLexer* lexer;
     std::unordered_map<char, std::vector<uint16_t>> indents;
@@ -57,12 +61,15 @@ struct Scanner {
     };
 
     // HACK: fix this to use less space
-    std::bitset<COUNT> active_mods;
-    char cache;
+    std::bitset<((LINK_MODIFIER - BOLD_OPEN) / 4)> active_mods;
     TokenType last_token = WHITESPACE;
 
-    bool is_word(char c) {
-        return !iswspace(c) && !iswpunct(c);
+    void set_active_mods(TokenType kind, bool val) {
+        active_mods[(kind - BOLD_OPEN) / 4] = val;
+    }
+    bool get_active_mods(TokenType kind) {
+        std::cout << (active_mods[(kind - BOLD_OPEN) / 4]) << std::endl;
+        return active_mods[(kind - BOLD_OPEN) / 4];
     }
 
     bool scan(const bool *valid_symbols) {
@@ -78,7 +85,7 @@ struct Scanner {
             return true;
         }
 
-        cache = lexer->lookahead;
+        char cache = lexer->lookahead;
         lexer->mark_end(lexer);
         advance();
 
@@ -128,35 +135,42 @@ struct Scanner {
             if (!lexer->lookahead || (!is_word(lexer->lookahead) && lexer->lookahead != n_attached_mod->first)) {
                 lexer->mark_end(lexer);
                 lexer->result_symbol = last_token = (TokenType)(n_attached_mod->second + 3);
-                active_mods[n_attached_mod->second] = false;
+                set_active_mods(n_attached_mod->second, false);
                 return true;
             }
             return false;
         }
         const auto attached_mod = lookup.find(cache);
-        if (attached_mod != lookup.end() && valid_symbols[attached_mod->second + 2] && !active_mods[attached_mod->second] && last_token != WORD && lexer->lookahead == '|') {
+        if (attached_mod != lookup.end() && valid_symbols[attached_mod->second + 2] && !get_active_mods(attached_mod->second) && last_token != WORD && lexer->lookahead == '|') {
             // _FREE_OPEN
             // (non word) ['*', '|']
             advance();
             lexer->mark_end(lexer);
             lexer->result_symbol = last_token = (TokenType)(attached_mod->second + 2);
-            active_mods[attached_mod->second] = true;
+            set_active_mods(attached_mod->second, true);
+            std::cout << "free" << std::endl;
             return true;
         }
-        if (attached_mod != lookup.end() && valid_symbols[attached_mod->second + 1] && active_mods[attached_mod->second] && last_token != WHITESPACE && (!lexer->lookahead || (!is_word(lexer->lookahead) && lexer->lookahead != attached_mod->first))) {
+        if (attached_mod != lookup.end() && valid_symbols[attached_mod->second + 1] && last_token != WHITESPACE && (!lexer->lookahead || (!is_word(lexer->lookahead) && lexer->lookahead != attached_mod->first))) {
+            std::cout << "close)" << get_active_mods(attached_mod->second) << std::endl;
+            std::cout << "close)" << active_mods[0] << std::endl;
+        }
+        if (attached_mod != lookup.end() && valid_symbols[attached_mod->second + 1] && get_active_mods(attached_mod->second) && last_token != WHITESPACE && (!lexer->lookahead || (!is_word(lexer->lookahead) && lexer->lookahead != attached_mod->first))) {
             // _CLOSE
             // (-ws) ["*", -(word | "*")]
             lexer->mark_end(lexer);
             lexer->result_symbol = last_token = (TokenType)(attached_mod->second + 1);
-            active_mods[attached_mod->second] = false;
+            set_active_mods(attached_mod->second, false);
+            std::cout << "close" << std::endl;
             return true;
         }
-        if (attached_mod != lookup.end() && valid_symbols[attached_mod->second] && !active_mods[attached_mod->second] && last_token != WORD && lexer->lookahead && !iswspace(lexer->lookahead) && (lexer->lookahead != attached_mod->first)) {
+        if (attached_mod != lookup.end() && valid_symbols[attached_mod->second] && !get_active_mods(attached_mod->second) && last_token != WORD && lexer->lookahead && !iswspace(lexer->lookahead) && (lexer->lookahead != attached_mod->first)) {
             // _OPEN
             // (-word) ["*", -(ws | "*")]
             lexer->mark_end(lexer);
             lexer->result_symbol = last_token = attached_mod->second;
-            active_mods[attached_mod->second] = true;
+            set_active_mods(attached_mod->second, true);
+            std::cout << "open" << get_active_mods(BOLD_OPEN) << std::endl;
             return true;
         }
 
@@ -225,6 +239,11 @@ extern "C" {
 
         size_t total_size = 0;
 
+        const size_t size = scanner->active_mods.size();
+        for(; total_size < size; ++total_size) {
+            buffer[total_size] = scanner->active_mods[total_size];
+        }
+        buffer[total_size++] = scanner->last_token;
         for (const std::pair<char, std::vector<uint16_t>>& kv : scanner->indents) {
             uint16_t size = kv.second.size();
             buffer[total_size] = kv.first;
@@ -241,12 +260,20 @@ extern "C" {
     void tree_sitter_norg_external_scanner_deserialize(void *payload,
             const char *buffer,
             unsigned length) {
+        Scanner* scanner = static_cast<Scanner*>(payload);
+        scanner->last_token = WHITESPACE;
+        scanner->active_mods.reset();
+
         if (length == 0)
             return;
 
-        Scanner* scanner = static_cast<Scanner*>(payload);
-
         size_t head = 0;
+
+        const size_t size = scanner->active_mods.size();
+        for(; head < size; head++) {
+            scanner->active_mods[head] = buffer[head];
+        }
+        scanner->last_token = (TokenType)buffer[head++];
 
         while (head < length) {
             char key = buffer[head];
