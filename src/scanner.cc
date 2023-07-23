@@ -153,6 +153,8 @@ struct Scanner {
             }
 
             if (iter != attached_modifiers.end()) {
+                if (!valid_symbols[iter->second + (INLINE_MACRO_OPEN - BOLD_OPEN) + 1])
+                    return false;
 
                 advance();
 
@@ -183,7 +185,14 @@ struct Scanner {
 
                 // The second check also ensures that a double modifier is not considered valid.
                 // Recall that it should be dismissed in all cases as per the specification.
-                if (!is_whitespace(lexer->lookahead) && lexer->lookahead != iter->first) {
+                if (!is_whitespace(lexer->lookahead)) {
+                    // TODO:
+                    // if (lexer->lookahead != iter->first) {
+                    //     advance();
+                    //     lexer->mark_end(lexer);
+                    //     return false;
+                    // }
+
                     lexer->result_symbol = iter->second;
                     lexer->mark_end(lexer);
                     return true;

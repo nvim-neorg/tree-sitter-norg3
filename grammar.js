@@ -98,6 +98,8 @@ module.exports = grammar({
         // lines!!).
         _paragraph_inner: ($) => choice($._word, $.escape_sequence),
 
+        // TODO: Attached modifiers may be immediately followed with other
+        // attached modifiers, or may be immediately followed by a conflict.
         _paragraph_segment: ($) =>
             prec.right(
                 seq(
@@ -113,10 +115,10 @@ module.exports = grammar({
                         seq(
                             $._whitespace,
                             choice(
-                                $.attached_modifier,
+                                repeat1($.attached_modifier),
                                 seq(
                                     $._attached_modifier_conflict_open,
-                                    repeat($._paragraph_inner),
+                                    $._paragraph_segment,
                                 ),
                                 repeat1($._paragraph_inner),
                             ),
