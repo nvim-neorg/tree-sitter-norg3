@@ -1,6 +1,5 @@
 #include <bitset>
 #include <cwctype>
-#include <iostream>
 #include <algorithm>
 #include <cstring>
 #include <unordered_map>
@@ -25,6 +24,46 @@ enum TokenType : char {
     BOLD_CLOSE,
     FREE_BOLD_OPEN,
     FREE_BOLD_CLOSE,
+    ITALIC_OPEN,
+    ITALIC_CLOSE,
+    FREE_ITALIC_OPEN,
+    FREE_ITALIC_CLOSE,
+    STRIKETHROUGH_OPEN,
+    STRIKETHROUGH_CLOSE,
+    FREE_STRIKETHROUGH_OPEN,
+    FREE_STRIKETHROUGH_CLOSE,
+    UNDERLINE_OPEN,
+    UNDERLINE_CLOSE,
+    FREE_UNDERLINE_OPEN,
+    FREE_UNDERLINE_CLOSE,
+    SPOILER_OPEN,
+    SPOILER_CLOSE,
+    FREE_SPOILER_OPEN,
+    FREE_SPOILER_CLOSE,
+    SUPERSCRIPT_OPEN,
+    SUPERSCRIPT_CLOSE,
+    FREE_SUPERSCRIPT_OPEN,
+    FREE_SUPERSCRIPT_CLOSE,
+    SUBSCRIPT_OPEN,
+    SUBSCRIPT_CLOSE,
+    FREE_SUBSCRIPT_OPEN,
+    FREE_SUBSCRIPT_CLOSE,
+    INLINE_COMMENT_OPEN,
+    INLINE_COMMENT_CLOSE,
+    FREE_INLINE_COMMENT_OPEN,
+    FREE_INLINE_COMMENT_CLOSE,
+    VERBATIM_OPEN,
+    VERBATIM_CLOSE,
+    FREE_VERBATIM_OPEN,
+    FREE_VERBATIM_CLOSE,
+    INLINE_MATH_OPEN,
+    INLINE_MATH_CLOSE,
+    FREE_INLINE_MATH_OPEN,
+    FREE_INLINE_MATH_CLOSE,
+    INLINE_MACRO_OPEN,
+    INLINE_MACRO_CLOSE,
+    FREE_INLINE_MACRO_OPEN,
+    FREE_INLINE_MACRO_CLOSE,
 
     LINK_MODIFIER,
     ESCAPE_SEQUENCE,
@@ -54,21 +93,19 @@ struct Scanner {
     TSLexer* lexer;
     std::unordered_map<char, std::vector<uint16_t>> indents;
     const std::unordered_map<int32_t, TokenType> lookup = {
-        {'*', BOLD_OPEN},        // {'/', ITALIC_OPEN},       {'-', STRIKETHROUGH_OPEN},
-        // {'_', UNDERLINE_OPEN},   {'!', SPOILER_OPEN},      {'`', VERBATIM_OPEN},
-        // {'^', SUPERSCRIPT_OPEN}, {',', SUBSCRIPT_OPEN},    {'%', INLINE_COMMENT_OPEN},
-        // {'$', INLINE_MATH_OPEN}, {'&', INLINE_MACRO_OPEN},
+        {'*', BOLD_OPEN},        {'/', ITALIC_OPEN},       {'-', STRIKETHROUGH_OPEN},
+        {'_', UNDERLINE_OPEN},   {'!', SPOILER_OPEN},      {'`', VERBATIM_OPEN},
+        {'^', SUPERSCRIPT_OPEN}, {',', SUBSCRIPT_OPEN},    {'%', INLINE_COMMENT_OPEN},
+        {'$', INLINE_MATH_OPEN}, {'&', INLINE_MACRO_OPEN},
     };
 
-    // HACK: fix this to use less space
-    std::bitset<((LINK_MODIFIER - BOLD_OPEN) / 4)> active_mods;
     TokenType last_token = WHITESPACE;
+    std::bitset<((LINK_MODIFIER - BOLD_OPEN) / 4)> active_mods;
 
     void set_active_mods(TokenType kind, bool val) {
         active_mods[(kind - BOLD_OPEN) / 4] = val;
     }
     bool get_active_mods(TokenType kind) {
-        std::cout << (active_mods[(kind - BOLD_OPEN) / 4]) << std::endl;
         return active_mods[(kind - BOLD_OPEN) / 4];
     }
 
@@ -148,12 +185,9 @@ struct Scanner {
             lexer->mark_end(lexer);
             lexer->result_symbol = last_token = (TokenType)(attached_mod->second + 2);
             set_active_mods(attached_mod->second, true);
-            std::cout << "free" << std::endl;
             return true;
         }
         if (attached_mod != lookup.end() && valid_symbols[attached_mod->second + 1] && last_token != WHITESPACE && (!lexer->lookahead || (!is_word(lexer->lookahead) && lexer->lookahead != attached_mod->first))) {
-            std::cout << "close)" << get_active_mods(attached_mod->second) << std::endl;
-            std::cout << "close)" << active_mods[0] << std::endl;
         }
         if (attached_mod != lookup.end() && valid_symbols[attached_mod->second + 1] && get_active_mods(attached_mod->second) && last_token != WHITESPACE && (!lexer->lookahead || (!is_word(lexer->lookahead) && lexer->lookahead != attached_mod->first))) {
             // _CLOSE
@@ -161,7 +195,6 @@ struct Scanner {
             lexer->mark_end(lexer);
             lexer->result_symbol = last_token = (TokenType)(attached_mod->second + 1);
             set_active_mods(attached_mod->second, false);
-            std::cout << "close" << std::endl;
             return true;
         }
         if (attached_mod != lookup.end() && valid_symbols[attached_mod->second] && !get_active_mods(attached_mod->second) && last_token != WORD && lexer->lookahead && !iswspace(lexer->lookahead) && (lexer->lookahead != attached_mod->first)) {
@@ -170,7 +203,6 @@ struct Scanner {
             lexer->mark_end(lexer);
             lexer->result_symbol = last_token = attached_mod->second;
             set_active_mods(attached_mod->second, true);
-            std::cout << "open" << get_active_mods(BOLD_OPEN) << std::endl;
             return true;
         }
 
