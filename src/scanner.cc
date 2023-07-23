@@ -1,3 +1,4 @@
+#include <bitset>
 #include <cwctype>
 #include <iostream>
 #include <algorithm>
@@ -18,6 +19,16 @@ using namespace std;
 
 enum TokenType : char {
     WHITESPACE,
+    WORD,
+
+    BOLD_OPEN,
+    BOLD_CLOSE,
+    FREE_BOLD_OPEN,
+    FREE_BOLD_CLOSE,
+
+    LINK_MODIFIER,
+    ESCAPE_SEQUENCE,
+    PUNC_END,
 
     HEADING,
     UNORDERED_LIST,
@@ -27,41 +38,139 @@ enum TokenType : char {
     WEAK_DELIMITING_MODIFIER,
 
     DEDENT,
+
+    COUNT,
 };
+
+bool was_attached_close_mod(TokenType token) {
+    return token >= BOLD_OPEN && token < LINK_MODIFIER && (token % 2 == BOLD_CLOSE % 2);
+}
 
 struct Scanner {
     TSLexer* lexer;
     std::unordered_map<char, std::vector<uint16_t>> indents;
+    const std::unordered_map<int32_t, TokenType> lookup = {
+        {'*', BOLD_OPEN},        // {'/', ITALIC_OPEN},       {'-', STRIKETHROUGH_OPEN},
+        // {'_', UNDERLINE_OPEN},   {'!', SPOILER_OPEN},      {'`', VERBATIM_OPEN},
+        // {'^', SUPERSCRIPT_OPEN}, {',', SUBSCRIPT_OPEN},    {'%', INLINE_COMMENT_OPEN},
+        // {'$', INLINE_MATH_OPEN}, {'&', INLINE_MACRO_OPEN},
+    };
+
+    // HACK: fix this to use less space
+    std::bitset<COUNT> active_mods;
+    char cache;
+    TokenType last_token = WHITESPACE;
+
+    bool is_word(char c) {
+        return !iswspace(c) && !iswpunct(c);
+    }
 
     bool scan(const bool *valid_symbols) {
         if (lexer->eof(lexer))
             return false;
 
-        if (lexer->get_column(lexer) == 0) {
-            const bool found_whitespace = iswspace(lexer->lookahead) && lexer->lookahead != '\n' && lexer->lookahead != '\r';
+        if (lexer->get_column(lexer) == 0)
+            last_token = WHITESPACE;
 
-            if (found_whitespace) {
-                while (iswspace(lexer->lookahead) && lexer->lookahead != '\n' && lexer->lookahead != '\r')
-                    advance();
-
-                lexer->result_symbol = WHITESPACE;
-                return true;
-            }
+        if (valid_symbols[PUNC_END] && last_token != PUNC_END) {
+            lexer->mark_end(lexer);
+            last_token = PUNC_END;
+            return true;
         }
 
-        if ((valid_symbols[HEADING] && lexer->lookahead == '*') || (valid_symbols[UNORDERED_LIST] && lexer->lookahead == '-') || (valid_symbols[ORDERED_LIST] && lexer->lookahead == '~') || (valid_symbols[QUOTE] && lexer->lookahead == '>')) {
-            int32_t character = lexer->lookahead;
-            std::vector<uint16_t>& indent_vector = indents[lexer->lookahead];
-            size_t count = 0;
-            lexer->mark_end(lexer);
+        cache = lexer->lookahead;
+        lexer->mark_end(lexer);
+        advance();
 
-            while (lexer->lookahead == character) {
+        // ESCAPE SEQUENCE
+        if (valid_symbols[ESCAPE_SEQUENCE] && cache == '\\') {
+            if (lexer->lookahead) {
+                lexer->mark_end(lexer);
+                lexer->result_symbol = last_token = ESCAPE_SEQUENCE;
+                return true;
+            }
+            return false;
+        }
+        // WHITESPACE
+        if (iswblank(cache)) {
+            while (iswblank(lexer->lookahead)) {
+                advance();
+            }
+            lexer->mark_end(lexer);
+            lexer->result_symbol = last_token = WHITESPACE;
+            return true;
+        }
+
+        // WORD
+        const bool found_punc = cache && iswpunct(cache);
+        if (valid_symbols[WORD] && cache && is_word(cache)) {
+            while (lexer->lookahead && !iswspace(lexer->lookahead) && !iswpunct(lexer->lookahead)) {
+                advance();
+            }
+            lexer->mark_end(lexer);
+            lexer->result_symbol = last_token = WORD;
+            return true;
+        }
+
+        if (valid_symbols[LINK_MODIFIER] && last_token == WORD && cache == ':' && !iswspace(lexer->lookahead)) {
+            lexer->mark_end(lexer);
+            lexer->result_symbol = last_token = LINK_MODIFIER;
+            return true;
+        } else if (valid_symbols[LINK_MODIFIER] && was_attached_close_mod(last_token) && cache == ':' && lexer->lookahead && is_word(lexer->lookahead)) {
+            lexer->mark_end(lexer);
+            lexer->result_symbol = last_token = LINK_MODIFIER;
+            return true;
+        }
+
+        const auto n_attached_mod = lookup.find(lexer->lookahead);
+        if (cache == '|' && (n_attached_mod != lookup.end()) && valid_symbols[n_attached_mod->second + 3]) {
+            advance();
+            if (!lexer->lookahead || (!is_word(lexer->lookahead) && lexer->lookahead != n_attached_mod->first)) {
+                lexer->mark_end(lexer);
+                lexer->result_symbol = last_token = (TokenType)(n_attached_mod->second + 3);
+                active_mods[n_attached_mod->second] = false;
+                return true;
+            }
+            return false;
+        }
+        const auto attached_mod = lookup.find(cache);
+        if (attached_mod != lookup.end() && valid_symbols[attached_mod->second + 2] && !active_mods[attached_mod->second] && last_token != WORD && lexer->lookahead == '|') {
+            // _FREE_OPEN
+            // (non word) ['*', '|']
+            advance();
+            lexer->mark_end(lexer);
+            lexer->result_symbol = last_token = (TokenType)(attached_mod->second + 2);
+            active_mods[attached_mod->second] = true;
+            return true;
+        }
+        if (attached_mod != lookup.end() && valid_symbols[attached_mod->second + 1] && active_mods[attached_mod->second] && last_token != WHITESPACE && (!lexer->lookahead || (!is_word(lexer->lookahead) && lexer->lookahead != attached_mod->first))) {
+            // _CLOSE
+            // (-ws) ["*", -(word | "*")]
+            lexer->mark_end(lexer);
+            lexer->result_symbol = last_token = (TokenType)(attached_mod->second + 1);
+            active_mods[attached_mod->second] = false;
+            return true;
+        }
+        if (attached_mod != lookup.end() && valid_symbols[attached_mod->second] && !active_mods[attached_mod->second] && last_token != WORD && lexer->lookahead && !iswspace(lexer->lookahead) && (lexer->lookahead != attached_mod->first)) {
+            // _OPEN
+            // (-word) ["*", -(ws | "*")]
+            lexer->mark_end(lexer);
+            lexer->result_symbol = last_token = attached_mod->second;
+            active_mods[attached_mod->second] = true;
+            return true;
+        }
+
+        if ((valid_symbols[HEADING] && cache == '*') || (valid_symbols[UNORDERED_LIST] && cache == '-') || (valid_symbols[ORDERED_LIST] && cache == '~') || (valid_symbols[QUOTE] && cache == '>')) {
+            std::vector<uint16_t>& indent_vector = indents[lexer->lookahead];
+            size_t count = 1;
+
+            while (lexer->lookahead == cache) {
                 count++;
                 advance();
             }
 
             if (!iswspace(lexer->lookahead) || lexer->lookahead == '\n' || lexer->lookahead == '\r') {
-                if (character == '-' && count >= 2 && (lexer->lookahead == '\n' || lexer->lookahead == '\r')) {
+                if (cache == '-' && count >= 2 && (lexer->lookahead == '\n' || lexer->lookahead == '\r')) {
                     // Advance past the newline as well.
                     advance();
                     lexer->mark_end(lexer);
@@ -79,7 +188,7 @@ struct Scanner {
             } else {
                 indent_vector.push_back(count);
                 lexer->mark_end(lexer);
-                switch (character) {
+                switch (cache) {
                     case '*': lexer->result_symbol = HEADING; break;
                     case '-': lexer->result_symbol = UNORDERED_LIST; break;
                     case '~': lexer->result_symbol = ORDERED_LIST; break;

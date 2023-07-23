@@ -8,9 +8,18 @@ module.exports = grammar({
     name: "norg",
 
     // Tell treesitter we want to handle whitespace ourselves
-    extras: ($) => [$._preceding_whitespace],
+    extras: ($) => [],
     externals: ($) => [
-        $._preceding_whitespace,
+        $._whitespace,
+        $._word,
+        $.bold_open,
+        $.bold_close,
+        $.free_bold_open,
+        $.free_bold_close,
+
+        $.link_modifier,
+        $.escape_sequence_prefix,
+        $._punc_end,
 
         $.heading_stars,
         $.unordered_list_prefix,
@@ -22,7 +31,13 @@ module.exports = grammar({
         $._dedent,
     ],
 
-    conflicts: ($) => [],
+    conflicts: ($) => [
+        [$.bold, $._mod_conflict],
+        [$._attached_modifier, $._mod_conflict],
+        [$._attached_modifier],
+        [$.table_cell_single, $._punc],
+        [$.detached_modifier_extension, $._punc],
+    ],
 
     precedences: ($) => [[$.heading, $.delimiting_modifier]],
 
@@ -57,14 +72,17 @@ module.exports = grammar({
                 $.delimiting_modifier,
             ),
 
-        _character: (_) => token(/[^\s]/),
-        _word: ($) => prec.right(repeat1($._character)),
-        _whitespace: (_) => token(prec(1, /[\t                　]+/)),
-
-        escape_sequence: ($) => seq("\\", alias(prec(10, /./), $.escape_char)),
+        escape_sequence: ($) => seq($.escape_sequence_prefix, alias(prec(10, /./), $.escape_char)),
 
         _paragraph_inner: ($) =>
-            choice($._word, $._whitespace, $.escape_sequence),
+            choice(
+                $.escape_sequence,
+                $._word,
+                $._whitespace,
+                $._punc,
+                $._mod_conflict,
+                $._attached_modifier,
+            ),
 
         paragraph: ($) =>
             prec.right(
@@ -476,5 +494,148 @@ module.exports = grammar({
 
         horizontal_line: ($) =>
             prec.right(seq("_", repeat1("_"), newline_or_eof)),
+        _punc: $ => seq(
+            choice(
+                // combine all repeated token to ignore repeated attached modifiers
+                token(prec.right(repeat1("*"))),
+                token(prec.right(repeat1("/"))),
+                token(prec.right(repeat1("-"))),
+                token(prec.right(repeat1("_"))),
+                token(prec.right(repeat1("!"))),
+                token(prec.right(repeat1("`"))),
+                token(prec.right(repeat1("^"))),
+                token(prec.right(repeat1(","))),
+                token(prec.right(repeat1("%"))),
+                token(prec.right(repeat1("$"))),
+                token(prec.right(repeat1("&"))),
+                ".",
+                "<",
+                ">",
+                "(",
+                ")",
+                "\\",
+                ":",
+                "|"
+            ),
+            optional($._punc_end)
+        ),
+        _attached_mod_content: $ =>
+            prec.right(seq(
+                repeat1($._paragraph_inner),
+                repeat(
+                    seq(
+                        newline,
+                        repeat1($._paragraph_inner),
+                    )
+                ),
+            )),
+        _verbatim_paragraph_element: $ =>
+            choice(
+                $.escape_sequence,
+                $._word,
+                $._whitespace,
+                $._punc,
+                $._mod_conflict,
+            ),
+        _verbatim_paragraph_content: $ =>
+            prec.right(seq(
+                repeat1($._verbatim_paragraph_element),
+                repeat(
+                    seq(
+                        newline,
+                        repeat1($._verbatim_paragraph_element),
+                    )
+                )
+            )),
+        _free_form_verbatim_mod_content: $ =>
+            prec.right(
+                repeat1(
+                    choice(
+                        choice(
+                            // $.escape_sequence,
+                            $._word,
+                            $._whitespace,
+                            $._punc,
+                            $._mod_conflict,
+                        ),
+                        newline,
+                    )
+                )
+            ),
+        _attached_modifier: $ =>
+            seq(
+                optional($.link_modifier),
+                choice(
+                    $.bold,
+                    // $.italic,
+                    // $.strikethrough,
+                    // $.underline,
+                    // $.spoiler,
+                    // $.superscript,
+                    // $.subscript,
+                    // $.inline_comment,
+                    // $.verbatim,
+                    // $.inline_math,
+                    // $.inline_macro,
+                ),
+                optional($.link_modifier),
+            ),
+        _mod_conflict: $ =>
+            alias(
+                choice(
+                    $.bold_open,
+                    // $.italic_open,
+                    // $.strikethrough_open,
+                    // $.underline_open,
+                    // $.spoiler_open,
+                    // $.superscript_open,
+                    // $.subscript_open,
+                    // $.inline_comment_open,
+                    // $.verbatim_open,
+                    // $.inline_math_open,
+                    // $.inline_macro_open,
+                    $.free_bold_open,
+                    // $.free_italic_open,
+                    // $.free_strikethrough_open,
+                    // $.free_underline_open,
+                    // $.free_spoiler_open,
+                    // $.free_superscript_open,
+                    // $.free_subscript_open,
+                    // $.free_inline_comment_open,
+                    // $.free_verbatim_open,
+                    // $.free_inline_math_open,
+                    // $.free_inline_macro_open,
+                    $.link_modifier,
+                ),
+            "_punc"),
+        bold: $ => gen_attached_modifier($, "bold", false),
     },
 });
+
+function gen_attached_modifier($, kind, verbatim) {
+    let open = alias($[kind + "_open"], "_open");
+    let close = alias($[kind + "_close"], "_close");
+    let free_open = alias($["free_" + kind + "_open"], $.free_form_open);
+    let free_close = alias($["free_" + kind + "_close"], $.free_form_close);
+    let content = $._attached_mod_content;
+    let free_form_content = $._attached_mod_content;
+    let precedence = 2;
+
+    if (verbatim) {
+        content = $._verbatim_paragraph_content;
+        free_form_content = $._free_form_verbatim_mod_content;
+        precedence = 5;
+    }
+    return choice(
+        prec.dynamic(precedence + 1, seq(
+            free_open,
+            free_form_content,
+            free_close,
+        )),
+        prec.dynamic(precedence, seq(
+            open,
+            content,
+            close,
+        ))
+    )
+}

@@ -172,6 +172,37 @@
     ]
   },
   {
+    "type": "bold",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "bold",
+          "named": true
+        },
+        {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "free_form_close",
+          "named": true
+        },
+        {
+          "type": "free_form_open",
+          "named": true
+        },
+        {
+          "type": "link_modifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "content",
     "named": true,
     "fields": {},
@@ -298,11 +329,15 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
           "type": "escape_char",
+          "named": true
+        },
+        {
+          "type": "escape_sequence_prefix",
           "named": true
         }
       ]
@@ -511,7 +546,15 @@
       "required": false,
       "types": [
         {
+          "type": "bold",
+          "named": true
+        },
+        {
           "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "link_modifier",
           "named": true
         },
         {
@@ -520,11 +563,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "parameter",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "quote",
@@ -709,7 +747,15 @@
       "required": false,
       "types": [
         {
+          "type": "bold",
+          "named": true
+        },
+        {
           "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "link_modifier",
           "named": true
         }
       ]
@@ -976,7 +1022,31 @@
     "named": false
   },
   {
+    "type": "_close",
+    "named": false
+  },
+  {
+    "type": "_open",
+    "named": false
+  },
+  {
+    "type": "_punc",
+    "named": false
+  },
+  {
     "type": "escape_char",
+    "named": true
+  },
+  {
+    "type": "escape_sequence_prefix",
+    "named": true
+  },
+  {
+    "type": "free_form_close",
+    "named": true
+  },
+  {
+    "type": "free_form_open",
     "named": true
   },
   {
@@ -984,7 +1054,15 @@
     "named": true
   },
   {
+    "type": "link_modifier",
+    "named": true
+  },
+  {
     "type": "ordered_list_prefix",
+    "named": true
+  },
+  {
+    "type": "parameter",
     "named": true
   },
   {
