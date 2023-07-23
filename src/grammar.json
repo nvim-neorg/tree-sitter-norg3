@@ -3494,7 +3494,12 @@
       ]
     }
   },
-  "extras": [],
+  "extras": [
+    {
+      "type": "SYMBOL",
+      "name": "_preceding_whitespace"
+    }
+  ],
   "conflicts": [
     [
       "bold",
@@ -3569,6 +3574,10 @@
     ]
   ],
   "externals": [
+    {
+      "type": "SYMBOL",
+      "name": "_preceding_whitespace"
+    },
     {
       "type": "SYMBOL",
       "name": "_whitespace"

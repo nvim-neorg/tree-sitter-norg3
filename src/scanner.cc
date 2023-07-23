@@ -17,6 +17,7 @@
 using namespace std;
 
 enum TokenType : char {
+    PRE_WHITESPACE,
     WHITESPACE,
     WORD,
 
@@ -113,8 +114,16 @@ struct Scanner {
         if (lexer->eof(lexer))
             return false;
 
-        if (lexer->get_column(lexer) == 0)
+        if (lexer->get_column(lexer) == 0) {
             last_token = WHITESPACE;
+            if (iswblank(lexer->lookahead)) {
+                while (iswblank(lexer->lookahead))
+                    advance();
+
+                lexer->result_symbol = PRE_WHITESPACE;
+                return true;
+            }
+        }
 
         if (valid_symbols[PUNC_END] && last_token != PUNC_END) {
             lexer->mark_end(lexer);

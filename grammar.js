@@ -8,8 +8,9 @@ module.exports = grammar({
     name: "norg",
 
     // Tell treesitter we want to handle whitespace ourselves
-    extras: ($) => [],
+    extras: ($) => [$._preceding_whitespace],
     externals: ($) => [
+        $._preceding_whitespace,
         $._whitespace,
         $._word,
 
