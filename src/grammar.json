@@ -2354,28 +2354,79 @@
             "name": "bold_open"
           },
           {
-            "type": "REPEAT1",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "_paragraph_inner"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "italic"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "_whitespace"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "_attached_modifier_conflict_open"
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "REPEAT1",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_paragraph_inner"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "italic"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_whitespace"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_attached_modifier_conflict_open"
+                    }
+                  ]
                 }
-              ]
-            }
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "\n"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "\r"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "\r\n"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "_paragraph_inner"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "italic"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "_whitespace"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "_attached_modifier_conflict_open"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
           },
           {
             "type": "SYMBOL",
@@ -2395,28 +2446,79 @@
             "name": "italic_open"
           },
           {
-            "type": "REPEAT1",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "_paragraph_inner"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "bold"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "_whitespace"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "_attached_modifier_conflict_open"
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "REPEAT1",
+                "content": {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "_paragraph_inner"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "bold"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_whitespace"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "_attached_modifier_conflict_open"
+                    }
+                  ]
                 }
-              ]
-            }
+              },
+              {
+                "type": "REPEAT",
+                "content": {
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "STRING",
+                          "value": "\n"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "\r"
+                        },
+                        {
+                          "type": "STRING",
+                          "value": "\r\n"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "_paragraph_inner"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "bold"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "_whitespace"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "_attached_modifier_conflict_open"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            ]
           },
           {
             "type": "SYMBOL",

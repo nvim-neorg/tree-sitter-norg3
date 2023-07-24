@@ -92,20 +92,23 @@ module.exports = grammar({
 
         escape_sequence: ($) => seq("\\", alias(prec(10, /./), $.escape_char)),
 
-        // TODO: Move $.attached_modifier out of here, as other things like headings, footnotes etc.
-        // use it as their "title". In fact it would be even better to make those use another construct
+        // TODO: Make those use another construct
         // like a "paragraph_segment" that uses "bold_single_line" (don't allow the bold to overflow across
         // lines!!).
         _paragraph_inner: ($) => choice($._word, $.escape_sequence),
 
-        // TODO: Attached modifiers may be immediately followed with other
-        // attached modifiers, or may be immediately followed by a conflict.
         _paragraph_segment: ($) =>
             prec.right(
                 seq(
                     choice(
                         repeat1($._paragraph_inner),
-                        seq($.attached_modifier, repeat(prec.right($._attached_modifier_conflict_open)), optional($._paragraph_segment)),
+                        seq(
+                            $.attached_modifier,
+                            repeat(
+                                prec.right($._attached_modifier_conflict_open),
+                            ),
+                            optional($._paragraph_segment),
+                        ),
                         seq(
                             $._attached_modifier_conflict_open,
                             $._paragraph_segment,
@@ -115,7 +118,15 @@ module.exports = grammar({
                         seq(
                             $._whitespace,
                             choice(
-                                seq($.attached_modifier, repeat(prec.right($._attached_modifier_conflict_open)), optional($._paragraph_segment)),
+                                seq(
+                                    $.attached_modifier,
+                                    repeat(
+                                        prec.right(
+                                            $._attached_modifier_conflict_open,
+                                        ),
+                                    ),
+                                    optional($._paragraph_segment),
+                                ),
                                 seq(
                                     $._attached_modifier_conflict_open,
                                     $._paragraph_segment,
@@ -543,12 +554,25 @@ module.exports = grammar({
                 1,
                 seq(
                     $.bold_open,
-                    repeat1(
-                        choice(
-                            $._paragraph_inner,
-                            $.italic,
-                            $._whitespace,
-                            $._attached_modifier_conflict_open,
+                    seq(
+                        repeat1(
+                            choice(
+                                $._paragraph_inner,
+                                $.italic,
+                                $._whitespace,
+                                $._attached_modifier_conflict_open,
+                            ),
+                        ),
+                        repeat(
+                            seq(
+                                newline,
+                                choice(
+                                    $._paragraph_inner,
+                                    $.italic,
+                                    $._whitespace,
+                                    $._attached_modifier_conflict_open,
+                                ),
+                            ),
                         ),
                     ),
                     $.bold_close,
@@ -560,12 +584,25 @@ module.exports = grammar({
                 1,
                 seq(
                     $.italic_open,
-                    repeat1(
-                        choice(
-                            $._paragraph_inner,
-                            $.bold,
-                            $._whitespace,
-                            $._attached_modifier_conflict_open,
+                    seq(
+                        repeat1(
+                            choice(
+                                $._paragraph_inner,
+                                $.bold,
+                                $._whitespace,
+                                $._attached_modifier_conflict_open,
+                            ),
+                        ),
+                        repeat(
+                            seq(
+                                newline,
+                                choice(
+                                    $._paragraph_inner,
+                                    $.bold,
+                                    $._whitespace,
+                                    $._attached_modifier_conflict_open,
+                                ),
+                            ),
                         ),
                     ),
                     $.italic_close,
