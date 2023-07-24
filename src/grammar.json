@@ -151,15 +151,22 @@
                     "name": "attached_modifier"
                   },
                   {
+                    "type": "REPEAT",
+                    "content": {
+                      "type": "PREC_RIGHT",
+                      "value": 0,
+                      "content": {
+                        "type": "SYMBOL",
+                        "name": "_attached_modifier_conflict_open"
+                      }
+                    }
+                  },
+                  {
                     "type": "CHOICE",
                     "members": [
                       {
-                        "type": "PREC",
-                        "value": 2,
-                        "content": {
-                          "type": "SYMBOL",
-                          "name": "_attached_modifier_conflict_open"
-                        }
+                        "type": "SYMBOL",
+                        "name": "_paragraph_segment"
                       },
                       {
                         "type": "BLANK"
@@ -196,11 +203,36 @@
                   "type": "CHOICE",
                   "members": [
                     {
-                      "type": "REPEAT1",
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "attached_modifier"
-                      }
+                      "type": "SEQ",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "attached_modifier"
+                        },
+                        {
+                          "type": "REPEAT",
+                          "content": {
+                            "type": "PREC_RIGHT",
+                            "value": 0,
+                            "content": {
+                              "type": "SYMBOL",
+                              "name": "_attached_modifier_conflict_open"
+                            }
+                          }
+                        },
+                        {
+                          "type": "CHOICE",
+                          "members": [
+                            {
+                              "type": "SYMBOL",
+                              "name": "_paragraph_segment"
+                            },
+                            {
+                              "type": "BLANK"
+                            }
+                          ]
+                        }
+                      ]
                     },
                     {
                       "type": "SEQ",

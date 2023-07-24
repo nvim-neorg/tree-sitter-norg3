@@ -105,7 +105,7 @@ module.exports = grammar({
                 seq(
                     choice(
                         repeat1($._paragraph_inner),
-                        $.attached_modifier,
+                        seq($.attached_modifier, repeat(prec.right($._attached_modifier_conflict_open)), optional($._paragraph_segment)),
                         seq(
                             $._attached_modifier_conflict_open,
                             $._paragraph_segment,
@@ -115,7 +115,7 @@ module.exports = grammar({
                         seq(
                             $._whitespace,
                             choice(
-                                repeat1($.attached_modifier),
+                                seq($.attached_modifier, repeat(prec.right($._attached_modifier_conflict_open)), optional($._paragraph_segment)),
                                 seq(
                                     $._attached_modifier_conflict_open,
                                     $._paragraph_segment,
