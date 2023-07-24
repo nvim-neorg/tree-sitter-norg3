@@ -49,6 +49,12 @@ module.exports = grammar({
     conflicts: ($) => [
         [$.bold, $._attached_modifier_conflict_open],
         [$.italic, $._attached_modifier_conflict_open],
+        [$.strikethrough, $._attached_modifier_conflict_open],
+        [$.underline, $._attached_modifier_conflict_open],
+        [$.spoiler, $._attached_modifier_conflict_open],
+        [$.superscript, $._attached_modifier_conflict_open],
+        [$.subscript, $._attached_modifier_conflict_open],
+        [$.null_modifier, $._attached_modifier_conflict_open],
     ],
 
     precedences: ($) => [[$.heading, $.delimiting_modifier]],
@@ -544,69 +550,68 @@ module.exports = grammar({
         horizontal_line: ($) =>
             prec.right(seq("_", repeat1("_"), newline_or_eof)),
 
-        attached_modifier: ($) => choice($.bold, $.italic),
+        attached_modifier: ($) => choice($.bold, $.italic, $.strikethrough),
 
         _attached_modifier_conflict_open: ($) =>
-            choice($.bold_open, $.italic_open),
+            choice($.bold_open, $.italic_open, $.strikethrough_open),
 
-        bold: ($) =>
-            prec.dynamic(
-                1,
-                seq(
-                    $.bold_open,
-                    seq(
-                        repeat1(
-                            choice(
-                                $._paragraph_inner,
-                                $.italic,
-                                $._whitespace,
-                                $._attached_modifier_conflict_open,
-                            ),
-                        ),
-                        repeat(
-                            seq(
-                                newline,
-                                choice(
-                                    $._paragraph_inner,
-                                    $.italic,
-                                    $._whitespace,
-                                    $._attached_modifier_conflict_open,
-                                ),
-                            ),
-                        ),
-                    ),
-                    $.bold_close,
-                ),
-            ),
-
-        italic: ($) =>
-            prec.dynamic(
-                1,
-                seq(
-                    $.italic_open,
-                    seq(
-                        repeat1(
-                            choice(
-                                $._paragraph_inner,
-                                $.bold,
-                                $._whitespace,
-                                $._attached_modifier_conflict_open,
-                            ),
-                        ),
-                        repeat(
-                            seq(
-                                newline,
-                                choice(
-                                    $._paragraph_inner,
-                                    $.bold,
-                                    $._whitespace,
-                                    $._attached_modifier_conflict_open,
-                                ),
-                            ),
-                        ),
-                    ),
-                    $.italic_close,
-                ),
-            ),
+        bold: ($) => attached_modifier($, "bold"),
+        italic: ($) => attached_modifier($, "italic"),
+        strikethrough: ($) => attached_modifier($, "strikethrough"),
+        underline: ($) => attached_modifier($, "underline"),
+        spoiler: ($) => attached_modifier($, "spoiler"),
+        superscript: ($) => attached_modifier($, "superscript"),
+        subscript: ($) => attached_modifier($, "subscript"),
+        // TODO: Verbatim stuff
+        null_modifier: ($) => attached_modifier($, "null_modifier"),
     },
 });
+
+function attached_modifier($, type) {
+    const other_attached_modifiers = [
+        "bold",
+        "italic",
+        "strikethrough",
+        "underline",
+        "spoiler",
+        "superscript",
+        "subscript",
+        // "verbatim",
+        "null_modifier",
+        // "inline_math",
+        // "inline_macro",
+    ]
+        .filter((x) => x != type)
+        .map((x) => $[x]);
+
+    return prec.dynamic(
+        1,
+        seq(
+            $[type + "_open"],
+            seq(
+                repeat1(
+                    choice(
+                        $._paragraph_inner,
+                        ...other_attached_modifiers,
+                        $._whitespace,
+                        $._attached_modifier_conflict_open,
+                    ),
+                ),
+                repeat(
+                    seq(
+                        newline,
+                        repeat1(
+                            choice(
+                                $._paragraph_inner,
+                                ...other_attached_modifiers,
+                                $._whitespace,
+                                $._attached_modifier_conflict_open,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+            $[type + "_close"],
+        ),
+    );
+}
