@@ -1,0 +1,67 @@
+* Attached Modifier Edge Cases and How to Handle Them
+
+  Attached modifiers are a difficult construct to parse even by modern standards.
+  While Norg would love to substitute them for a less ambiguous syntax, attached modifiers
+  are so engrained in our expectations for markup today that they are simply impossible to replace.
+
+** Attached Modifier Conflicts
+
+   We define an "opening/closing conflict" as an opening/closing attached modifier that does not have
+   a respective counterpart. Complicated cases arise when unclosed markup meets closed markup, forcing
+   parsers to be very vigilent at all times despite the strict rules imposed by the Norg specification.
+
+* Conflicts vs. Closed Markup
+
+  Left-flanking, internal:
+
+  |example
+  */hello*
+  |end
+
+  Left-flanking, external:
+
+  |example
+  /*hello*
+  |end
+
+  Right-flanking, internal:
+
+  |example
+  *hello/*
+  |end
+
+  Right-flanking, external - this particular case is especially tricky as the `/` could accidentally
+  be considered an opening modifier by an unsuspecting parser.
+
+  |example
+  *hello*/ world
+  |end
+
+* Consecutive
+
+  Duplex, dissimilar:
+
+  |example
+  *hello*/world/
+  |end
+
+  Duplex, similar - note that as per the specification consecutive attached modifiers should be
+  ignored and treated as raw text, therefore the below example becomes a single, monolithic `bold`:
+
+  |example
+  *hello**world*
+  |end
+
+* Nested
+
+  Multiplex, intertwined with duplication - a very daunting edge case, where the inner `*` cannot be
+  disambiguated with a `GLR(1)` and the same character is surrounding the `*`. Do not mistake it for italic!:
+
+  |example
+  */hello/*/world/
+  |end
+
+  ===
+
+#comment
+vim: conceallevel=0
