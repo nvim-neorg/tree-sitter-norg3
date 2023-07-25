@@ -55,11 +55,20 @@ module.exports = grammar({
         [$.superscript, $._attached_modifier_conflict_open],
         [$.subscript, $._attached_modifier_conflict_open],
         [$.null_modifier, $._attached_modifier_conflict_open],
+
+        [$.bold_inline, $._attached_modifier_conflict_open],
+        [$.italic_inline, $._attached_modifier_conflict_open],
+        [$.strikethrough_inline, $._attached_modifier_conflict_open],
+        [$.underline_inline, $._attached_modifier_conflict_open],
+        [$.spoiler_inline, $._attached_modifier_conflict_open],
+        [$.superscript_inline, $._attached_modifier_conflict_open],
+        [$.subscript_inline, $._attached_modifier_conflict_open],
+        [$.null_modifier_inline, $._attached_modifier_conflict_open],
     ],
 
     precedences: ($) => [[$.heading, $.delimiting_modifier]],
 
-    inlines: ($) => [],
+    inlines: ($) => [$._title_inline],
 
     supertypes: ($) => [
         $.non_structural,
@@ -69,6 +78,7 @@ module.exports = grammar({
         $.todo_item,
         $.delimiting_modifier,
         $.attached_modifier,
+        $.attached_modifier_inline,
         $._attached_modifier_conflict_open,
     ],
 
@@ -161,13 +171,100 @@ module.exports = grammar({
                 ),
             ),
 
+        // This is a meta-node to make treesitter do what we want it to.
+        // If you make `$.title` self-reference with a hidden alias (e.g. `alias($.title, "_title")`,
+        // then the content is still marked "nested". As a result when you do `*hello* /world/`, `*hello*`
+        // self-references `title`, which then makes `/world/` a subchild of `*hello*`, even though it absolutely
+        // shouldn't. This node is marked inline in the AST, preventing
+        _title_inline: ($) =>
+            prec.right(
+                seq(
+                    choice(
+                        repeat1($._paragraph_inner),
+                        seq(
+                            $.attached_modifier_inline,
+                            repeat(
+                                prec.right($._attached_modifier_conflict_open),
+                            ),
+                            optional($._title_inline),
+                        ),
+                        seq(
+                            $._attached_modifier_conflict_open,
+                            $._title_inline,
+                        ),
+                    ),
+                    repeat(
+                        seq(
+                            $._whitespace,
+                            choice(
+                                seq(
+                                    $.attached_modifier_inline,
+                                    repeat(
+                                        prec.right(
+                                            $._attached_modifier_conflict_open,
+                                        ),
+                                    ),
+                                    optional($._title_inline),
+                                ),
+                                seq(
+                                    $._attached_modifier_conflict_open,
+                                    $._title_inline,
+                                ),
+                                repeat1($._paragraph_inner),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+
+        title: ($) =>
+            prec.right(
+                seq(
+                    choice(
+                        repeat1($._paragraph_inner),
+                        seq(
+                            $.attached_modifier_inline,
+                            repeat(
+                                prec.right($._attached_modifier_conflict_open),
+                            ),
+                            optional($._title_inline),
+                        ),
+                        seq(
+                            $._attached_modifier_conflict_open,
+                            $._title_inline,
+                        ),
+                    ),
+                    repeat(
+                        seq(
+                            $._whitespace,
+                            choice(
+                                seq(
+                                    $.attached_modifier_inline,
+                                    repeat(
+                                        prec.right(
+                                            $._attached_modifier_conflict_open,
+                                        ),
+                                    ),
+                                    optional($._title_inline),
+                                ),
+                                seq(
+                                    $._attached_modifier_conflict_open,
+                                    $._title_inline,
+                                ),
+                                repeat1($._paragraph_inner),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+
         heading: ($) =>
             prec.right(
                 seq(
                     $.heading_stars,
                     $._whitespace,
                     optional(seq($.detached_modifier_extension, $._whitespace)),
-                    alias(repeat1($._paragraph_inner), $.title),
+                    $.title,
                     newline_or_eof,
                     repeat(choice($.heading, $.non_structural)),
                     optional(choice($._dedent, $.weak_delimiting_modifier)),
@@ -230,7 +327,7 @@ module.exports = grammar({
                 "$",
                 $._whitespace,
                 optional(seq($.detached_modifier_extension, $._whitespace)),
-                alias($._paragraph_inner, $.title),
+                $.title,
                 repeat1(newline),
                 $.paragraph,
             ),
@@ -241,7 +338,8 @@ module.exports = grammar({
                     "$$",
                     $._whitespace,
                     optional(seq($.detached_modifier_extension, $._whitespace)),
-                    alias($._paragraph_inner, $.title),
+                    $.title,
+                    newline_or_eof,
                     repeat($.non_structural),
                     "$$",
                 ),
@@ -255,7 +353,7 @@ module.exports = grammar({
                 "^",
                 $._whitespace,
                 optional(seq($.detached_modifier_extension, $._whitespace)),
-                alias($._paragraph_inner, $.title),
+                $.title,
                 repeat1(newline),
                 $.paragraph,
             ),
@@ -266,7 +364,8 @@ module.exports = grammar({
                     "^^",
                     $._whitespace,
                     optional(seq($.detached_modifier_extension, $._whitespace)),
-                    alias($._paragraph_inner, $.title),
+                    $.title,
+                    newline_or_eof,
                     repeat($.non_structural),
                     "^^",
                 ),
@@ -279,7 +378,7 @@ module.exports = grammar({
                 ":",
                 $._whitespace,
                 optional(seq($.detached_modifier_extension, $._whitespace)),
-                alias($._paragraph_inner, $.title),
+                $.title,
                 repeat1(newline),
                 $.paragraph,
             ),
@@ -290,7 +389,8 @@ module.exports = grammar({
                     "::",
                     $._whitespace,
                     optional(seq($.detached_modifier_extension, $._whitespace)),
-                    alias($._paragraph_inner, $.title),
+                    $.title,
+                    newline_or_eof,
                     repeat($.non_structural),
                     "::",
                 ),
@@ -550,10 +650,40 @@ module.exports = grammar({
         horizontal_line: ($) =>
             prec.right(seq("_", repeat1("_"), newline_or_eof)),
 
-        attached_modifier: ($) => choice($.bold, $.italic, $.strikethrough),
+        attached_modifier: ($) =>
+            choice(
+                $.bold,
+                $.italic,
+                $.strikethrough,
+                $.underline,
+                $.spoiler,
+                $.superscript,
+                $.subscript,
+                $.null_modifier,
+            ),
+        attached_modifier_inline: ($) =>
+            choice(
+                $.bold_inline,
+                $.italic_inline,
+                $.strikethrough_inline,
+                $.underline_inline,
+                $.spoiler_inline,
+                $.superscript_inline,
+                $.subscript_inline,
+                $.null_modifier_inline,
+            ),
 
         _attached_modifier_conflict_open: ($) =>
-            choice($.bold_open, $.italic_open, $.strikethrough_open),
+            choice(
+                $.bold_open,
+                $.italic_open,
+                $.strikethrough_open,
+                $.underline_open,
+                $.spoiler_open,
+                $.superscript_open,
+                $.subscript_open,
+                $.null_modifier_open,
+            ),
 
         bold: ($) => attached_modifier($, "bold"),
         italic: ($) => attached_modifier($, "italic"),
@@ -564,6 +694,18 @@ module.exports = grammar({
         subscript: ($) => attached_modifier($, "subscript"),
         // TODO: Verbatim stuff
         null_modifier: ($) => attached_modifier($, "null_modifier"),
+
+        bold_inline: ($) => attached_modifier_inline($, "bold"),
+        italic_inline: ($) => attached_modifier_inline($, "italic"),
+        strikethrough_inline: ($) =>
+            attached_modifier_inline($, "strikethrough"),
+        underline_inline: ($) => attached_modifier_inline($, "underline"),
+        spoiler_inline: ($) => attached_modifier_inline($, "spoiler"),
+        superscript_inline: ($) => attached_modifier_inline($, "superscript"),
+        subscript_inline: ($) => attached_modifier_inline($, "subscript"),
+        // TODO: Verbatim stuff
+        null_modifier_inline: ($) =>
+            attached_modifier_inline($, "null_modifier"),
     },
 });
 
@@ -609,6 +751,40 @@ function attached_modifier($, type) {
                             ),
                         ),
                     ),
+                ),
+            ),
+            $[type + "_close"],
+        ),
+    );
+}
+
+function attached_modifier_inline($, type) {
+    const other_attached_modifiers = [
+        "bold",
+        "italic",
+        "strikethrough",
+        "underline",
+        "spoiler",
+        "superscript",
+        "subscript",
+        // "verbatim",
+        "null_modifier",
+        // "inline_math",
+        // "inline_macro",
+    ]
+        .filter((x) => x != type)
+        .map((x) => $[x + "_inline"]);
+
+    return prec.dynamic(
+        1,
+        seq(
+            $[type + "_open"],
+            repeat1(
+                choice(
+                    $._paragraph_inner,
+                    ...other_attached_modifiers,
+                    $._whitespace,
+                    $._attached_modifier_conflict_open,
                 ),
             ),
             $[type + "_close"],
