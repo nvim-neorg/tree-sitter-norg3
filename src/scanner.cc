@@ -57,7 +57,7 @@ enum TokenType : char {
 struct Scanner {
     TSLexer* lexer;
     std::unordered_map<char, std::vector<uint16_t>> indents;
-    std::unordered_map<int32_t, TokenType> attached_modifiers = { {'*', BOLD_OPEN}, {'/', ITALIC_OPEN}, {'_', UNDERLINE_OPEN}, {'-', STRIKETHROUGH_OPEN}, {'%', NULL_MODIFIER_OPEN}, {'!', SPOILER_OPEN}, {'&', INLINE_MACRO_OPEN} };
+    std::unordered_map<int32_t, TokenType> attached_modifiers = { {'*', BOLD_OPEN}, {'/', ITALIC_OPEN}, {'_', UNDERLINE_OPEN}, {'-', STRIKETHROUGH_OPEN}, {'%', NULL_MODIFIER_OPEN}, {'`', VERBATIM_OPEN}, {'!', SPOILER_OPEN}, {'&', INLINE_MACRO_OPEN} };
 
     bool is_whitespace(int32_t character) {
         return iswspace(character) && character != '\n' && character != '\r';

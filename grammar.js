@@ -54,6 +54,7 @@ module.exports = grammar({
         [$.spoiler, $._attached_modifier_conflict_open],
         [$.superscript, $._attached_modifier_conflict_open],
         [$.subscript, $._attached_modifier_conflict_open],
+        [$.verbatim, $._attached_modifier_conflict_open],
         [$.null_modifier, $._attached_modifier_conflict_open],
 
         [$.bold_inline, $._attached_modifier_conflict_open],
@@ -63,6 +64,7 @@ module.exports = grammar({
         [$.spoiler_inline, $._attached_modifier_conflict_open],
         [$.superscript_inline, $._attached_modifier_conflict_open],
         [$.subscript_inline, $._attached_modifier_conflict_open],
+        [$.verbatim_inline, $._attached_modifier_conflict_open],
         [$.null_modifier_inline, $._attached_modifier_conflict_open],
     ],
 
@@ -660,6 +662,7 @@ module.exports = grammar({
                 $.superscript,
                 $.subscript,
                 $.null_modifier,
+                $.verbatim,
             ),
         attached_modifier_inline: ($) =>
             choice(
@@ -670,6 +673,7 @@ module.exports = grammar({
                 $.spoiler_inline,
                 $.superscript_inline,
                 $.subscript_inline,
+                $.verbatim_inline,
                 $.null_modifier_inline,
             ),
 
@@ -683,6 +687,7 @@ module.exports = grammar({
                 $.superscript_open,
                 $.subscript_open,
                 $.null_modifier_open,
+                $.verbatim_open,
             ),
 
         bold: ($) => attached_modifier($, "bold"),
@@ -692,7 +697,7 @@ module.exports = grammar({
         spoiler: ($) => attached_modifier($, "spoiler"),
         superscript: ($) => attached_modifier($, "superscript"),
         subscript: ($) => attached_modifier($, "subscript"),
-        // TODO: Verbatim stuff
+        verbatim: ($) => attached_modifier_verbatim($, "verbatim"),
         null_modifier: ($) => attached_modifier($, "null_modifier"),
 
         bold_inline: ($) => attached_modifier_inline($, "bold"),
@@ -703,7 +708,8 @@ module.exports = grammar({
         spoiler_inline: ($) => attached_modifier_inline($, "spoiler"),
         superscript_inline: ($) => attached_modifier_inline($, "superscript"),
         subscript_inline: ($) => attached_modifier_inline($, "subscript"),
-        // TODO: Verbatim stuff
+        verbatim_inline: ($) =>
+            attached_modifier_verbatim_inline($, "verbatim"),
         null_modifier_inline: ($) =>
             attached_modifier_inline($, "null_modifier"),
     },
@@ -718,8 +724,8 @@ function attached_modifier($, type) {
         "spoiler",
         "superscript",
         "subscript",
-        // "verbatim",
         "null_modifier",
+        "verbatim",
         // "inline_math",
         // "inline_macro",
     ]
@@ -751,6 +757,52 @@ function attached_modifier($, type) {
                             ),
                         ),
                     ),
+                ),
+            ),
+            $[type + "_close"],
+        ),
+    );
+}
+
+function attached_modifier_verbatim($, type) {
+    return prec.dynamic(
+        2,
+        seq(
+            $[type + "_open"],
+            repeat1(
+                choice(
+                    $._paragraph_inner,
+                    $._whitespace,
+                    $._attached_modifier_conflict_open,
+                ),
+            ),
+            repeat(
+                seq(
+                    newline,
+                    repeat1(
+                        choice(
+                            $._paragraph_inner,
+                            $._whitespace,
+                            $._attached_modifier_conflict_open,
+                        ),
+                    ),
+                ),
+            ),
+            $[type + "_close"],
+        ),
+    );
+}
+
+function attached_modifier_verbatim_inline($, type) {
+    return prec.dynamic(
+        2,
+        seq(
+            $[type + "_open"],
+            repeat1(
+                choice(
+                    $._paragraph_inner,
+                    $._whitespace,
+                    $._attached_modifier_conflict_open,
                 ),
             ),
             $[type + "_close"],

@@ -2646,6 +2646,10 @@
         {
           "type": "SYMBOL",
           "name": "null_modifier"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "verbatim"
         }
       ]
     },
@@ -2679,6 +2683,10 @@
         {
           "type": "SYMBOL",
           "name": "subscript_inline"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "verbatim_inline"
         },
         {
           "type": "SYMBOL",
@@ -2720,6 +2728,10 @@
         {
           "type": "SYMBOL",
           "name": "null_modifier_open"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "verbatim_open"
         }
       ]
     },
@@ -2772,6 +2784,10 @@
                     {
                       "type": "SYMBOL",
                       "name": "null_modifier"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "verbatim"
                     },
                     {
                       "type": "SYMBOL",
@@ -2842,6 +2858,10 @@
                           {
                             "type": "SYMBOL",
                             "name": "null_modifier"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "verbatim"
                           },
                           {
                             "type": "SYMBOL",
@@ -2918,6 +2938,10 @@
                     },
                     {
                       "type": "SYMBOL",
+                      "name": "verbatim"
+                    },
+                    {
+                      "type": "SYMBOL",
                       "name": "_whitespace"
                     },
                     {
@@ -2985,6 +3009,10 @@
                           {
                             "type": "SYMBOL",
                             "name": "null_modifier"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "verbatim"
                           },
                           {
                             "type": "SYMBOL",
@@ -3061,6 +3089,10 @@
                     },
                     {
                       "type": "SYMBOL",
+                      "name": "verbatim"
+                    },
+                    {
+                      "type": "SYMBOL",
                       "name": "_whitespace"
                     },
                     {
@@ -3128,6 +3160,10 @@
                           {
                             "type": "SYMBOL",
                             "name": "null_modifier"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "verbatim"
                           },
                           {
                             "type": "SYMBOL",
@@ -3204,6 +3240,10 @@
                     },
                     {
                       "type": "SYMBOL",
+                      "name": "verbatim"
+                    },
+                    {
+                      "type": "SYMBOL",
                       "name": "_whitespace"
                     },
                     {
@@ -3271,6 +3311,10 @@
                           {
                             "type": "SYMBOL",
                             "name": "null_modifier"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "verbatim"
                           },
                           {
                             "type": "SYMBOL",
@@ -3347,6 +3391,10 @@
                     },
                     {
                       "type": "SYMBOL",
+                      "name": "verbatim"
+                    },
+                    {
+                      "type": "SYMBOL",
                       "name": "_whitespace"
                     },
                     {
@@ -3414,6 +3462,10 @@
                           {
                             "type": "SYMBOL",
                             "name": "null_modifier"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "verbatim"
                           },
                           {
                             "type": "SYMBOL",
@@ -3490,6 +3542,10 @@
                     },
                     {
                       "type": "SYMBOL",
+                      "name": "verbatim"
+                    },
+                    {
+                      "type": "SYMBOL",
                       "name": "_whitespace"
                     },
                     {
@@ -3557,6 +3613,10 @@
                           {
                             "type": "SYMBOL",
                             "name": "null_modifier"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "verbatim"
                           },
                           {
                             "type": "SYMBOL",
@@ -3633,6 +3693,10 @@
                     },
                     {
                       "type": "SYMBOL",
+                      "name": "verbatim"
+                    },
+                    {
+                      "type": "SYMBOL",
                       "name": "_whitespace"
                     },
                     {
@@ -3703,6 +3767,10 @@
                           },
                           {
                             "type": "SYMBOL",
+                            "name": "verbatim"
+                          },
+                          {
+                            "type": "SYMBOL",
                             "name": "_whitespace"
                           },
                           {
@@ -3720,6 +3788,88 @@
           {
             "type": "SYMBOL",
             "name": "subscript_close"
+          }
+        ]
+      }
+    },
+    "verbatim": {
+      "type": "PREC_DYNAMIC",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "verbatim_open"
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_paragraph_inner"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_whitespace"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_attached_modifier_conflict_open"
+                }
+              ]
+            }
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "\n"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "\r"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "\r\n"
+                    }
+                  ]
+                },
+                {
+                  "type": "REPEAT1",
+                  "content": {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "_paragraph_inner"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "_whitespace"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "_attached_modifier_conflict_open"
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "type": "SYMBOL",
+            "name": "verbatim_close"
           }
         ]
       }
@@ -3773,6 +3923,10 @@
                     {
                       "type": "SYMBOL",
                       "name": "subscript"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "verbatim"
                     },
                     {
                       "type": "SYMBOL",
@@ -3843,6 +3997,10 @@
                           {
                             "type": "SYMBOL",
                             "name": "subscript"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "verbatim"
                           },
                           {
                             "type": "SYMBOL",
@@ -4322,6 +4480,43 @@
         ]
       }
     },
+    "verbatim_inline": {
+      "type": "PREC_DYNAMIC",
+      "value": 2,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "verbatim_open"
+          },
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_paragraph_inner"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_whitespace"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_attached_modifier_conflict_open"
+                }
+              ]
+            }
+          },
+          {
+            "type": "SYMBOL",
+            "name": "verbatim_close"
+          }
+        ]
+      }
+    },
     "null_modifier_inline": {
       "type": "PREC_DYNAMIC",
       "value": 1,
@@ -4424,6 +4619,10 @@
       "_attached_modifier_conflict_open"
     ],
     [
+      "verbatim",
+      "_attached_modifier_conflict_open"
+    ],
+    [
       "null_modifier",
       "_attached_modifier_conflict_open"
     ],
@@ -4453,6 +4652,10 @@
     ],
     [
       "subscript_inline",
+      "_attached_modifier_conflict_open"
+    ],
+    [
+      "verbatim_inline",
       "_attached_modifier_conflict_open"
     ],
     [
