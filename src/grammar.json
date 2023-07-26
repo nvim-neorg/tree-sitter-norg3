@@ -72,7 +72,7 @@
     },
     "_word": {
       "type": "PREC_RIGHT",
-      "value": 0,
+      "value": -1,
       "content": {
         "type": "REPEAT1",
         "content": {

@@ -105,7 +105,7 @@ module.exports = grammar({
             ),
 
         _character: (_) => token(/[^\s]/),
-        _word: ($) => prec.right(repeat1($._character)),
+        _word: ($) => prec.right(-1, repeat1($._character)),
         _whitespace: (_) => token(prec(1, /[\t                　]+/)),
 
         escape_sequence: ($) => seq("\\", alias(prec(10, /./), $.escape_char)),
