@@ -404,6 +404,11 @@
     }
   },
   {
+    "type": "bold_open",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "content",
     "named": true,
     "fields": {},
@@ -776,6 +781,11 @@
     }
   },
   {
+    "type": "italic_open",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "macro_tag",
     "named": true,
     "fields": {},
@@ -903,6 +913,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "null_modifier_open",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "ordered_list",
@@ -1150,6 +1165,11 @@
     }
   },
   {
+    "type": "spoiler_open",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "strikethrough",
     "named": true,
     "fields": {},
@@ -1254,6 +1274,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "strikethrough_open",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "strong_carryover_tag",
@@ -1386,6 +1411,11 @@
     }
   },
   {
+    "type": "subscript_open",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "superscript",
     "named": true,
     "fields": {},
@@ -1490,6 +1520,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "superscript_open",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "table",
@@ -1625,6 +1660,11 @@
     "fields": {}
   },
   {
+    "type": "todo_item_pending",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "todo_item_priority",
     "named": true,
     "fields": {}
@@ -1673,6 +1713,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "todo_item_urgent",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "underline",
@@ -1781,6 +1826,11 @@
     }
   },
   {
+    "type": "underline_open",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "unordered_list",
     "named": true,
     "fields": {},
@@ -1874,6 +1924,11 @@
     }
   },
   {
+    "type": "verbatim_open",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "verbatim_ranged_tag",
     "named": true,
     "fields": {},
@@ -1932,6 +1987,10 @@
     "named": false
   },
   {
+    "type": "!",
+    "named": false
+  },
+  {
     "type": "#",
     "named": false
   },
@@ -1944,6 +2003,14 @@
     "named": false
   },
   {
+    "type": "%",
+    "named": false
+  },
+  {
+    "type": "&",
+    "named": false
+  },
+  {
     "type": "(",
     "named": false
   },
@@ -1952,11 +2019,27 @@
     "named": false
   },
   {
+    "type": "*",
+    "named": false
+  },
+  {
     "type": "+",
     "named": false
   },
   {
+    "type": ",",
+    "named": false
+  },
+  {
+    "type": "-",
+    "named": false
+  },
+  {
     "type": ".",
+    "named": false
+  },
+  {
+    "type": "/",
     "named": false
   },
   {
@@ -2012,11 +2095,11 @@
     "named": false
   },
   {
-    "type": "bold_close",
-    "named": true
+    "type": "`",
+    "named": false
   },
   {
-    "type": "bold_open",
+    "type": "bold_close",
     "named": true
   },
   {
@@ -2032,15 +2115,7 @@
     "named": true
   },
   {
-    "type": "italic_open",
-    "named": true
-  },
-  {
     "type": "null_modifier_close",
-    "named": true
-  },
-  {
-    "type": "null_modifier_open",
     "named": true
   },
   {
@@ -2056,15 +2131,7 @@
     "named": true
   },
   {
-    "type": "spoiler_open",
-    "named": true
-  },
-  {
     "type": "strikethrough_close",
-    "named": true
-  },
-  {
-    "type": "strikethrough_open",
     "named": true
   },
   {
@@ -2072,23 +2139,11 @@
     "named": true
   },
   {
-    "type": "subscript_open",
-    "named": true
-  },
-  {
     "type": "superscript_close",
     "named": true
   },
   {
-    "type": "superscript_open",
-    "named": true
-  },
-  {
     "type": "todo_item_done",
-    "named": true
-  },
-  {
-    "type": "todo_item_pending",
     "named": true
   },
   {
@@ -2100,15 +2155,7 @@
     "named": true
   },
   {
-    "type": "todo_item_urgent",
-    "named": true
-  },
-  {
     "type": "underline_close",
-    "named": true
-  },
-  {
-    "type": "underline_open",
     "named": true
   },
   {
@@ -2117,10 +2164,6 @@
   },
   {
     "type": "verbatim_close",
-    "named": true
-  },
-  {
-    "type": "verbatim_open",
     "named": true
   },
   {

@@ -19,17 +19,17 @@ module.exports = grammar({
 
         $.weak_delimiting_modifier,
 
-        $.bold_open,
-        $.italic_open,
-        $.strikethrough_open,
-        $.underline_open,
-        $.spoiler_open,
-        $.superscript_open,
-        $.subscript_open,
-        $.verbatim_open,
-        $.null_modifier_open,
-        $.inline_math_open,
-        $.inline_macro_open,
+        "*",
+        "/",
+        "-",
+        "_",
+        "!",
+        "^",
+        ",",
+        "`",
+        "%",
+        "$",
+        "&",
 
         $.bold_close,
         $.italic_close,
@@ -68,7 +68,11 @@ module.exports = grammar({
         [$.null_modifier_inline, $._attached_modifier_conflict_open],
     ],
 
-    precedences: ($) => [[$.heading, $.delimiting_modifier]],
+    precedences: ($) => [
+        [$.heading, $.delimiting_modifier],
+        [$.horizontal_line, $.underline_open],
+        [$.footnote_list_single, $.superscript_open],
+    ],
 
     inlines: ($) => [$._title_inline],
 
@@ -108,13 +112,24 @@ module.exports = grammar({
         _word: ($) => prec.right(-1, repeat1($._character)),
         _whitespace: (_) => token(prec(1, /[\t                　]+/)),
 
+        bold_open: (_) => "*",
+        italic_open: (_) => "/",
+        strikethrough_open: (_) => "-",
+        underline_open: (_) => "_",
+        spoiler_open: (_) => "!",
+        superscript_open: (_) => "^",
+        subscript_open: (_) => ",",
+        verbatim_open: (_) => "`",
+        null_modifier_open: (_) => "%",
+        inline_math_open: (_) => "$",
+        inline_macro_open: (_) => "&",
+
         escape_sequence: ($) => seq("\\", alias(prec(10, /./), $.escape_char)),
 
-        // TODO: Make those use another construct
-        // like a "paragraph_segment" that uses "bold_single_line" (don't allow the bold to overflow across
-        // lines!!).
         _paragraph_inner: ($) => choice($._word, $.escape_sequence),
 
+        // TODO: Make the choices a little more explicit. Make the part after $._whitespace optional,
+        // see if the attached modifier edge cases still function.
         _paragraph_segment: ($) =>
             prec.right(
                 seq(
@@ -732,6 +747,9 @@ function attached_modifier($, type) {
         .filter((x) => x != type)
         .map((x) => $[x]);
 
+    // TODO: Make it more explicit within the grammar that
+    // it is impossible to have an opening marker and then immediately
+    // a whitespace to prevent any inconsistencies or edge cases.
     return prec.dynamic(
         1,
         seq(

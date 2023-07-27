@@ -167,8 +167,6 @@ struct Scanner {
 
                 return false;
             }
-
-            return false;
         }
 
         int32_t valid_opening_symbol = get_valid_symbol(valid_symbols, BOLD_OPEN, INLINE_MACRO_OPEN);
@@ -201,8 +199,6 @@ struct Scanner {
 
                 return false;
             }
-
-            return false;
         }
 
         return false;

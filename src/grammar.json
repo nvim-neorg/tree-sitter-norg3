@@ -92,6 +92,50 @@
         }
       }
     },
+    "bold_open": {
+      "type": "STRING",
+      "value": "*"
+    },
+    "italic_open": {
+      "type": "STRING",
+      "value": "/"
+    },
+    "strikethrough_open": {
+      "type": "STRING",
+      "value": "-"
+    },
+    "underline_open": {
+      "type": "STRING",
+      "value": "_"
+    },
+    "spoiler_open": {
+      "type": "STRING",
+      "value": "!"
+    },
+    "superscript_open": {
+      "type": "STRING",
+      "value": "^"
+    },
+    "subscript_open": {
+      "type": "STRING",
+      "value": ","
+    },
+    "verbatim_open": {
+      "type": "STRING",
+      "value": "`"
+    },
+    "null_modifier_open": {
+      "type": "STRING",
+      "value": "%"
+    },
+    "inline_math_open": {
+      "type": "STRING",
+      "value": "$"
+    },
+    "inline_macro_open": {
+      "type": "STRING",
+      "value": "&"
+    },
     "escape_sequence": {
       "type": "SEQ",
       "members": [
@@ -4673,6 +4717,26 @@
         "type": "SYMBOL",
         "name": "delimiting_modifier"
       }
+    ],
+    [
+      {
+        "type": "SYMBOL",
+        "name": "horizontal_line"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "underline_open"
+      }
+    ],
+    [
+      {
+        "type": "SYMBOL",
+        "name": "footnote_list_single"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "superscript_open"
+      }
     ]
   ],
   "externals": [
@@ -4701,48 +4765,48 @@
       "name": "weak_delimiting_modifier"
     },
     {
-      "type": "SYMBOL",
-      "name": "bold_open"
+      "type": "STRING",
+      "value": "*"
     },
     {
-      "type": "SYMBOL",
-      "name": "italic_open"
+      "type": "STRING",
+      "value": "/"
     },
     {
-      "type": "SYMBOL",
-      "name": "strikethrough_open"
+      "type": "STRING",
+      "value": "-"
     },
     {
-      "type": "SYMBOL",
-      "name": "underline_open"
+      "type": "STRING",
+      "value": "_"
     },
     {
-      "type": "SYMBOL",
-      "name": "spoiler_open"
+      "type": "STRING",
+      "value": "!"
     },
     {
-      "type": "SYMBOL",
-      "name": "superscript_open"
+      "type": "STRING",
+      "value": "^"
     },
     {
-      "type": "SYMBOL",
-      "name": "subscript_open"
+      "type": "STRING",
+      "value": ","
     },
     {
-      "type": "SYMBOL",
-      "name": "verbatim_open"
+      "type": "STRING",
+      "value": "`"
     },
     {
-      "type": "SYMBOL",
-      "name": "null_modifier_open"
+      "type": "STRING",
+      "value": "%"
     },
     {
-      "type": "SYMBOL",
-      "name": "inline_math_open"
+      "type": "STRING",
+      "value": "$"
     },
     {
-      "type": "SYMBOL",
-      "name": "inline_macro_open"
+      "type": "STRING",
+      "value": "&"
     },
     {
       "type": "SYMBOL",
