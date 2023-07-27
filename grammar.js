@@ -781,6 +781,40 @@ function attached_modifier($, type) {
     );
 }
 
+function attached_modifier_inline($, type) {
+    const other_attached_modifiers = [
+        "bold",
+        "italic",
+        "strikethrough",
+        "underline",
+        "spoiler",
+        "superscript",
+        "subscript",
+        // "verbatim",
+        "null_modifier",
+        // "inline_math",
+        // "inline_macro",
+    ]
+        .filter((x) => x != type)
+        .map((x) => $[x + "_inline"]);
+
+    return prec.dynamic(
+        1,
+        seq(
+            $[type + "_open"],
+            repeat1(
+                choice(
+                    $._paragraph_inner,
+                    ...other_attached_modifiers,
+                    $._whitespace,
+                    $._attached_modifier_conflict_open,
+                ),
+            ),
+            $[type + "_close"],
+        ),
+    );
+}
+
 function attached_modifier_verbatim($, type) {
     return prec.dynamic(
         2,
@@ -818,40 +852,6 @@ function attached_modifier_verbatim_inline($, type) {
             repeat1(
                 choice(
                     $._paragraph_inner,
-                    $._whitespace,
-                    $._attached_modifier_conflict_open,
-                ),
-            ),
-            $[type + "_close"],
-        ),
-    );
-}
-
-function attached_modifier_inline($, type) {
-    const other_attached_modifiers = [
-        "bold",
-        "italic",
-        "strikethrough",
-        "underline",
-        "spoiler",
-        "superscript",
-        "subscript",
-        // "verbatim",
-        "null_modifier",
-        // "inline_math",
-        // "inline_macro",
-    ]
-        .filter((x) => x != type)
-        .map((x) => $[x + "_inline"]);
-
-    return prec.dynamic(
-        1,
-        seq(
-            $[type + "_open"],
-            repeat1(
-                choice(
-                    $._paragraph_inner,
-                    ...other_attached_modifiers,
                     $._whitespace,
                     $._attached_modifier_conflict_open,
                 ),
