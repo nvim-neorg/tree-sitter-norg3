@@ -66,6 +66,9 @@ module.exports = grammar({
         [$.subscript_inline, $._attached_modifier_conflict_open],
         [$.verbatim_inline, $._attached_modifier_conflict_open],
         [$.null_modifier_inline, $._attached_modifier_conflict_open],
+
+        // TODO: Is it possible to remove this conflict?
+        [$._paragraph_segment],
     ],
 
     precedences: ($) => [
@@ -136,35 +139,31 @@ module.exports = grammar({
                     choice(
                         repeat1($._paragraph_inner),
                         seq(
-                            $.attached_modifier,
-                            repeat(
-                                prec.right($._attached_modifier_conflict_open),
+                            repeat1(
+                                choice(
+                                    $._attached_modifier_conflict_open,
+                                    $.attached_modifier,
+                                ),
                             ),
                             optional($._paragraph_segment),
-                        ),
-                        seq(
-                            $._attached_modifier_conflict_open,
-                            $._paragraph_segment,
                         ),
                     ),
                     repeat(
                         seq(
                             $._whitespace,
-                            choice(
-                                seq(
-                                    $.attached_modifier,
-                                    repeat(
-                                        prec.right(
-                                            $._attached_modifier_conflict_open,
+                            optional(
+                                choice(
+                                    repeat1($._paragraph_inner),
+                                    seq(
+                                        repeat1(
+                                            choice(
+                                                $._attached_modifier_conflict_open,
+                                                $.attached_modifier,
+                                            ),
                                         ),
+                                        optional($._paragraph_segment),
                                     ),
-                                    optional($._paragraph_segment),
                                 ),
-                                seq(
-                                    $._attached_modifier_conflict_open,
-                                    $._paragraph_segment,
-                                ),
-                                repeat1($._paragraph_inner),
                             ),
                         ),
                     ),

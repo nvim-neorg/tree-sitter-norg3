@@ -191,18 +191,19 @@
                 "type": "SEQ",
                 "members": [
                   {
-                    "type": "SYMBOL",
-                    "name": "attached_modifier"
-                  },
-                  {
-                    "type": "REPEAT",
+                    "type": "REPEAT1",
                     "content": {
-                      "type": "PREC_RIGHT",
-                      "value": 0,
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "_attached_modifier_conflict_open"
-                      }
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "_attached_modifier_conflict_open"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "attached_modifier"
+                        }
+                      ]
                     }
                   },
                   {
@@ -216,19 +217,6 @@
                         "type": "BLANK"
                       }
                     ]
-                  }
-                ]
-              },
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "_attached_modifier_conflict_open"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "_paragraph_segment"
                   }
                 ]
               }
@@ -247,56 +235,52 @@
                   "type": "CHOICE",
                   "members": [
                     {
-                      "type": "SEQ",
+                      "type": "CHOICE",
                       "members": [
                         {
-                          "type": "SYMBOL",
-                          "name": "attached_modifier"
-                        },
-                        {
-                          "type": "REPEAT",
+                          "type": "REPEAT1",
                           "content": {
-                            "type": "PREC_RIGHT",
-                            "value": 0,
-                            "content": {
-                              "type": "SYMBOL",
-                              "name": "_attached_modifier_conflict_open"
-                            }
+                            "type": "SYMBOL",
+                            "name": "_paragraph_inner"
                           }
                         },
                         {
-                          "type": "CHOICE",
+                          "type": "SEQ",
                           "members": [
                             {
-                              "type": "SYMBOL",
-                              "name": "_paragraph_segment"
+                              "type": "REPEAT1",
+                              "content": {
+                                "type": "CHOICE",
+                                "members": [
+                                  {
+                                    "type": "SYMBOL",
+                                    "name": "_attached_modifier_conflict_open"
+                                  },
+                                  {
+                                    "type": "SYMBOL",
+                                    "name": "attached_modifier"
+                                  }
+                                ]
+                              }
                             },
                             {
-                              "type": "BLANK"
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_paragraph_segment"
+                                },
+                                {
+                                  "type": "BLANK"
+                                }
+                              ]
                             }
                           ]
                         }
                       ]
                     },
                     {
-                      "type": "SEQ",
-                      "members": [
-                        {
-                          "type": "SYMBOL",
-                          "name": "_attached_modifier_conflict_open"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "_paragraph_segment"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "REPEAT1",
-                      "content": {
-                        "type": "SYMBOL",
-                        "name": "_paragraph_inner"
-                      }
+                      "type": "BLANK"
                     }
                   ]
                 }
@@ -4705,6 +4689,9 @@
     [
       "null_modifier_inline",
       "_attached_modifier_conflict_open"
+    ],
+    [
+      "_paragraph_segment"
     ]
   ],
   "precedences": [
