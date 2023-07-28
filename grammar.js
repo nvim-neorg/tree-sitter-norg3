@@ -69,6 +69,26 @@ module.exports = grammar({
 
         // TODO: Is it possible to remove this conflict?
         [$._paragraph_segment],
+        [$._title_inline],
+        [$._bold_paragraph_segment],
+        [$._italic_paragraph_segment],
+        [$._strikethrough_paragraph_segment],
+        [$._underline_paragraph_segment],
+        [$._spoiler_paragraph_segment],
+        [$._superscript_paragraph_segment],
+        [$._subscript_paragraph_segment],
+        [$._subscript_paragraph_segment],
+        [$._null_modifier_paragraph_segment],
+        [$._bold_inline_paragraph_segment],
+        [$._italic_inline_paragraph_segment],
+        [$._strikethrough_inline_paragraph_segment],
+        [$._underline_inline_paragraph_segment],
+        [$._spoiler_inline_paragraph_segment],
+        [$._superscript_inline_paragraph_segment],
+        [$._subscript_inline_paragraph_segment],
+        [$._subscript_inline_paragraph_segment],
+        [$._null_modifier_inline_paragraph_segment],
+        [$._verbatim_paragraph_segment],
     ],
 
     precedences: ($) => [
@@ -198,81 +218,38 @@ module.exports = grammar({
                     choice(
                         repeat1($._paragraph_inner),
                         seq(
-                            $.attached_modifier_inline,
-                            repeat(
-                                prec.right($._attached_modifier_conflict_open),
+                            repeat1(
+                                choice(
+                                    $._attached_modifier_conflict_open,
+                                    $.attached_modifier_inline,
+                                ),
                             ),
                             optional($._title_inline),
-                        ),
-                        seq(
-                            $._attached_modifier_conflict_open,
-                            $._title_inline,
                         ),
                     ),
                     repeat(
                         seq(
                             $._whitespace,
-                            choice(
-                                seq(
-                                    $.attached_modifier_inline,
-                                    repeat(
-                                        prec.right(
-                                            $._attached_modifier_conflict_open,
+                            optional(
+                                choice(
+                                    repeat1($._paragraph_inner),
+                                    seq(
+                                        repeat1(
+                                            choice(
+                                                $._attached_modifier_conflict_open,
+                                                $.attached_modifier_inline,
+                                            ),
                                         ),
+                                        optional($._title_inline),
                                     ),
-                                    optional($._title_inline),
                                 ),
-                                seq(
-                                    $._attached_modifier_conflict_open,
-                                    $._title_inline,
-                                ),
-                                repeat1($._paragraph_inner),
                             ),
                         ),
                     ),
                 ),
             ),
 
-        title: ($) =>
-            prec.right(
-                seq(
-                    choice(
-                        repeat1($._paragraph_inner),
-                        seq(
-                            $.attached_modifier_inline,
-                            repeat(
-                                prec.right($._attached_modifier_conflict_open),
-                            ),
-                            optional($._title_inline),
-                        ),
-                        seq(
-                            $._attached_modifier_conflict_open,
-                            $._title_inline,
-                        ),
-                    ),
-                    repeat(
-                        seq(
-                            $._whitespace,
-                            choice(
-                                seq(
-                                    $.attached_modifier_inline,
-                                    repeat(
-                                        prec.right(
-                                            $._attached_modifier_conflict_open,
-                                        ),
-                                    ),
-                                    optional($._title_inline),
-                                ),
-                                seq(
-                                    $._attached_modifier_conflict_open,
-                                    $._title_inline,
-                                ),
-                                repeat1($._paragraph_inner),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
+        title: ($) => $._title_inline,
 
         heading: ($) =>
             prec.right(
@@ -704,6 +681,39 @@ module.exports = grammar({
                 $.verbatim_open,
             ),
 
+        _bold_paragraph_segment: $ => attached_modifier_para_seg($, "bold"),
+        _italic_paragraph_segment: ($) => attached_modifier_para_seg($, "italic"),
+        _strikethrough_paragraph_segment: ($) => attached_modifier_para_seg($, "strikethrough"),
+        _underline_paragraph_segment: ($) => attached_modifier_para_seg($, "underline"),
+        _spoiler_paragraph_segment: ($) => attached_modifier_para_seg($, "spoiler"),
+        _superscript_paragraph_segment: ($) => attached_modifier_para_seg($, "superscript"),
+        _subscript_paragraph_segment: ($) => attached_modifier_para_seg($, "subscript"),
+        _null_modifier_paragraph_segment: ($) => attached_modifier_para_seg($, "null_modifier"),
+        _verbatim_paragraph_segment: ($) => seq(
+            repeat1(choice(
+                $._paragraph_inner,
+                $._attached_modifier_conflict_open,
+            )),
+            repeat(
+                seq(
+                    $._whitespace,
+                    repeat1(choice(
+                        $._paragraph_inner,
+                        $._attached_modifier_conflict_open,
+                    )),
+                )
+            )
+        ),
+
+        _bold_inline_paragraph_segment: $ => attached_modifier_para_seg($, "bold", true),
+        _italic_inline_paragraph_segment: ($) => attached_modifier_para_seg($, "italic", true),
+        _strikethrough_inline_paragraph_segment: ($) => attached_modifier_para_seg($, "strikethrough", true),
+        _underline_inline_paragraph_segment: ($) => attached_modifier_para_seg($, "underline", true),
+        _spoiler_inline_paragraph_segment: ($) => attached_modifier_para_seg($, "spoiler", true),
+        _superscript_inline_paragraph_segment: ($) => attached_modifier_para_seg($, "superscript", true),
+        _subscript_inline_paragraph_segment: ($) => attached_modifier_para_seg($, "subscript", true),
+        _null_modifier_inline_paragraph_segment: ($) => attached_modifier_para_seg($, "null_modifier", true),
+
         bold: ($) => attached_modifier($, "bold"),
         italic: ($) => attached_modifier($, "italic"),
         strikethrough: ($) => attached_modifier($, "strikethrough"),
@@ -729,7 +739,7 @@ module.exports = grammar({
     },
 });
 
-function attached_modifier($, type) {
+function attached_modifier_para_seg($, type, inline) {
     const other_attached_modifiers = [
         "bold",
         "italic",
@@ -744,75 +754,62 @@ function attached_modifier($, type) {
         // "inline_macro",
     ]
         .filter((x) => x != type)
-        .map((x) => $[x]);
-
-    // TODO: Make it more explicit within the grammar that
-    // it is impossible to have an opening marker and then immediately
-    // a whitespace to prevent any inconsistencies or edge cases.
-    return prec.dynamic(
-        1,
-        seq(
-            $[type + "_open"],
+        .map((x) => $[inline ? x + "_inline" : x]);
+    type = inline ? type + "_inline" : type;
+    const paragraph_segment = $["_" + type + "_paragraph_segment"];
+    return seq(
+        choice(
+            repeat1($._paragraph_inner),
             seq(
                 repeat1(
                     choice(
-                        $._paragraph_inner,
-                        ...other_attached_modifiers,
-                        $._whitespace,
                         $._attached_modifier_conflict_open,
+                        ...other_attached_modifiers,
                     ),
                 ),
-                repeat(
+                optional(paragraph_segment),
+            ),
+        ),
+        repeat(
+            seq(
+                $._whitespace,
+                choice(
+                    repeat1($._paragraph_inner),
                     seq(
-                        newline,
                         repeat1(
                             choice(
-                                $._paragraph_inner,
-                                ...other_attached_modifiers,
-                                $._whitespace,
                                 $._attached_modifier_conflict_open,
+                                ...other_attached_modifiers,
                             ),
                         ),
+                        optional(paragraph_segment),
                     ),
                 ),
             ),
-            $[type + "_close"],
         ),
-    );
+    )
 }
 
-function attached_modifier_inline($, type) {
-    const other_attached_modifiers = [
-        "bold",
-        "italic",
-        "strikethrough",
-        "underline",
-        "spoiler",
-        "superscript",
-        "subscript",
-        // "verbatim",
-        "null_modifier",
-        // "inline_math",
-        // "inline_macro",
-    ]
-        .filter((x) => x != type)
-        .map((x) => $[x + "_inline"]);
-
+function attached_modifier($, type) {
+    const paragraph_segment = $["_" + type + "_paragraph_segment"];
     return prec.dynamic(
         1,
         seq(
             $[type + "_open"],
-            repeat1(
-                choice(
-                    $._paragraph_inner,
-                    ...other_attached_modifiers,
-                    $._whitespace,
-                    $._attached_modifier_conflict_open,
-                ),
+            paragraph_segment,
+            repeat(
+                seq(
+                    optional($._whitespace),
+                    newline,
+                    choice(
+                        paragraph_segment,
+                        seq($.weak_carryover_tag, paragraph_segment),
+                    )
+                )
             ),
             $[type + "_close"],
-        ),
-    );
+        )
+    )
 }
 
 function attached_modifier_verbatim($, type) {
@@ -820,24 +817,13 @@ function attached_modifier_verbatim($, type) {
         2,
         seq(
             $[type + "_open"],
-            repeat1(
-                choice(
-                    $._paragraph_inner,
-                    $._whitespace,
-                    $._attached_modifier_conflict_open,
-                ),
-            ),
+            $._verbatim_paragraph_segment,
             repeat(
                 seq(
+                    optional($._whitespace),
                     newline,
-                    repeat1(
-                        choice(
-                            $._paragraph_inner,
-                            $._whitespace,
-                            $._attached_modifier_conflict_open,
-                        ),
-                    ),
-                ),
+                    $._verbatim_paragraph_segment,
+                )
             ),
             $[type + "_close"],
         ),
@@ -849,13 +835,18 @@ function attached_modifier_verbatim_inline($, type) {
         2,
         seq(
             $[type + "_open"],
-            repeat1(
-                choice(
-                    $._paragraph_inner,
-                    $._whitespace,
-                    $._attached_modifier_conflict_open,
-                ),
-            ),
+            $._verbatim_paragraph_segment,
+            $[type + "_close"],
+        ),
+    );
+}
+
+function attached_modifier_inline($, type) {
+    return prec.dynamic(
+        1,
+        seq(
+            $[type + "_open"],
+            $["_" + type + "_inline_paragraph_segment"],
             $[type + "_close"],
         ),
     );

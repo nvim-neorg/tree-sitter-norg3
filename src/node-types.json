@@ -348,6 +348,10 @@
         {
           "type": "verbatim",
           "named": true
+        },
+        {
+          "type": "weak_carryover_tag",
+          "named": true
         }
       ]
     }
@@ -398,6 +402,10 @@
         },
         {
           "type": "underline_inline",
+          "named": true
+        },
+        {
+          "type": "verbatim_inline",
           "named": true
         }
       ]
@@ -725,6 +733,10 @@
         {
           "type": "verbatim",
           "named": true
+        },
+        {
+          "type": "weak_carryover_tag",
+          "named": true
         }
       ]
     }
@@ -775,6 +787,10 @@
         },
         {
           "type": "underline_inline",
+          "named": true
+        },
+        {
+          "type": "verbatim_inline",
           "named": true
         }
       ]
@@ -859,6 +875,10 @@
         {
           "type": "verbatim",
           "named": true
+        },
+        {
+          "type": "weak_carryover_tag",
+          "named": true
         }
       ]
     }
@@ -909,6 +929,10 @@
         },
         {
           "type": "underline_inline",
+          "named": true
+        },
+        {
+          "type": "verbatim_inline",
           "named": true
         }
       ]
@@ -1109,6 +1133,10 @@
         {
           "type": "verbatim",
           "named": true
+        },
+        {
+          "type": "weak_carryover_tag",
+          "named": true
         }
       ]
     }
@@ -1159,6 +1187,10 @@
         },
         {
           "type": "underline_inline",
+          "named": true
+        },
+        {
+          "type": "verbatim_inline",
           "named": true
         }
       ]
@@ -1220,6 +1252,10 @@
         {
           "type": "verbatim",
           "named": true
+        },
+        {
+          "type": "weak_carryover_tag",
+          "named": true
         }
       ]
     }
@@ -1270,6 +1306,10 @@
         },
         {
           "type": "underline_inline",
+          "named": true
+        },
+        {
+          "type": "verbatim_inline",
           "named": true
         }
       ]
@@ -1355,6 +1395,10 @@
         {
           "type": "verbatim",
           "named": true
+        },
+        {
+          "type": "weak_carryover_tag",
+          "named": true
         }
       ]
     }
@@ -1405,6 +1449,10 @@
         },
         {
           "type": "underline_inline",
+          "named": true
+        },
+        {
+          "type": "verbatim_inline",
           "named": true
         }
       ]
@@ -1466,6 +1514,10 @@
         {
           "type": "verbatim",
           "named": true
+        },
+        {
+          "type": "weak_carryover_tag",
+          "named": true
         }
       ]
     }
@@ -1516,6 +1568,10 @@
         },
         {
           "type": "underline_inline",
+          "named": true
+        },
+        {
+          "type": "verbatim_inline",
           "named": true
         }
       ]
@@ -1770,6 +1826,10 @@
         {
           "type": "verbatim",
           "named": true
+        },
+        {
+          "type": "weak_carryover_tag",
+          "named": true
         }
       ]
     }
@@ -1820,6 +1880,10 @@
         },
         {
           "type": "underline_close",
+          "named": true
+        },
+        {
+          "type": "verbatim_inline",
           "named": true
         }
       ]

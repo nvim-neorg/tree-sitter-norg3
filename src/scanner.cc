@@ -137,7 +137,7 @@ struct Scanner {
 
         int32_t valid_closing_symbol = get_valid_symbol(valid_symbols, BOLD_CLOSE, INLINE_MACRO_CLOSE);
 
-        if (valid_closing_symbol != -1 && !is_whitespace(lexer->lookahead)) {
+        if (valid_closing_symbol != -1 && !iswspace(lexer->lookahead)) {
             std::unordered_map<int32_t, TokenType>::iterator iter = attached_modifiers.find(lexer->lookahead);
 
             // NOTE: It's possible that this gets executed despite the next character not being tied to the "expected"
@@ -162,38 +162,6 @@ struct Scanner {
                 if ((iswspace(lexer->lookahead) || iswpunct(lexer->lookahead)) && (lexer->lookahead != iter->first)) {
                     lexer->mark_end(lexer);
                     lexer->result_symbol = iter->second + (INLINE_MACRO_OPEN - BOLD_OPEN) + 1;
-                    return true;
-                }
-
-                return false;
-            }
-        }
-
-        int32_t valid_opening_symbol = get_valid_symbol(valid_symbols, BOLD_OPEN, INLINE_MACRO_OPEN);
-
-        if (valid_opening_symbol != -1 && (is_whitespace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
-            std::unordered_map<int32_t, TokenType>::iterator iter = attached_modifiers.find(lexer->lookahead);
-
-            if (iter == attached_modifiers.end()) {
-                advance();
-                iter = attached_modifiers.find(lexer->lookahead);
-            }
-
-            if (iter != attached_modifiers.end()) {
-                advance();
-
-                // The second check also ensures that a double modifier is not considered valid.
-                // Recall that it should be dismissed in all cases as per the specification.
-                if (lexer->lookahead && !iswspace(lexer->lookahead)) {
-                    // TODO:
-                    // if (lexer->lookahead != iter->first) {
-                    //     advance();
-                    //     lexer->mark_end(lexer);
-                    //     return false;
-                    // }
-
-                    lexer->result_symbol = iter->second;
-                    lexer->mark_end(lexer);
                     return true;
                 }
 
