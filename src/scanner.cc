@@ -184,7 +184,7 @@ struct Scanner {
 
                 // The second check also ensures that a double modifier is not considered valid.
                 // Recall that it should be dismissed in all cases as per the specification.
-                if (!is_whitespace(lexer->lookahead)) {
+                if (lexer->lookahead && !iswspace(lexer->lookahead)) {
                     // TODO:
                     // if (lexer->lookahead != iter->first) {
                     //     advance();
