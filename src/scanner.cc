@@ -147,7 +147,7 @@ struct Scanner {
                 advance();
 
                 // ensure it is not a double modifier
-                if ((iswspace(lexer->lookahead) || iswpunct(lexer->lookahead)) && (lexer->lookahead != iter->first)) {
+                if ((!lexer->lookahead || iswspace(lexer->lookahead) || iswpunct(lexer->lookahead)) && (lexer->lookahead != iter->first)) {
                     lexer->mark_end(lexer);
                     lexer->result_symbol = iter->second;
                     return true;
