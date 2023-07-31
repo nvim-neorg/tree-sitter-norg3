@@ -662,7 +662,7 @@ module.exports = grammar({
             ),
 
         _attached_modifier_conflict_open: ($) =>
-            choice(
+            alias(choice(
                 $.bold_open,
                 $.italic_open,
                 $.strikethrough_open,
@@ -672,7 +672,7 @@ module.exports = grammar({
                 $.subscript_open,
                 $.null_modifier_open,
                 $.verbatim_open,
-            ),
+            ), "_word"),
 
         _bold_paragraph_segment: ($) => attached_modifier_para_seg($, "bold"),
         _italic_paragraph_segment: ($) =>
