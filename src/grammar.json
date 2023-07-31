@@ -1427,16 +1427,25 @@
                       "type": "SEQ",
                       "members": [
                         {
-                          "type": "REPEAT1",
+                          "type": "ALIAS",
                           "content": {
-                            "type": "ALIAS",
+                            "type": "REPEAT1",
                             "content": {
-                              "type": "SYMBOL",
-                              "name": "_word"
-                            },
-                            "named": true,
-                            "value": "parameter"
-                          }
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_word"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_punctuation"
+                                }
+                              ]
+                            }
+                          },
+                          "named": true,
+                          "value": "parameter"
                         },
                         {
                           "type": "REPEAT",
@@ -1453,8 +1462,20 @@
                                   {
                                     "type": "ALIAS",
                                     "content": {
-                                      "type": "SYMBOL",
-                                      "name": "_word"
+                                      "type": "REPEAT1",
+                                      "content": {
+                                        "type": "CHOICE",
+                                        "members": [
+                                          {
+                                            "type": "SYMBOL",
+                                            "name": "_word"
+                                          },
+                                          {
+                                            "type": "SYMBOL",
+                                            "name": "_punctuation"
+                                          }
+                                        ]
+                                      }
                                     },
                                     "named": true,
                                     "value": "parameter"
@@ -1512,6 +1533,10 @@
                 {
                   "type": "SYMBOL",
                   "name": "_whitespace"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_punctuation"
                 },
                 {
                   "type": "CHOICE",
@@ -1590,16 +1615,25 @@
                       "type": "SEQ",
                       "members": [
                         {
-                          "type": "REPEAT1",
+                          "type": "ALIAS",
                           "content": {
-                            "type": "ALIAS",
+                            "type": "REPEAT1",
                             "content": {
-                              "type": "SYMBOL",
-                              "name": "_word"
-                            },
-                            "named": true,
-                            "value": "parameter"
-                          }
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_word"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_punctuation"
+                                }
+                              ]
+                            }
+                          },
+                          "named": true,
+                          "value": "parameter"
                         },
                         {
                           "type": "REPEAT",
@@ -1616,8 +1650,20 @@
                                   {
                                     "type": "ALIAS",
                                     "content": {
-                                      "type": "SYMBOL",
-                                      "name": "_word"
+                                      "type": "REPEAT1",
+                                      "content": {
+                                        "type": "CHOICE",
+                                        "members": [
+                                          {
+                                            "type": "SYMBOL",
+                                            "name": "_word"
+                                          },
+                                          {
+                                            "type": "SYMBOL",
+                                            "name": "_punctuation"
+                                          }
+                                        ]
+                                      }
                                     },
                                     "named": true,
                                     "value": "parameter"
@@ -1719,16 +1765,25 @@
                       "type": "SEQ",
                       "members": [
                         {
-                          "type": "REPEAT1",
+                          "type": "ALIAS",
                           "content": {
-                            "type": "ALIAS",
+                            "type": "REPEAT1",
                             "content": {
-                              "type": "SYMBOL",
-                              "name": "_word"
-                            },
-                            "named": true,
-                            "value": "parameter"
-                          }
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_word"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_punctuation"
+                                }
+                              ]
+                            }
+                          },
+                          "named": true,
+                          "value": "parameter"
                         },
                         {
                           "type": "REPEAT",
@@ -1745,8 +1800,20 @@
                                   {
                                     "type": "ALIAS",
                                     "content": {
-                                      "type": "SYMBOL",
-                                      "name": "_word"
+                                      "type": "REPEAT1",
+                                      "content": {
+                                        "type": "CHOICE",
+                                        "members": [
+                                          {
+                                            "type": "SYMBOL",
+                                            "name": "_word"
+                                          },
+                                          {
+                                            "type": "SYMBOL",
+                                            "name": "_punctuation"
+                                          }
+                                        ]
+                                      }
                                     },
                                     "named": true,
                                     "value": "parameter"
@@ -1845,16 +1912,25 @@
                       "type": "SEQ",
                       "members": [
                         {
-                          "type": "REPEAT1",
+                          "type": "ALIAS",
                           "content": {
-                            "type": "ALIAS",
+                            "type": "REPEAT1",
                             "content": {
-                              "type": "SYMBOL",
-                              "name": "_word"
-                            },
-                            "named": true,
-                            "value": "parameter"
-                          }
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_word"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_punctuation"
+                                }
+                              ]
+                            }
+                          },
+                          "named": true,
+                          "value": "parameter"
                         },
                         {
                           "type": "REPEAT",
@@ -1871,8 +1947,20 @@
                                   {
                                     "type": "ALIAS",
                                     "content": {
-                                      "type": "SYMBOL",
-                                      "name": "_word"
+                                      "type": "REPEAT1",
+                                      "content": {
+                                        "type": "CHOICE",
+                                        "members": [
+                                          {
+                                            "type": "SYMBOL",
+                                            "name": "_word"
+                                          },
+                                          {
+                                            "type": "SYMBOL",
+                                            "name": "_punctuation"
+                                          }
+                                        ]
+                                      }
                                     },
                                     "named": true,
                                     "value": "parameter"
@@ -1946,16 +2034,25 @@
                       "type": "SEQ",
                       "members": [
                         {
-                          "type": "REPEAT1",
+                          "type": "ALIAS",
                           "content": {
-                            "type": "ALIAS",
+                            "type": "REPEAT1",
                             "content": {
-                              "type": "SYMBOL",
-                              "name": "_word"
-                            },
-                            "named": true,
-                            "value": "parameter"
-                          }
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_word"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_punctuation"
+                                }
+                              ]
+                            }
+                          },
+                          "named": true,
+                          "value": "parameter"
                         },
                         {
                           "type": "REPEAT",
@@ -1972,8 +2069,20 @@
                                   {
                                     "type": "ALIAS",
                                     "content": {
-                                      "type": "SYMBOL",
-                                      "name": "_word"
+                                      "type": "REPEAT1",
+                                      "content": {
+                                        "type": "CHOICE",
+                                        "members": [
+                                          {
+                                            "type": "SYMBOL",
+                                            "name": "_word"
+                                          },
+                                          {
+                                            "type": "SYMBOL",
+                                            "name": "_punctuation"
+                                          }
+                                        ]
+                                      }
                                     },
                                     "named": true,
                                     "value": "parameter"
@@ -2047,16 +2156,25 @@
                       "type": "SEQ",
                       "members": [
                         {
-                          "type": "REPEAT1",
+                          "type": "ALIAS",
                           "content": {
-                            "type": "ALIAS",
+                            "type": "REPEAT1",
                             "content": {
-                              "type": "SYMBOL",
-                              "name": "_word"
-                            },
-                            "named": true,
-                            "value": "parameter"
-                          }
+                              "type": "CHOICE",
+                              "members": [
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_word"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "_punctuation"
+                                }
+                              ]
+                            }
+                          },
+                          "named": true,
+                          "value": "parameter"
                         },
                         {
                           "type": "REPEAT",
@@ -2073,8 +2191,20 @@
                                   {
                                     "type": "ALIAS",
                                     "content": {
-                                      "type": "SYMBOL",
-                                      "name": "_word"
+                                      "type": "REPEAT1",
+                                      "content": {
+                                        "type": "CHOICE",
+                                        "members": [
+                                          {
+                                            "type": "SYMBOL",
+                                            "name": "_word"
+                                          },
+                                          {
+                                            "type": "SYMBOL",
+                                            "name": "_punctuation"
+                                          }
+                                        ]
+                                      }
                                     },
                                     "named": true,
                                     "value": "parameter"
