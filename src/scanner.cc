@@ -27,18 +27,6 @@ enum TokenType : char {
 
     WEAK_DELIMITING_MODIFIER,
 
-    BOLD_OPEN,
-    ITALIC_OPEN,
-    STRIKETHROUGH_OPEN,
-    UNDERLINE_OPEN,
-    SPOILER_OPEN,
-    SUPERSCRIPT_OPEN,
-    SUBSCRIPT_OPEN,
-    VERBATIM_OPEN,
-    NULL_MODIFIER_OPEN,
-    INLINE_MATH_OPEN,
-    INLINE_MACRO_OPEN,
-
     BOLD_CLOSE,
     ITALIC_CLOSE,
     STRIKETHROUGH_CLOSE,
@@ -57,7 +45,7 @@ enum TokenType : char {
 struct Scanner {
     TSLexer* lexer;
     std::unordered_map<char, std::vector<uint16_t>> indents;
-    std::unordered_map<int32_t, TokenType> attached_modifiers = { {'*', BOLD_OPEN}, {'/', ITALIC_OPEN}, {'_', UNDERLINE_OPEN}, {'-', STRIKETHROUGH_OPEN}, {'%', NULL_MODIFIER_OPEN}, {'`', VERBATIM_OPEN}, {'!', SPOILER_OPEN}, {'&', INLINE_MACRO_OPEN} };
+    std::unordered_map<int32_t, TokenType> attached_modifiers = { {'*', BOLD_CLOSE}, {'/', ITALIC_CLOSE}, {'_', UNDERLINE_CLOSE}, {'-', STRIKETHROUGH_CLOSE}, {'%', NULL_MODIFIER_CLOSE}, {'`', VERBATIM_CLOSE}, {'!', SPOILER_CLOSE}, {'^', SUPERSCRIPT_CLOSE}, {',', SUBSCRIPT_CLOSE}, {'&', INLINE_MACRO_CLOSE} };
 
     bool is_whitespace(int32_t character) {
         return iswspace(character) && character != '\n' && character != '\r';
@@ -153,7 +141,7 @@ struct Scanner {
             }
 
             if (iter != attached_modifiers.end()) {
-                if (!valid_symbols[iter->second + (INLINE_MACRO_OPEN - BOLD_OPEN) + 1])
+                if (!valid_symbols[iter->second])
                     return false;
 
                 advance();
@@ -161,7 +149,7 @@ struct Scanner {
                 // ensure it is not a double modifier
                 if ((iswspace(lexer->lookahead) || iswpunct(lexer->lookahead)) && (lexer->lookahead != iter->first)) {
                     lexer->mark_end(lexer);
-                    lexer->result_symbol = iter->second + (INLINE_MACRO_OPEN - BOLD_OPEN) + 1;
+                    lexer->result_symbol = iter->second;
                     return true;
                 }
 

@@ -19,18 +19,6 @@ module.exports = grammar({
 
         $.weak_delimiting_modifier,
 
-        "*",
-        "/",
-        "-",
-        "_",
-        "!",
-        "^",
-        ",",
-        "`",
-        "%",
-        "$",
-        "&",
-
         $.bold_close,
         $.italic_close,
         $.strikethrough_close,
@@ -131,9 +119,10 @@ module.exports = grammar({
                 $.delimiting_modifier,
             ),
 
-        _character: (_) => token(/[^\s]/),
+        _character: (_) => token(/[^\p{P}\p{Z}]/u),
+        _punctuation: (_) => token(/\p{P}/u),
         _word: ($) => prec.right(-1, repeat1($._character)),
-        _whitespace: (_) => token(prec(1, /[\t                　]+/)),
+        _whitespace: (_) => token(prec(1, /\p{Z}+/u)),
 
         bold_open: (_) => "*",
         italic_open: (_) => "/",
@@ -149,7 +138,8 @@ module.exports = grammar({
 
         escape_sequence: ($) => seq("\\", alias(prec(10, /./), $.escape_char)),
 
-        _paragraph_inner: ($) => choice($._word, $.escape_sequence),
+        _paragraph_inner: ($) =>
+            choice($._word, $.escape_sequence, $._punctuation),
 
         // TODO: Make the choices a little more explicit. Make the part after $._whitespace optional,
         // see if the attached modifier edge cases still function.
@@ -169,19 +159,22 @@ module.exports = grammar({
                         ),
                     ),
                     repeat(
-                        seq(
-                            $._whitespace,
-                            optional(
-                                choice(
-                                    repeat1($._paragraph_inner),
-                                    seq(
-                                        repeat1(
-                                            choice(
-                                                $._attached_modifier_conflict_open,
-                                                $.attached_modifier,
+                        prec.right(
+                            1,
+                            seq(
+                                choice($._whitespace, $._punctuation),
+                                optional(
+                                    choice(
+                                        repeat1($._paragraph_inner),
+                                        seq(
+                                            repeat1(
+                                                choice(
+                                                    $._attached_modifier_conflict_open,
+                                                    $.attached_modifier,
+                                                ),
                                             ),
+                                            optional($._paragraph_segment),
                                         ),
-                                        optional($._paragraph_segment),
                                     ),
                                 ),
                             ),
@@ -681,38 +674,58 @@ module.exports = grammar({
                 $.verbatim_open,
             ),
 
-        _bold_paragraph_segment: $ => attached_modifier_para_seg($, "bold"),
-        _italic_paragraph_segment: ($) => attached_modifier_para_seg($, "italic"),
-        _strikethrough_paragraph_segment: ($) => attached_modifier_para_seg($, "strikethrough"),
-        _underline_paragraph_segment: ($) => attached_modifier_para_seg($, "underline"),
-        _spoiler_paragraph_segment: ($) => attached_modifier_para_seg($, "spoiler"),
-        _superscript_paragraph_segment: ($) => attached_modifier_para_seg($, "superscript"),
-        _subscript_paragraph_segment: ($) => attached_modifier_para_seg($, "subscript"),
-        _null_modifier_paragraph_segment: ($) => attached_modifier_para_seg($, "null_modifier"),
-        _verbatim_paragraph_segment: ($) => seq(
-            repeat1(choice(
-                $._paragraph_inner,
-                $._attached_modifier_conflict_open,
-            )),
-            repeat(
-                seq(
-                    $._whitespace,
-                    repeat1(choice(
+        _bold_paragraph_segment: ($) => attached_modifier_para_seg($, "bold"),
+        _italic_paragraph_segment: ($) =>
+            attached_modifier_para_seg($, "italic"),
+        _strikethrough_paragraph_segment: ($) =>
+            attached_modifier_para_seg($, "strikethrough"),
+        _underline_paragraph_segment: ($) =>
+            attached_modifier_para_seg($, "underline"),
+        _spoiler_paragraph_segment: ($) =>
+            attached_modifier_para_seg($, "spoiler"),
+        _superscript_paragraph_segment: ($) =>
+            attached_modifier_para_seg($, "superscript"),
+        _subscript_paragraph_segment: ($) =>
+            attached_modifier_para_seg($, "subscript"),
+        _null_modifier_paragraph_segment: ($) =>
+            attached_modifier_para_seg($, "null_modifier"),
+        _verbatim_paragraph_segment: ($) =>
+            seq(
+                repeat1(
+                    choice(
                         $._paragraph_inner,
                         $._attached_modifier_conflict_open,
-                    )),
-                )
-            )
-        ),
+                    ),
+                ),
+                repeat(
+                    seq(
+                        $._whitespace,
+                        repeat1(
+                            choice(
+                                $._paragraph_inner,
+                                $._attached_modifier_conflict_open,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
 
-        _bold_inline_paragraph_segment: $ => attached_modifier_para_seg($, "bold", true),
-        _italic_inline_paragraph_segment: ($) => attached_modifier_para_seg($, "italic", true),
-        _strikethrough_inline_paragraph_segment: ($) => attached_modifier_para_seg($, "strikethrough", true),
-        _underline_inline_paragraph_segment: ($) => attached_modifier_para_seg($, "underline", true),
-        _spoiler_inline_paragraph_segment: ($) => attached_modifier_para_seg($, "spoiler", true),
-        _superscript_inline_paragraph_segment: ($) => attached_modifier_para_seg($, "superscript", true),
-        _subscript_inline_paragraph_segment: ($) => attached_modifier_para_seg($, "subscript", true),
-        _null_modifier_inline_paragraph_segment: ($) => attached_modifier_para_seg($, "null_modifier", true),
+        _bold_inline_paragraph_segment: ($) =>
+            attached_modifier_para_seg($, "bold", true),
+        _italic_inline_paragraph_segment: ($) =>
+            attached_modifier_para_seg($, "italic", true),
+        _strikethrough_inline_paragraph_segment: ($) =>
+            attached_modifier_para_seg($, "strikethrough", true),
+        _underline_inline_paragraph_segment: ($) =>
+            attached_modifier_para_seg($, "underline", true),
+        _spoiler_inline_paragraph_segment: ($) =>
+            attached_modifier_para_seg($, "spoiler", true),
+        _superscript_inline_paragraph_segment: ($) =>
+            attached_modifier_para_seg($, "superscript", true),
+        _subscript_inline_paragraph_segment: ($) =>
+            attached_modifier_para_seg($, "subscript", true),
+        _null_modifier_inline_paragraph_segment: ($) =>
+            attached_modifier_para_seg($, "null_modifier", true),
 
         bold: ($) => attached_modifier($, "bold"),
         italic: ($) => attached_modifier($, "italic"),
@@ -787,7 +800,7 @@ function attached_modifier_para_seg($, type, inline) {
                 ),
             ),
         ),
-    )
+    );
 }
 
 function attached_modifier($, type) {
@@ -804,12 +817,12 @@ function attached_modifier($, type) {
                     choice(
                         paragraph_segment,
                         seq($.weak_carryover_tag, paragraph_segment),
-                    )
-                )
+                    ),
+                ),
             ),
             $[type + "_close"],
-        )
-    )
+        ),
+    );
 }
 
 function attached_modifier_verbatim($, type) {
@@ -823,7 +836,7 @@ function attached_modifier_verbatim($, type) {
                     optional($._whitespace),
                     newline,
                     $._verbatim_paragraph_segment,
-                )
+                ),
             ),
             $[type + "_close"],
         ),

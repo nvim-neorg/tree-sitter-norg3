@@ -412,11 +412,6 @@
     }
   },
   {
-    "type": "bold_open",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "content",
     "named": true,
     "fields": {},
@@ -797,11 +792,6 @@
     }
   },
   {
-    "type": "italic_open",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "macro_tag",
     "named": true,
     "fields": {},
@@ -937,11 +927,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "null_modifier_open",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "ordered_list",
@@ -1457,11 +1442,6 @@
         }
       ]
     }
-  },
-  {
-    "type": "subscript_open",
-    "named": true,
-    "fields": {}
   },
   {
     "type": "superscript",
@@ -1988,11 +1968,6 @@
     }
   },
   {
-    "type": "verbatim_open",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "verbatim_ranged_tag",
     "named": true,
     "fields": {},
@@ -2067,14 +2042,6 @@
     "named": false
   },
   {
-    "type": "%",
-    "named": false
-  },
-  {
-    "type": "&",
-    "named": false
-  },
-  {
     "type": "(",
     "named": false
   },
@@ -2083,15 +2050,7 @@
     "named": false
   },
   {
-    "type": "*",
-    "named": false
-  },
-  {
     "type": "+",
-    "named": false
-  },
-  {
-    "type": ",",
     "named": false
   },
   {
@@ -2100,10 +2059,6 @@
   },
   {
     "type": ".",
-    "named": false
-  },
-  {
-    "type": "/",
     "named": false
   },
   {
@@ -2159,11 +2114,11 @@
     "named": false
   },
   {
-    "type": "`",
-    "named": false
+    "type": "bold_close",
+    "named": true
   },
   {
-    "type": "bold_close",
+    "type": "bold_open",
     "named": true
   },
   {
@@ -2179,7 +2134,15 @@
     "named": true
   },
   {
+    "type": "italic_open",
+    "named": true
+  },
+  {
     "type": "null_modifier_close",
+    "named": true
+  },
+  {
+    "type": "null_modifier_open",
     "named": true
   },
   {
@@ -2200,6 +2163,10 @@
   },
   {
     "type": "subscript_close",
+    "named": true
+  },
+  {
+    "type": "subscript_open",
     "named": true
   },
   {
@@ -2228,6 +2195,10 @@
   },
   {
     "type": "verbatim_close",
+    "named": true
+  },
+  {
+    "type": "verbatim_open",
     "named": true
   },
   {
