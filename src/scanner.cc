@@ -38,6 +38,7 @@ enum TokenType : char {
     NULL_MODIFIER_CLOSE,
     INLINE_MATH_CLOSE,
     INLINE_MACRO_CLOSE,
+    FREE_CLOSE,
 
     DEDENT,
 };
@@ -114,31 +115,34 @@ struct Scanner {
             }
         }
 
-        int32_t valid_closing_symbol = get_valid_symbol(valid_symbols, BOLD_CLOSE, INLINE_MACRO_CLOSE);
+        int32_t valid_closing_symbol = get_valid_symbol(valid_symbols, BOLD_CLOSE, FREE_CLOSE);
 
-        if (valid_closing_symbol != -1 && !iswspace(lexer->lookahead)) {
+        if (valid_closing_symbol != -1) {
+            bool free_form = false;
+            if (lexer->lookahead == '|' && valid_symbols[FREE_CLOSE]) {
+                advance();
+                lexer->mark_end(lexer);
+                lexer->result_symbol = FREE_CLOSE;
+                free_form = true;
+            }
             std::unordered_map<int32_t, TokenType>::iterator iter = attached_modifiers.find(lexer->lookahead);
 
-            // NOTE: It's possible that this gets executed despite the next character not being tied to the "expected"
-            // valid_symbol from the valid_symbols list. I.e. we could be looking ahead to a `*` but succeeding in parsing
-            // this because valid_symbols[ITALIC_CLOSE] is valid.
-            // This is also why we get errors on a single closing bold modifier. It shouldn't be being parsed, but because
-            // we are already in the context of e.g. an italic then we are theoretically looking for any valid attached modifier
-            // character.
-
-            if (iter == attached_modifiers.end()) {
-                advance();
+            if (!free_form && iter == attached_modifiers.end()) {
+                skip();
                 iter = attached_modifiers.find(lexer->lookahead);
             }
 
             if (iter != attached_modifiers.end()) {
-                if (!valid_symbols[iter->second])
+                if (!valid_symbols[iter->second] && !valid_symbols[FREE_CLOSE])
                     return false;
 
                 advance();
 
                 // ensure it is not a double modifier
                 if ((!lexer->lookahead || iswspace(lexer->lookahead) || iswpunct(lexer->lookahead)) && (lexer->lookahead != iter->first)) {
+                    if (free_form) {
+                        return true;
+                    }
                     lexer->mark_end(lexer);
                     lexer->result_symbol = iter->second;
                     return true;

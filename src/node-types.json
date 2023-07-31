@@ -295,6 +295,14 @@
           "named": true
         },
         {
+          "type": "free_close",
+          "named": true
+        },
+        {
+          "type": "free_open",
+          "named": true
+        },
+        {
           "type": "italic",
           "named": true
         },
@@ -595,6 +603,11 @@
     }
   },
   {
+    "type": "free_open",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "heading",
     "named": true,
     "fields": {},
@@ -676,6 +689,14 @@
         },
         {
           "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "free_close",
+          "named": true
+        },
+        {
+          "type": "free_open",
           "named": true
         },
         {
@@ -821,6 +842,14 @@
         },
         {
           "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "free_close",
+          "named": true
+        },
+        {
+          "type": "free_open",
           "named": true
         },
         {
@@ -1085,6 +1114,14 @@
           "named": true
         },
         {
+          "type": "free_close",
+          "named": true
+        },
+        {
+          "type": "free_open",
+          "named": true
+        },
+        {
           "type": "italic",
           "named": true
         },
@@ -1209,6 +1246,14 @@
         },
         {
           "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "free_close",
+          "named": true
+        },
+        {
+          "type": "free_open",
           "named": true
         },
         {
@@ -1363,6 +1408,14 @@
           "named": true
         },
         {
+          "type": "free_close",
+          "named": true
+        },
+        {
+          "type": "free_open",
+          "named": true
+        },
+        {
           "type": "italic",
           "named": true
         },
@@ -1482,6 +1535,14 @@
         },
         {
           "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "free_close",
+          "named": true
+        },
+        {
+          "type": "free_open",
           "named": true
         },
         {
@@ -1802,6 +1863,14 @@
         },
         {
           "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "free_close",
+          "named": true
+        },
+        {
+          "type": "free_open",
           "named": true
         },
         {
@@ -2172,6 +2241,10 @@
   },
   {
     "type": "escape_char",
+    "named": true
+  },
+  {
+    "type": "free_close",
     "named": true
   },
   {

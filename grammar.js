@@ -30,6 +30,7 @@ module.exports = grammar({
         $.null_modifier_close,
         $.inline_math_close,
         $.inline_macro_close,
+        $.free_close,
 
         $._dedent,
     ],
@@ -138,6 +139,8 @@ module.exports = grammar({
         null_modifier_open: (_) => "%",
         inline_math_open: (_) => "$",
         inline_macro_open: (_) => "&",
+
+        free_open: (_) => ("|"),
 
         escape_sequence: ($) => seq("\\", alias(prec(10, /./), $.escape_char)),
 
@@ -677,6 +680,7 @@ module.exports = grammar({
                     $.subscript_open,
                     $.null_modifier_open,
                     $.verbatim_open,
+                    $.free_open,
                 ),
                 "_word",
             ),
@@ -698,6 +702,36 @@ module.exports = grammar({
             attached_modifier_para_seg($, "null_modifier"),
         _verbatim_paragraph_segment: ($) =>
             seq(
+                repeat1(
+                    choice(
+                        $._paragraph_inner,
+                        $._attached_modifier_conflict_open,
+                    ),
+                ),
+                repeat(
+                    seq(
+                        $._whitespace,
+                        repeat1(
+                            choice(
+                                $._paragraph_inner,
+                                $._attached_modifier_conflict_open,
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+
+        _bold_free_paragraph_segment: ($) => attached_modifier_free_para_seg($, "bold"),
+        _italic_free_paragraph_segment: ($) => attached_modifier_free_para_seg($, "italic"),
+        _strikethrough_free_paragraph_segment: ($) => attached_modifier_free_para_seg($, "strikethrough"),
+        _underline_free_paragraph_segment: ($) => attached_modifier_free_para_seg($, "underline"),
+        _spoiler_free_paragraph_segment: ($) => attached_modifier_free_para_seg($, "spoiler"),
+        _superscript_free_paragraph_segment: ($) => attached_modifier_free_para_seg($, "superscript"),
+        _subscript_free_paragraph_segment: ($) => attached_modifier_free_para_seg($, "subscript"),
+        _null_modifier_free_paragraph_segment: ($) => attached_modifier_free_para_seg($, "null_modifier"),
+        _verbatim_free_paragraph_segment: ($) =>
+            seq(
+                optional($._whitespace),
                 repeat1(
                     choice(
                         $._paragraph_inner,
@@ -813,9 +847,87 @@ function attached_modifier_para_seg($, type, inline) {
     );
 }
 
+function attached_modifier_free_para_seg($, type, inline) {
+    const other_attached_modifiers = [
+        "bold",
+        "italic",
+        "strikethrough",
+        "underline",
+        "spoiler",
+        "superscript",
+        "subscript",
+        "null_modifier",
+        "verbatim",
+        // "inline_math",
+        // "inline_macro",
+    ]
+        .filter((x) => x != type)
+        .map((x) => $[inline ? x + "_inline" : x]);
+    type = inline ? type + "_inline" : type;
+    const paragraph_segment = $["_" + type + "_paragraph_segment"];
+    return seq(
+        optional($._whitespace),
+        choice(
+            repeat1($._paragraph_inner),
+            seq(
+                repeat1(
+                    choice(
+                        $._attached_modifier_conflict_open,
+                        ...other_attached_modifiers,
+                    ),
+                ),
+                optional(paragraph_segment),
+            ),
+        ),
+        repeat(
+            prec.right(
+                1,
+                seq(
+                    choice($._whitespace, $._punctuation),
+                    optional(
+                        choice(
+                            repeat1($._paragraph_inner),
+                            seq(
+                                repeat1(
+                                    choice(
+                                        $._attached_modifier_conflict_open,
+                                        ...other_attached_modifiers,
+                                    ),
+                                ),
+                                optional(paragraph_segment),
+                            ),
+                        ),
+                    ),
+                ),
+            ),
+        ),
+    );
+}
+
 function attached_modifier($, type) {
     const paragraph_segment = $["_" + type + "_paragraph_segment"];
-    return prec.dynamic(
+    const free_paragraph_segment = $["_" + type + "_free_paragraph_segment"];
+    return choice(
+    prec.dynamic(
+        2,
+        seq(
+            $[type + "_open"],
+            $.free_open,
+            free_paragraph_segment,
+            repeat(
+                seq(
+                    newline,
+                    choice(
+                        free_paragraph_segment,
+                        seq($.weak_carryover_tag, free_paragraph_segment),
+                    ),
+                ),
+            ),
+            $.free_close,
+            $[type + "_close"],
+        )
+    ),
+        prec.dynamic(
         1,
         seq(
             $[type + "_open"],
@@ -832,6 +944,7 @@ function attached_modifier($, type) {
             ),
             $[type + "_close"],
         ),
+    ),
     );
 }
 
