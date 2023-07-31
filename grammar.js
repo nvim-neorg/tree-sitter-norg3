@@ -57,6 +57,7 @@ module.exports = grammar({
 
         // TODO: Is it possible to remove this conflict?
         [$._paragraph_segment],
+
         [$._title_inline],
         [$._bold_paragraph_segment],
         [$._italic_paragraph_segment],
@@ -790,18 +791,21 @@ function attached_modifier_para_seg($, type, inline) {
             ),
         ),
         repeat(
-            seq(
-                $._whitespace,
-                choice(
-                    repeat1($._paragraph_inner),
-                    seq(
-                        repeat1(
-                            choice(
-                                $._attached_modifier_conflict_open,
-                                ...other_attached_modifiers,
+            prec.right(
+                1,
+                seq(
+                    choice($._whitespace, $._punctuation),
+                    choice(
+                        repeat1($._paragraph_inner),
+                        seq(
+                            repeat1(
+                                choice(
+                                    $._attached_modifier_conflict_open,
+                                    ...other_attached_modifiers,
+                                ),
                             ),
+                            optional(paragraph_segment),
                         ),
-                        optional(paragraph_segment),
                     ),
                 ),
             ),
