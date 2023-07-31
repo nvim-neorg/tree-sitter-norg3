@@ -93,15 +93,6 @@ struct Scanner {
                     lexer->result_symbol = WEAK_DELIMITING_MODIFIER;
                     return true;
                 }
-                else {
-                    std::unordered_map<int32_t, TokenType>::iterator iter = attached_modifiers.find(character);
-
-                    if (iter != attached_modifiers.end() && count == 1) {
-                        lexer->mark_end(lexer);
-                        lexer->result_symbol = iter->second;
-                        return true;
-                    }
-                }
 
                 return false;
             }
