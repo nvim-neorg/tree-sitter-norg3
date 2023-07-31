@@ -122,7 +122,7 @@ module.exports = grammar({
         _character: (_) => token(/[^\p{P}\p{Z}]/u),
         _punctuation: (_) => token(/\p{P}/u),
         _word: ($) => prec.right(-1, repeat1($._character)),
-        _whitespace: (_) => token(prec(1, /\p{Z}+/u)),
+        _whitespace: (_) => token(prec(1, /\p{Zl}+/u)),
 
         bold_open: (_) => "*",
         italic_open: (_) => "/",
@@ -648,6 +648,7 @@ module.exports = grammar({
                 $.null_modifier,
                 $.verbatim,
             ),
+
         attached_modifier_inline: ($) =>
             choice(
                 $.bold_inline,
