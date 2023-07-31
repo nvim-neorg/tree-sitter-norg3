@@ -119,10 +119,12 @@ module.exports = grammar({
                 $.delimiting_modifier,
             ),
 
-        _character: (_) => token(/[^\p{P}\p{Z}]/u),
-        _punctuation: (_) => token(/\p{P}/u),
+        _character: (_) => token(/[\p{L}\p{N}]/u),
+        // TODO: Is there a way of shortening this regex? If there were set intersection, we could
+        // do: \p{P}&&[^\n\r]. Apparently \p{P} includes newlines, which causes problems.
+        _punctuation: (_) => token(/[^\n\r\p{Z}\p{L}\p{N}]/u),
         _word: ($) => prec.right(-1, repeat1($._character)),
-        _whitespace: (_) => token(prec(1, /\p{Zl}+/u)),
+        _whitespace: (_) => token(prec(1, /\p{Zs}+/u)),
 
         bold_open: (_) => "*",
         italic_open: (_) => "/",
@@ -663,17 +665,20 @@ module.exports = grammar({
             ),
 
         _attached_modifier_conflict_open: ($) =>
-            alias(choice(
-                $.bold_open,
-                $.italic_open,
-                $.strikethrough_open,
-                $.underline_open,
-                $.spoiler_open,
-                $.superscript_open,
-                $.subscript_open,
-                $.null_modifier_open,
-                $.verbatim_open,
-            ), "_word"),
+            alias(
+                choice(
+                    $.bold_open,
+                    $.italic_open,
+                    $.strikethrough_open,
+                    $.underline_open,
+                    $.spoiler_open,
+                    $.superscript_open,
+                    $.subscript_open,
+                    $.null_modifier_open,
+                    $.verbatim_open,
+                ),
+                "_word",
+            ),
 
         _bold_paragraph_segment: ($) => attached_modifier_para_seg($, "bold"),
         _italic_paragraph_segment: ($) =>

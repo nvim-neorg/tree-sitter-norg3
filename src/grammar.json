@@ -67,7 +67,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[^\\p{P}\\p{Zl}]"
+        "value": "[\\p{L}\\p{N}]"
       }
     },
     "_punctuation": {
@@ -95,7 +95,7 @@
         "value": 1,
         "content": {
           "type": "PATTERN",
-          "value": "\\p{Zl}+"
+          "value": "\\p{Zs}+"
         }
       }
     },
