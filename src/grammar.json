@@ -170,21 +170,25 @@
       "value": ":"
     },
     "_paragraph_inner": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "_word"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "escape_sequence"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_punctuation"
-        }
-      ]
+      "type": "PREC",
+      "value": -1,
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "_word"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "escape_sequence"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_punctuation"
+          }
+        ]
+      }
     },
     "_attached_modifier_array": {
       "type": "PREC_RIGHT",
@@ -388,7 +392,7 @@
             "type": "REPEAT",
             "content": {
               "type": "PREC_RIGHT",
-              "value": 1,
+              "value": 0,
               "content": {
                 "type": "SEQ",
                 "members": [
@@ -459,8 +463,25 @@
                                                 ]
                                               },
                                               {
-                                                "type": "STRING",
-                                                "value": ":"
+                                                "type": "SEQ",
+                                                "members": [
+                                                  {
+                                                    "type": "STRING",
+                                                    "value": ":"
+                                                  },
+                                                  {
+                                                    "type": "CHOICE",
+                                                    "members": [
+                                                      {
+                                                        "type": "SYMBOL",
+                                                        "name": "_attached_modifier_array"
+                                                      },
+                                                      {
+                                                        "type": "BLANK"
+                                                      }
+                                                    ]
+                                                  }
+                                                ]
                                               }
                                             ]
                                           },
@@ -486,8 +507,17 @@
                                         "type": "CHOICE",
                                         "members": [
                                           {
-                                            "type": "SYMBOL",
-                                            "name": "_word"
+                                            "type": "CHOICE",
+                                            "members": [
+                                              {
+                                                "type": "SYMBOL",
+                                                "name": "_word"
+                                              },
+                                              {
+                                                "type": "SYMBOL",
+                                                "name": "_attached_modifier_array"
+                                              }
+                                            ]
                                           },
                                           {
                                             "type": "BLANK"
@@ -532,37 +562,8 @@
                             ]
                           },
                           {
-                            "type": "SEQ",
-                            "members": [
-                              {
-                                "type": "REPEAT1",
-                                "content": {
-                                  "type": "CHOICE",
-                                  "members": [
-                                    {
-                                      "type": "SYMBOL",
-                                      "name": "_attached_modifier_conflict_open"
-                                    },
-                                    {
-                                      "type": "SYMBOL",
-                                      "name": "attached_modifier"
-                                    }
-                                  ]
-                                }
-                              },
-                              {
-                                "type": "CHOICE",
-                                "members": [
-                                  {
-                                    "type": "SYMBOL",
-                                    "name": "_paragraph_segment"
-                                  },
-                                  {
-                                    "type": "BLANK"
-                                  }
-                                ]
-                              }
-                            ]
+                            "type": "SYMBOL",
+                            "name": "_attached_modifier_array"
                           }
                         ]
                       },

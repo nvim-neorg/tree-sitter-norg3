@@ -34,6 +34,7 @@ module.exports = grammar({
         $._dedent,
     ],
 
+    // TODO: Minimize conflict count
     conflicts: ($) => [
         [$.bold, $._attached_modifier_conflict_open],
         [$.italic, $._attached_modifier_conflict_open],
@@ -147,7 +148,7 @@ module.exports = grammar({
         link_modifier: (_) => ":",
 
         _paragraph_inner: ($) =>
-            choice($._word, $.escape_sequence, $._punctuation),
+            prec(-1, choice($._word, $.escape_sequence, $._punctuation)),
 
         _attached_modifier_array: ($) =>
             prec.right(
@@ -206,7 +207,6 @@ module.exports = grammar({
                     ),
                     repeat(
                         prec.right(
-                            1,
                             seq(
                                 choice($._whitespace, $._punctuation),
                                 optional(
@@ -224,14 +224,24 @@ module.exports = grammar({
                                                                 $.link_modifier,
                                                                 $._word,
                                                             ),
-                                                            ":",
+                                                            seq(
+                                                                ":",
+                                                                optional(
+                                                                    $._attached_modifier_array,
+                                                                ),
+                                                            ),
                                                         ),
                                                     ),
                                                 ),
                                                 seq(
                                                     ":",
                                                     $._attached_modifier_conflict_open,
-                                                    optional($._word),
+                                                    optional(
+                                                        choice(
+                                                            $._word,
+                                                            $._attached_modifier_array,
+                                                        ),
+                                                    ),
                                                 ),
                                             ),
                                         ),
@@ -242,15 +252,7 @@ module.exports = grammar({
                                                 ":",
                                             ),
                                         ),
-                                        seq(
-                                            repeat1(
-                                                choice(
-                                                    $._attached_modifier_conflict_open,
-                                                    $.attached_modifier,
-                                                ),
-                                            ),
-                                            optional($._paragraph_segment),
-                                        ),
+                                        $._attached_modifier_array,
                                     ),
                                 ),
                             ),
