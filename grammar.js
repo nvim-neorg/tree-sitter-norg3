@@ -3,6 +3,8 @@ let newline_or_eof = choice("\n", "\r", "\r\n", "\0");
 
 /// General TODOS:
 //  - Abstract repeating patterns (e.g. nestable detached modifiers) into Javascript functions.
+//  - Support link modifiers within inline paragraph segments (titles)
+//  - Add tests for link modifiers, then everything else.
 
 module.exports = grammar({
     name: "norg",
