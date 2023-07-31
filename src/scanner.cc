@@ -15,6 +15,8 @@
 /// 2. Quotes, lists and headings (the "nestable detached modifiers") are parsed in this scanner to allow for
 ///    "infinite" nesting (in reality the cap is at the 16 bit integer limit).
 
+// GENERAL TODOS: Detect the treesitter "error mode" in the scanner.
+
 using namespace std;
 
 enum TokenType : char {

@@ -165,6 +165,10 @@
         }
       ]
     },
+    "link_modifier": {
+      "type": "STRING",
+      "value": ":"
+    },
     "_paragraph_inner": {
       "type": "CHOICE",
       "members": [
@@ -181,6 +185,43 @@
           "name": "_punctuation"
         }
       ]
+    },
+    "_attached_modifier_array": {
+      "type": "PREC_RIGHT",
+      "value": 1,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "_attached_modifier_conflict_open"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "attached_modifier"
+                }
+              ]
+            }
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "_paragraph_segment"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
     },
     "_paragraph_segment": {
       "type": "PREC_RIGHT",
@@ -202,34 +243,144 @@
                 "type": "SEQ",
                 "members": [
                   {
-                    "type": "REPEAT1",
-                    "content": {
-                      "type": "CHOICE",
-                      "members": [
-                        {
-                          "type": "SYMBOL",
-                          "name": "_attached_modifier_conflict_open"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "attached_modifier"
-                        }
-                      ]
-                    }
+                    "type": "SYMBOL",
+                    "name": "_word"
                   },
                   {
                     "type": "CHOICE",
                     "members": [
                       {
-                        "type": "SYMBOL",
-                        "name": "_paragraph_segment"
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "link_modifier"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "attached_modifier"
+                          },
+                          {
+                            "type": "CHOICE",
+                            "members": [
+                              {
+                                "type": "CHOICE",
+                                "members": [
+                                  {
+                                    "type": "SEQ",
+                                    "members": [
+                                      {
+                                        "type": "SYMBOL",
+                                        "name": "link_modifier"
+                                      },
+                                      {
+                                        "type": "SYMBOL",
+                                        "name": "_word"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "SEQ",
+                                    "members": [
+                                      {
+                                        "type": "STRING",
+                                        "value": ":"
+                                      },
+                                      {
+                                        "type": "CHOICE",
+                                        "members": [
+                                          {
+                                            "type": "SYMBOL",
+                                            "name": "_attached_modifier_array"
+                                          },
+                                          {
+                                            "type": "BLANK"
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "BLANK"
+                              }
+                            ]
+                          }
+                        ]
                       },
                       {
-                        "type": "BLANK"
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "STRING",
+                            "value": ":"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "_attached_modifier_conflict_open"
+                          },
+                          {
+                            "type": "CHOICE",
+                            "members": [
+                              {
+                                "type": "CHOICE",
+                                "members": [
+                                  {
+                                    "type": "SYMBOL",
+                                    "name": "_word"
+                                  },
+                                  {
+                                    "type": "SYMBOL",
+                                    "name": "_attached_modifier_array"
+                                  }
+                                ]
+                              },
+                              {
+                                "type": "BLANK"
+                              }
+                            ]
+                          }
+                        ]
                       }
                     ]
                   }
                 ]
+              },
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "attached_modifier"
+                  },
+                  {
+                    "type": "CHOICE",
+                    "members": [
+                      {
+                        "type": "SEQ",
+                        "members": [
+                          {
+                            "type": "SYMBOL",
+                            "name": "link_modifier"
+                          },
+                          {
+                            "type": "SYMBOL",
+                            "name": "_word"
+                          }
+                        ]
+                      },
+                      {
+                        "type": "STRING",
+                        "value": ":"
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "_attached_modifier_array"
               }
             ]
           },
@@ -266,6 +417,119 @@
                               "type": "SYMBOL",
                               "name": "_paragraph_inner"
                             }
+                          },
+                          {
+                            "type": "SEQ",
+                            "members": [
+                              {
+                                "type": "SYMBOL",
+                                "name": "_word"
+                              },
+                              {
+                                "type": "CHOICE",
+                                "members": [
+                                  {
+                                    "type": "SEQ",
+                                    "members": [
+                                      {
+                                        "type": "SYMBOL",
+                                        "name": "link_modifier"
+                                      },
+                                      {
+                                        "type": "SYMBOL",
+                                        "name": "attached_modifier"
+                                      },
+                                      {
+                                        "type": "CHOICE",
+                                        "members": [
+                                          {
+                                            "type": "CHOICE",
+                                            "members": [
+                                              {
+                                                "type": "SEQ",
+                                                "members": [
+                                                  {
+                                                    "type": "SYMBOL",
+                                                    "name": "link_modifier"
+                                                  },
+                                                  {
+                                                    "type": "SYMBOL",
+                                                    "name": "_word"
+                                                  }
+                                                ]
+                                              },
+                                              {
+                                                "type": "STRING",
+                                                "value": ":"
+                                              }
+                                            ]
+                                          },
+                                          {
+                                            "type": "BLANK"
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "SEQ",
+                                    "members": [
+                                      {
+                                        "type": "STRING",
+                                        "value": ":"
+                                      },
+                                      {
+                                        "type": "SYMBOL",
+                                        "name": "_attached_modifier_conflict_open"
+                                      },
+                                      {
+                                        "type": "CHOICE",
+                                        "members": [
+                                          {
+                                            "type": "SYMBOL",
+                                            "name": "_word"
+                                          },
+                                          {
+                                            "type": "BLANK"
+                                          }
+                                        ]
+                                      }
+                                    ]
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "type": "SEQ",
+                            "members": [
+                              {
+                                "type": "SYMBOL",
+                                "name": "attached_modifier"
+                              },
+                              {
+                                "type": "CHOICE",
+                                "members": [
+                                  {
+                                    "type": "SEQ",
+                                    "members": [
+                                      {
+                                        "type": "SYMBOL",
+                                        "name": "link_modifier"
+                                      },
+                                      {
+                                        "type": "SYMBOL",
+                                        "name": "_word"
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "STRING",
+                                    "value": ":"
+                                  }
+                                ]
+                              }
+                            ]
                           },
                           {
                             "type": "SEQ",
@@ -6673,6 +6937,10 @@
     ],
     [
       "_verbatim_paragraph_segment"
+    ],
+    [
+      "link_modifier",
+      "_paragraph_segment"
     ]
   ],
   "precedences": [
@@ -6704,6 +6972,16 @@
       {
         "type": "SYMBOL",
         "name": "superscript_open"
+      }
+    ],
+    [
+      {
+        "type": "SYMBOL",
+        "name": "table_cell_single"
+      },
+      {
+        "type": "SYMBOL",
+        "name": "link_modifier"
       }
     ]
   ],
