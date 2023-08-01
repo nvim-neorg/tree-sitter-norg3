@@ -1,15 +1,5 @@
 [
   {
-    "type": "_attached_modifier_conflict_open",
-    "named": true,
-    "subtypes": [
-      {
-        "type": "_word",
-        "named": false
-      }
-    ]
-  },
-  {
     "type": "attached_modifier",
     "named": true,
     "subtypes": [
@@ -279,10 +269,6 @@
       "required": true,
       "types": [
         {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
-        {
           "type": "bold_close",
           "named": true
         },
@@ -295,11 +281,11 @@
           "named": true
         },
         {
-          "type": "free_close",
+          "type": "free_form_close",
           "named": true
         },
         {
-          "type": "free_open",
+          "type": "free_form_open",
           "named": true
         },
         {
@@ -349,10 +335,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
         {
           "type": "bold_close",
           "named": true
@@ -603,7 +585,7 @@
     }
   },
   {
-    "type": "free_open",
+    "type": "free_form_open",
     "named": true,
     "fields": {}
   },
@@ -672,6 +654,11 @@
     }
   },
   {
+    "type": "inline_math_open",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "italic",
     "named": true,
     "fields": {},
@@ -679,10 +666,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
         {
           "type": "bold",
           "named": true
@@ -692,11 +675,11 @@
           "named": true
         },
         {
-          "type": "free_close",
+          "type": "free_form_close",
           "named": true
         },
         {
-          "type": "free_open",
+          "type": "free_form_open",
           "named": true
         },
         {
@@ -750,10 +733,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
         {
           "type": "bold_inline",
           "named": true
@@ -833,10 +812,6 @@
       "required": true,
       "types": [
         {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
-        {
           "type": "bold",
           "named": true
         },
@@ -845,11 +820,11 @@
           "named": true
         },
         {
-          "type": "free_close",
+          "type": "free_form_close",
           "named": true
         },
         {
-          "type": "free_open",
+          "type": "free_form_open",
           "named": true
         },
         {
@@ -903,10 +878,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
         {
           "type": "bold_inline",
           "named": true
@@ -1005,10 +976,6 @@
       "required": false,
       "types": [
         {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
-        {
           "type": "attached_modifier",
           "named": true
         },
@@ -1102,10 +1069,6 @@
       "required": true,
       "types": [
         {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
-        {
           "type": "bold",
           "named": true
         },
@@ -1114,11 +1077,11 @@
           "named": true
         },
         {
-          "type": "free_close",
+          "type": "free_form_close",
           "named": true
         },
         {
-          "type": "free_open",
+          "type": "free_form_open",
           "named": true
         },
         {
@@ -1172,10 +1135,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
         {
           "type": "bold_inline",
           "named": true
@@ -1237,10 +1196,6 @@
       "required": true,
       "types": [
         {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
-        {
           "type": "bold",
           "named": true
         },
@@ -1249,11 +1204,11 @@
           "named": true
         },
         {
-          "type": "free_close",
+          "type": "free_form_close",
           "named": true
         },
         {
-          "type": "free_open",
+          "type": "free_form_open",
           "named": true
         },
         {
@@ -1307,10 +1262,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
         {
           "type": "bold_inline",
           "named": true
@@ -1396,10 +1347,6 @@
       "required": true,
       "types": [
         {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
-        {
           "type": "bold",
           "named": true
         },
@@ -1408,11 +1355,11 @@
           "named": true
         },
         {
-          "type": "free_close",
+          "type": "free_form_close",
           "named": true
         },
         {
-          "type": "free_open",
+          "type": "free_form_open",
           "named": true
         },
         {
@@ -1466,10 +1413,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
         {
           "type": "bold_inline",
           "named": true
@@ -1526,10 +1469,6 @@
       "required": true,
       "types": [
         {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
-        {
           "type": "bold",
           "named": true
         },
@@ -1538,11 +1477,11 @@
           "named": true
         },
         {
-          "type": "free_close",
+          "type": "free_form_close",
           "named": true
         },
         {
-          "type": "free_open",
+          "type": "free_form_open",
           "named": true
         },
         {
@@ -1596,10 +1535,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
         {
           "type": "bold_inline",
           "named": true
@@ -1746,10 +1681,6 @@
       "required": false,
       "types": [
         {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
-        {
           "type": "attached_modifier_inline",
           "named": true
         },
@@ -1854,10 +1785,6 @@
       "required": true,
       "types": [
         {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
-        {
           "type": "bold",
           "named": true
         },
@@ -1866,11 +1793,11 @@
           "named": true
         },
         {
-          "type": "free_close",
+          "type": "free_form_close",
           "named": true
         },
         {
-          "type": "free_open",
+          "type": "free_form_open",
           "named": true
         },
         {
@@ -1924,10 +1851,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
         {
           "type": "bold_inline",
           "named": true
@@ -2031,10 +1954,6 @@
       "required": true,
       "types": [
         {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
-        {
           "type": "escape_sequence",
           "named": true
         },
@@ -2062,10 +1981,6 @@
       "multiple": true,
       "required": true,
       "types": [
-        {
-          "type": "_attached_modifier_conflict_open",
-          "named": true
-        },
         {
           "type": "escape_sequence",
           "named": true
@@ -2244,11 +2159,23 @@
     "named": true
   },
   {
-    "type": "free_close",
+    "type": "free_form_close",
     "named": true
   },
   {
     "type": "heading_stars",
+    "named": true
+  },
+  {
+    "type": "inline_macro_close",
+    "named": true
+  },
+  {
+    "type": "inline_macro_open",
+    "named": true
+  },
+  {
+    "type": "inline_math_close",
     "named": true
   },
   {

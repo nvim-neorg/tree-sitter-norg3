@@ -117,7 +117,7 @@ struct Scanner {
 
         int32_t valid_closing_symbol = get_valid_symbol(valid_symbols, BOLD_CLOSE, FREE_CLOSE);
 
-        if (valid_closing_symbol != -1) {
+        if (valid_closing_symbol != -1 && iswpunct(lexer->lookahead)) {
             bool free_form = false;
             if (lexer->lookahead == '|' && valid_symbols[FREE_CLOSE]) {
                 advance();
@@ -140,12 +140,13 @@ struct Scanner {
 
                 // ensure it is not a double modifier
                 if ((!lexer->lookahead || iswspace(lexer->lookahead) || iswpunct(lexer->lookahead)) && (lexer->lookahead != iter->first)) {
-                    if (free_form) {
+                    if (free_form && valid_symbols[FREE_CLOSE]) {
+                        return true;
+                    } else if (valid_symbols[iter->second]) {
+                        lexer->mark_end(lexer);
+                        lexer->result_symbol = iter->second;
                         return true;
                     }
-                    lexer->mark_end(lexer);
-                    lexer->result_symbol = iter->second;
-                    return true;
                 }
 
                 return false;

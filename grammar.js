@@ -30,7 +30,7 @@ module.exports = grammar({
         $.null_modifier_close,
         $.inline_math_close,
         $.inline_macro_close,
-        $.free_close,
+        $.free_form_close,
 
         $._dedent,
     ],
@@ -45,6 +45,25 @@ module.exports = grammar({
         [$.subscript, $._attached_modifier_conflict_open],
         [$.verbatim, $._attached_modifier_conflict_open],
         [$.null_modifier, $._attached_modifier_conflict_open],
+        [$._free_bold_open, $._attached_modifier_conflict_open],
+        [$._free_italic_open, $._attached_modifier_conflict_open],
+        [$._free_strikethrough_open, $._attached_modifier_conflict_open],
+        [$._free_underline_open, $._attached_modifier_conflict_open],
+        [$._free_spoiler_open, $._attached_modifier_conflict_open],
+        [$._free_superscript_open, $._attached_modifier_conflict_open],
+        [$._free_subscript_open, $._attached_modifier_conflict_open],
+        [$._free_verbatim_open, $._attached_modifier_conflict_open],
+        [$._free_null_modifier_open, $._attached_modifier_conflict_open],
+        [$._free_bold_open, $.bold, $._attached_modifier_conflict_open],
+        [$._free_italic_open, $.italic, $._attached_modifier_conflict_open],
+        [$._free_strikethrough_open, $.strikethrough, $._attached_modifier_conflict_open],
+        [$._free_underline_open, $.underline, $._attached_modifier_conflict_open],
+        [$._free_spoiler_open, $.spoiler, $._attached_modifier_conflict_open],
+        [$._free_superscript_open, $.superscript, $._attached_modifier_conflict_open],
+        [$._free_subscript_open, $.subscript, $._attached_modifier_conflict_open],
+        [$._free_verbatim_open, $.verbatim, $._attached_modifier_conflict_open],
+        [$._free_null_modifier_open, $.null_modifier, $._attached_modifier_conflict_open],
+        [$._attached_modifier_conflict_open],
 
         [$.bold_inline, $._attached_modifier_conflict_open],
         [$.italic_inline, $._attached_modifier_conflict_open],
@@ -79,6 +98,25 @@ module.exports = grammar({
         [$._subscript_inline_paragraph_segment],
         [$._null_modifier_inline_paragraph_segment],
         [$._verbatim_paragraph_segment],
+        [$._bold_free_paragraph_segment],
+        [$._italic_free_paragraph_segment],
+        [$._strikethrough_free_paragraph_segment],
+        [$._underline_free_paragraph_segment],
+        [$._spoiler_free_paragraph_segment],
+        [$._superscript_free_paragraph_segment],
+        [$._subscript_free_paragraph_segment],
+        [$._subscript_free_paragraph_segment],
+        [$._null_modifier_free_paragraph_segment],
+        // [$._bold_inline_free_paragraph_segment],
+        // [$._italic_inline_free_paragraph_segment],
+        // [$._strikethrough_inline_free_paragraph_segment],
+        // [$._underline_inline_free_paragraph_segment],
+        // [$._spoiler_inline_free_paragraph_segment],
+        // [$._superscript_inline_free_paragraph_segment],
+        // [$._subscript_inline_free_paragraph_segment],
+        // [$._subscript_inline_free_paragraph_segment],
+        // [$._null_modifier_inline_free_paragraph_segment],
+        [$._verbatim_free_paragraph_segment],
     ],
 
     precedences: ($) => [
@@ -98,7 +136,6 @@ module.exports = grammar({
         $.delimiting_modifier,
         $.attached_modifier,
         $.attached_modifier_inline,
-        $._attached_modifier_conflict_open,
     ],
 
     rules: {
@@ -140,7 +177,29 @@ module.exports = grammar({
         inline_math_open: (_) => "$",
         inline_macro_open: (_) => "&",
 
-        free_open: (_) => ("|"),
+        free_form_open: (_) => "|",
+        _free_bold_open: ($) => seq($.bold_open, $.free_form_open),
+        _free_italic_open: ($) => seq($.italic_open, $.free_form_open),
+        _free_strikethrough_open: ($) => seq($.strikethrough_open, $.free_form_open),
+        _free_underline_open: ($) => seq($.underline_open, $.free_form_open),
+        _free_spoiler_open: ($) => seq($.spoiler_open, $.free_form_open),
+        _free_superscript_open: ($) => seq($.superscript_open, $.free_form_open),
+        _free_subscript_open: ($) => seq($.subscript_open, $.free_form_open),
+        _free_verbatim_open: ($) => seq($.verbatim_open, $.free_form_open),
+        _free_null_modifier_open: ($) => seq($.null_modifier_open, $.free_form_open),
+        _free_inline_math_open: ($) => seq($.inline_math_open, $.free_form_open),
+        _free_inline_macro_open: ($) => seq($.inline_macro_open, $.free_form_open),
+        _free_bold_close: ($) => seq($.free_form_close, $.bold_close),
+        _free_italic_close: ($) => seq($.free_form_close, $.italic_close),
+        _free_strikethrough_close: ($) => seq($.free_form_close, $.strikethrough_close),
+        _free_underline_close: ($) => seq($.free_form_close, $.underline_close),
+        _free_spoiler_close: ($) => seq($.free_form_close, $.spoiler_close),
+        _free_superscript_close: ($) => seq($.free_form_close, $.superscript_close),
+        _free_subscript_close: ($) => seq($.free_form_close, $.subscript_close),
+        _free_verbatim_close: ($) => seq($.free_form_close, $.verbatim_close),
+        _free_null_modifier_close: ($) => seq($.free_form_close, $.null_modifier_close),
+        _free_inline_math_close: ($) => seq($.free_form_close, $.inline_math_close),
+        _free_inline_macro_close: ($) => seq($.free_form_close, $.inline_macro_close),
 
         escape_sequence: ($) => seq("\\", alias(prec(10, /./), $.escape_char)),
 
@@ -158,6 +217,7 @@ module.exports = grammar({
                             repeat1(
                                 choice(
                                     $._attached_modifier_conflict_open,
+                                    alias($.free_form_open, "_word"),
                                     $.attached_modifier,
                                 ),
                             ),
@@ -176,6 +236,7 @@ module.exports = grammar({
                                             repeat1(
                                                 choice(
                                                     $._attached_modifier_conflict_open,
+                                                    alias($.free_form_open, "_word"),
                                                     $.attached_modifier,
                                                 ),
                                             ),
@@ -670,6 +731,7 @@ module.exports = grammar({
 
         _attached_modifier_conflict_open: ($) =>
             alias(
+            seq(
                 choice(
                     $.bold_open,
                     $.italic_open,
@@ -680,8 +742,9 @@ module.exports = grammar({
                     $.subscript_open,
                     $.null_modifier_open,
                     $.verbatim_open,
-                    $.free_open,
                 ),
+                optional($.free_form_open),
+            ),
                 "_word",
             ),
 
@@ -864,15 +927,17 @@ function attached_modifier_free_para_seg($, type, inline) {
         .filter((x) => x != type)
         .map((x) => $[inline ? x + "_inline" : x]);
     type = inline ? type + "_inline" : type;
-    const paragraph_segment = $["_" + type + "_paragraph_segment"];
+    const paragraph_segment = $["_" + type + "_free_paragraph_segment"];
     return seq(
-        optional($._whitespace),
         choice(
             repeat1($._paragraph_inner),
             seq(
                 repeat1(
                     choice(
                         $._attached_modifier_conflict_open,
+                        // allow *_close token here to resolve conflicts like:
+                        // *| *bold* |*
+                        alias($[type + "_close"], "_word"),
                         ...other_attached_modifiers,
                     ),
                 ),
@@ -883,7 +948,7 @@ function attached_modifier_free_para_seg($, type, inline) {
             prec.right(
                 1,
                 seq(
-                    choice($._whitespace, $._punctuation),
+                    choice($._whitespace, $._punctuation, $[type + "_close"]),
                     optional(
                         choice(
                             repeat1($._paragraph_inner),
@@ -891,6 +956,7 @@ function attached_modifier_free_para_seg($, type, inline) {
                                 repeat1(
                                     choice(
                                         $._attached_modifier_conflict_open,
+                                        alias($[type + "_close"], "_word"),
                                         ...other_attached_modifiers,
                                     ),
                                 ),
@@ -906,13 +972,15 @@ function attached_modifier_free_para_seg($, type, inline) {
 
 function attached_modifier($, type) {
     const paragraph_segment = $["_" + type + "_paragraph_segment"];
-    const free_paragraph_segment = $["_" + type + "_free_paragraph_segment"];
+    const free_paragraph_segment = seq(
+        optional($._whitespace),
+        $["_" + type + "_free_paragraph_segment"]
+    );
     return choice(
     prec.dynamic(
         2,
         seq(
-            $[type + "_open"],
-            $.free_open,
+            $["_free_" + type + "_open"],
             free_paragraph_segment,
             repeat(
                 seq(
@@ -923,14 +991,19 @@ function attached_modifier($, type) {
                     ),
                 ),
             ),
-            $.free_close,
-            $[type + "_close"],
+            $["_free_" + type + "_close"],
         )
     ),
         prec.dynamic(
         1,
         seq(
             $[type + "_open"],
+            optional(
+                seq(
+                    alias($.free_form_open, "_word"),
+                    optional($._whitespace)
+                )
+            ),
             paragraph_segment,
             repeat(
                 seq(
