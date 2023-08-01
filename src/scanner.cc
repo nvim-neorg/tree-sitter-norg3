@@ -118,6 +118,7 @@ struct Scanner {
         int32_t valid_closing_symbol = get_valid_symbol(valid_symbols, BOLD_CLOSE, FREE_CLOSE);
 
         if (valid_closing_symbol != -1 && iswpunct(lexer->lookahead)) {
+            // std::cout << lexer->get_column(lexer) << std::endl;
             bool free_form = false;
             if (lexer->lookahead == '|' && valid_symbols[FREE_CLOSE]) {
                 advance();

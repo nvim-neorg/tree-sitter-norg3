@@ -45,24 +45,24 @@ module.exports = grammar({
         [$.subscript, $._attached_modifier_conflict_open],
         [$.verbatim, $._attached_modifier_conflict_open],
         [$.null_modifier, $._attached_modifier_conflict_open],
-        [$._free_bold_open, $._attached_modifier_conflict_open],
-        [$._free_italic_open, $._attached_modifier_conflict_open],
-        [$._free_strikethrough_open, $._attached_modifier_conflict_open],
-        [$._free_underline_open, $._attached_modifier_conflict_open],
-        [$._free_spoiler_open, $._attached_modifier_conflict_open],
-        [$._free_superscript_open, $._attached_modifier_conflict_open],
-        [$._free_subscript_open, $._attached_modifier_conflict_open],
-        [$._free_verbatim_open, $._attached_modifier_conflict_open],
-        [$._free_null_modifier_open, $._attached_modifier_conflict_open],
-        [$._free_bold_open, $.bold, $._attached_modifier_conflict_open],
-        [$._free_italic_open, $.italic, $._attached_modifier_conflict_open],
-        [$._free_strikethrough_open, $.strikethrough, $._attached_modifier_conflict_open],
-        [$._free_underline_open, $.underline, $._attached_modifier_conflict_open],
-        [$._free_spoiler_open, $.spoiler, $._attached_modifier_conflict_open],
-        [$._free_superscript_open, $.superscript, $._attached_modifier_conflict_open],
-        [$._free_subscript_open, $.subscript, $._attached_modifier_conflict_open],
-        [$._free_verbatim_open, $.verbatim, $._attached_modifier_conflict_open],
-        [$._free_null_modifier_open, $.null_modifier, $._attached_modifier_conflict_open],
+        // [$._free_bold_open, $._attached_modifier_conflict_open],
+        // [$._free_italic_open, $._attached_modifier_conflict_open],
+        // [$._free_strikethrough_open, $._attached_modifier_conflict_open],
+        // [$._free_underline_open, $._attached_modifier_conflict_open],
+        // [$._free_spoiler_open, $._attached_modifier_conflict_open],
+        // [$._free_superscript_open, $._attached_modifier_conflict_open],
+        // [$._free_subscript_open, $._attached_modifier_conflict_open],
+        // [$._free_verbatim_open, $._attached_modifier_conflict_open],
+        // [$._free_null_modifier_open, $._attached_modifier_conflict_open],
+        // [$._free_bold_open, $.bold, $._attached_modifier_conflict_open],
+        // [$._free_italic_open, $.italic, $._attached_modifier_conflict_open],
+        // [$._free_strikethrough_open, $.strikethrough, $._attached_modifier_conflict_open],
+        // [$._free_underline_open, $.underline, $._attached_modifier_conflict_open],
+        // [$._free_spoiler_open, $.spoiler, $._attached_modifier_conflict_open],
+        // [$._free_superscript_open, $.superscript, $._attached_modifier_conflict_open],
+        // [$._free_subscript_open, $.subscript, $._attached_modifier_conflict_open],
+        // [$._free_verbatim_open, $.verbatim, $._attached_modifier_conflict_open],
+        // [$._free_null_modifier_open, $.null_modifier, $._attached_modifier_conflict_open],
         [$._attached_modifier_conflict_open],
 
         [$.bold_inline, $._attached_modifier_conflict_open],
@@ -74,6 +74,56 @@ module.exports = grammar({
         [$.subscript_inline, $._attached_modifier_conflict_open],
         [$.verbatim_inline, $._attached_modifier_conflict_open],
         [$.null_modifier_inline, $._attached_modifier_conflict_open],
+
+        [$._bold_paragraph_segment, $._bold_free_paragraph_segment],
+        [$._italic_paragraph_segment, $._italic_free_paragraph_segment],
+        [$._strikethrough_paragraph_segment, $._strikethrough_free_paragraph_segment],
+        [$._underline_paragraph_segment, $._underline_free_paragraph_segment],
+        [$._spoiler_paragraph_segment, $._spoiler_free_paragraph_segment],
+        [$._superscript_paragraph_segment, $._superscript_free_paragraph_segment],
+        [$._subscript_paragraph_segment, $._subscript_free_paragraph_segment],
+        [$._verbatim_paragraph_segment, $._verbatim_free_paragraph_segment],
+        [$._null_modifier_paragraph_segment, $._null_modifier_free_paragraph_segment],
+
+        [$._bold_paragraph_segment, $._attached_modifier_conflict_open],
+        [$._italic_paragraph_segment, $._attached_modifier_conflict_open],
+        [$._strikethrough_paragraph_segment, $._attached_modifier_conflict_open],
+        [$._underline_paragraph_segment, $._attached_modifier_conflict_open],
+        [$._spoiler_paragraph_segment, $._attached_modifier_conflict_open],
+        [$._superscript_paragraph_segment, $._attached_modifier_conflict_open],
+        [$._subscript_paragraph_segment, $._attached_modifier_conflict_open],
+        [$._verbatim_paragraph_segment, $._attached_modifier_conflict_open],
+        [$._null_modifier_paragraph_segment, $._attached_modifier_conflict_open],
+
+        [$._bold_inline_paragraph_segment, $._attached_modifier_conflict_open],
+        [$._italic_inline_paragraph_segment, $._attached_modifier_conflict_open],
+        [$._strikethrough_inline_paragraph_segment, $._attached_modifier_conflict_open],
+        [$._underline_inline_paragraph_segment, $._attached_modifier_conflict_open],
+        [$._spoiler_inline_paragraph_segment, $._attached_modifier_conflict_open],
+        [$._superscript_inline_paragraph_segment, $._attached_modifier_conflict_open],
+        [$._subscript_inline_paragraph_segment, $._attached_modifier_conflict_open],
+        // [$._verbatim_inline_paragraph_segment, $._attached_modifier_conflict_open],
+        [$._null_modifier_inline_paragraph_segment, $._attached_modifier_conflict_open],
+
+        [$.bold, $._bold_paragraph_segment, $._attached_modifier_conflict_open],
+        [$.italic, $._italic_paragraph_segment, $._attached_modifier_conflict_open],
+        [$.strikethrough, $._strikethrough_paragraph_segment, $._attached_modifier_conflict_open],
+        [$.underline, $._underline_paragraph_segment, $._attached_modifier_conflict_open],
+        [$.spoiler, $._spoiler_paragraph_segment, $._attached_modifier_conflict_open],
+        [$.superscript, $._superscript_paragraph_segment, $._attached_modifier_conflict_open],
+        [$.subscript, $._subscript_paragraph_segment, $._attached_modifier_conflict_open],
+        [$.verbatim, $._verbatim_paragraph_segment, $._attached_modifier_conflict_open],
+        [$.null_modifier, $._null_modifier_paragraph_segment, $._attached_modifier_conflict_open],
+
+        [$.bold, $._bold_paragraph_segment],
+        [$.italic, $._italic_paragraph_segment],
+        [$.strikethrough, $._strikethrough_paragraph_segment],
+        [$.underline, $._underline_paragraph_segment],
+        [$.spoiler, $._spoiler_paragraph_segment],
+        [$.superscript, $._superscript_paragraph_segment],
+        [$.subscript, $._subscript_paragraph_segment],
+        [$.verbatim, $._verbatim_paragraph_segment],
+        [$.null_modifier, $._null_modifier_paragraph_segment],
 
         // TODO: Is it possible to remove this conflict?
         [$._paragraph_segment],
@@ -178,17 +228,17 @@ module.exports = grammar({
         inline_macro_open: (_) => "&",
 
         free_form_open: (_) => "|",
-        _free_bold_open: ($) => seq($.bold_open, $.free_form_open),
-        _free_italic_open: ($) => seq($.italic_open, $.free_form_open),
-        _free_strikethrough_open: ($) => seq($.strikethrough_open, $.free_form_open),
-        _free_underline_open: ($) => seq($.underline_open, $.free_form_open),
-        _free_spoiler_open: ($) => seq($.spoiler_open, $.free_form_open),
-        _free_superscript_open: ($) => seq($.superscript_open, $.free_form_open),
-        _free_subscript_open: ($) => seq($.subscript_open, $.free_form_open),
-        _free_verbatim_open: ($) => seq($.verbatim_open, $.free_form_open),
-        _free_null_modifier_open: ($) => seq($.null_modifier_open, $.free_form_open),
-        _free_inline_math_open: ($) => seq($.inline_math_open, $.free_form_open),
-        _free_inline_macro_open: ($) => seq($.inline_macro_open, $.free_form_open),
+        // _free_bold_open: ($) => seq($.bold_open, $.free_form_open),
+        // _free_italic_open: ($) => seq($.italic_open, $.free_form_open),
+        // _free_strikethrough_open: ($) => seq($.strikethrough_open, $.free_form_open),
+        // _free_underline_open: ($) => seq($.underline_open, $.free_form_open),
+        // _free_spoiler_open: ($) => seq($.spoiler_open, $.free_form_open),
+        // _free_superscript_open: ($) => seq($.superscript_open, $.free_form_open),
+        // _free_subscript_open: ($) => seq($.subscript_open, $.free_form_open),
+        // _free_verbatim_open: ($) => seq($.verbatim_open, $.free_form_open),
+        // _free_null_modifier_open: ($) => seq($.null_modifier_open, $.free_form_open),
+        // _free_inline_math_open: ($) => seq($.inline_math_open, $.free_form_open),
+        // _free_inline_macro_open: ($) => seq($.inline_macro_open, $.free_form_open),
         _free_bold_close: ($) => seq($.free_form_close, $.bold_close),
         _free_italic_close: ($) => seq($.free_form_close, $.italic_close),
         _free_strikethrough_close: ($) => seq($.free_form_close, $.strikethrough_close),
@@ -731,20 +781,20 @@ module.exports = grammar({
 
         _attached_modifier_conflict_open: ($) =>
             alias(
-            seq(
-                choice(
-                    $.bold_open,
-                    $.italic_open,
-                    $.strikethrough_open,
-                    $.underline_open,
-                    $.spoiler_open,
-                    $.superscript_open,
-                    $.subscript_open,
-                    $.null_modifier_open,
-                    $.verbatim_open,
+                seq(
+                    choice(
+                        $.bold_open,
+                        $.italic_open,
+                        $.strikethrough_open,
+                        $.underline_open,
+                        $.spoiler_open,
+                        $.superscript_open,
+                        $.subscript_open,
+                        $.null_modifier_open,
+                        $.verbatim_open,
+                    ),
+                    optional($.free_form_open),
                 ),
-                optional($.free_form_open),
-            ),
                 "_word",
             ),
 
@@ -881,6 +931,7 @@ function attached_modifier_para_seg($, type, inline) {
                 repeat1(
                     choice(
                         $._attached_modifier_conflict_open,
+                        alias($.free_form_open, "_word"),
                         ...other_attached_modifiers,
                     ),
                 ),
@@ -898,6 +949,7 @@ function attached_modifier_para_seg($, type, inline) {
                             repeat1(
                                 choice(
                                     $._attached_modifier_conflict_open,
+                                    alias($.free_form_open, "_word"),
                                     ...other_attached_modifiers,
                                 ),
                             ),
@@ -935,6 +987,7 @@ function attached_modifier_free_para_seg($, type, inline) {
                 repeat1(
                     choice(
                         $._attached_modifier_conflict_open,
+                        alias($.free_form_open, "_word"),
                         // allow *_close token here to resolve conflicts like:
                         // *| *bold* |*
                         alias($[type + "_close"], "_word"),
@@ -946,7 +999,7 @@ function attached_modifier_free_para_seg($, type, inline) {
         ),
         repeat(
             prec.right(
-                1,
+                2,
                 seq(
                     choice($._whitespace, $._punctuation, $[type + "_close"]),
                     optional(
@@ -956,6 +1009,7 @@ function attached_modifier_free_para_seg($, type, inline) {
                                 repeat1(
                                     choice(
                                         $._attached_modifier_conflict_open,
+                                        alias($.free_form_open, "_word"),
                                         alias($[type + "_close"], "_word"),
                                         ...other_attached_modifiers,
                                     ),
@@ -980,7 +1034,9 @@ function attached_modifier($, type) {
     prec.dynamic(
         2,
         seq(
-            $["_free_" + type + "_open"],
+            // $["_free_" + type + "_open"],
+            $[type + "_open"],
+            $.free_form_open,
             free_paragraph_segment,
             repeat(
                 seq(

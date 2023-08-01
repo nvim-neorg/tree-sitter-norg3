@@ -654,11 +654,6 @@
     }
   },
   {
-    "type": "inline_math_open",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "italic",
     "named": true,
     "fields": {},
@@ -2168,10 +2163,6 @@
   },
   {
     "type": "inline_macro_close",
-    "named": true
-  },
-  {
-    "type": "inline_macro_open",
     "named": true
   },
   {

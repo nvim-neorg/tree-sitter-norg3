@@ -65,9 +65,11 @@ _| some text ||_
   (paragraph
     (italic
       (italic_open)
+      (free_form_open)
       (bold
         (bold_open)
         (bold_close))
+      (free_form_close)
       (italic_close)))
   (paragraph
     (underline
@@ -75,3 +77,48 @@ _| some text ||_
       (free_form_open)
       (free_form_close)
       (underline_close))))
+
+================================================================================
+Repeating free form modifier delimiter
+================================================================================
+*||some text|*
+--------------------------------------------------------------------------------
+
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (free_form_close)
+      (bold_close))))
+
+================================================================================
+Failed repeating free form modifier delimiter
+================================================================================
+*||some text*
+--------------------------------------------------------------------------------
+
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (bold_close))))
+
+================================================================================
+Invalid free form modifiers
+================================================================================
+*|some text*
+
+*some text|*
+--------------------------------------------------------------------------------
+
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (bold_close)))
+  (paragraph
+    (bold
+      (bold_open)
+      (bold_close))))
+
