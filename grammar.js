@@ -58,9 +58,6 @@ module.exports = grammar({
         [$.verbatim_inline, $._attached_modifier_conflict_open],
         [$.null_modifier_inline, $._attached_modifier_conflict_open],
 
-        // TODO: Is it possible to remove this conflict?
-        [$._paragraph_segment],
-
         [$._title_inline],
         [$._bold_paragraph_segment],
         [$._italic_paragraph_segment],
@@ -104,6 +101,7 @@ module.exports = grammar({
         $.attached_modifier,
         $.attached_modifier_inline,
         $._attached_modifier_conflict_open,
+        $.link_to_detached_modifier,
     ],
 
     rules: {
@@ -160,12 +158,20 @@ module.exports = grammar({
                         choice(
                             $._attached_modifier_conflict_open,
                             $.attached_modifier,
+                            // Lower precedence than in the _paragraph_segment
+                            prec(-1, $.link),
+                            prec(-1, $.anchor),
                         ),
                     ),
                     optional($._paragraph_segment),
                 ),
             ),
 
+        // NOTE: If I wasn't on a deadline with this this would be so much cleaner.
+        // I expect to come back to this someday and rewrite it. It won't require touching
+        // other part of the grammar. The problems that come with this are ensuring that attached
+        // modifiers can only begin *after* a whitespace, but allowing links and other elements to
+        // freely intermix, all while supporting link modifiers.
         _paragraph_segment: ($) =>
             prec.right(
                 seq(
@@ -210,7 +216,12 @@ module.exports = grammar({
                     repeat(
                         prec.right(
                             seq(
-                                choice($._whitespace, $._punctuation),
+                                choice(
+                                    $._whitespace,
+                                    $._punctuation,
+                                    $.link,
+                                    $.anchor,
+                                ),
                                 optional(
                                     choice(
                                         repeat1($._paragraph_inner),
@@ -295,6 +306,8 @@ module.exports = grammar({
                                 choice(
                                     $._attached_modifier_conflict_open,
                                     $.attached_modifier_inline,
+                                    $.link_inline,
+                                    $.anchor_inline,
                                 ),
                             ),
                             optional($._title_inline),
@@ -302,7 +315,11 @@ module.exports = grammar({
                     ),
                     repeat(
                         seq(
-                            $._whitespace,
+                            choice(
+                                $._whitespace,
+                                $.link_inline,
+                                $.anchor_inline,
+                            ),
                             optional(
                                 choice(
                                     repeat1($._paragraph_inner),
@@ -311,6 +328,8 @@ module.exports = grammar({
                                             choice(
                                                 $._attached_modifier_conflict_open,
                                                 $.attached_modifier_inline,
+                                                $.link_inline,
+                                                $.anchor_inline,
                                             ),
                                         ),
                                         optional($._title_inline),
@@ -914,14 +933,87 @@ module.exports = grammar({
         null_modifier_inline: ($) =>
             attached_modifier_inline($, "null_modifier"),
 
-        // link: $ => seq(
-        //
-        // ),
+        link: ($) =>
+            prec.right(seq($.link_location, optional($.link_description))),
 
-        // link_location: $ => seq(
-        //     "{",
-        //     "}"
-        // ),
+        anchor: ($) =>
+            prec.right(
+                seq(
+                    $.link_description,
+                    optional(choice($.link_location, $.link_description)),
+                ),
+            ),
+
+        url: ($) => repeat1(choice($._word, $._punctuation)),
+
+        link_to_detached_modifier: ($) =>
+            choice(
+                alias(repeat1("*"), $.heading),
+                alias("$", $.definition),
+                alias("^", $.footnote),
+            ),
+
+        // FIXME: double newlines are permitted within links here.
+        // FIXME: Allow attached modifiers to contain links
+        // TODO: Give the paragraph segments a node name
+        // TODO: Give field names to the description and location
+        link_location: ($) =>
+            seq(
+                "{",
+                choice(
+                    $.url,
+                    seq(
+                        $.link_to_detached_modifier,
+                        $._whitespace,
+                        $._paragraph_segment,
+                        repeat(seq(newline, $._paragraph_segment)),
+                    ),
+                ),
+                "}",
+            ),
+
+        link_description: ($) =>
+            seq(
+                "[",
+                $._paragraph_segment,
+                repeat(seq(newline, $._paragraph_segment)),
+                "]",
+            ),
+
+        link_location_inline: ($) =>
+            seq(
+                "{",
+                choice(
+                    $.url,
+                    seq($.link_to_detached_modifier, $._whitespace, $.title),
+                ),
+                "}",
+            ),
+
+        link_description_inline: ($) => seq("[", $.title, "]"),
+
+        link_inline: ($) =>
+            prec.right(
+                2,
+                seq(
+                    $.link_location_inline,
+                    optional($.link_description_inline),
+                ),
+            ),
+
+        anchor_inline: ($) =>
+            prec.right(
+                2,
+                seq(
+                    $.link_description_inline,
+                    optional(
+                        choice(
+                            $.link_location_inline,
+                            $.link_description_inline,
+                        ),
+                    ),
+                ),
+            ),
     },
 });
 
@@ -936,6 +1028,8 @@ function attached_modifier_para_seg($, type, inline) {
         "subscript",
         "null_modifier",
         "verbatim",
+        "link",
+        "anchor",
         // "inline_math",
         // "inline_macro",
     ]
