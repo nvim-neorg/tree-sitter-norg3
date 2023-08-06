@@ -87,7 +87,6 @@ module.exports = grammar({
         [$.horizontal_line, $.underline_open],
         [$.footnote_list_single, $.superscript_open],
         [$.table_cell_single, $.link_modifier],
-        [$.slide, $.non_structural],
     ],
 
     inlines: ($) => [$._title_inline],
@@ -350,7 +349,7 @@ module.exports = grammar({
                     $.heading_stars,
                     $._whitespace,
                     optional(seq($.detached_modifier_extension, $._whitespace)),
-                    choice($.title, $.slide),
+                    $.title,
                     newline_or_eof,
                     repeat(choice($.heading, $.non_structural)),
                     optional(choice($._dedent, $.weak_delimiting_modifier)),
@@ -1016,15 +1015,15 @@ module.exports = grammar({
                 ),
             ),
 
-        slide: ($) =>
-            seq(
-                ":",
-                newline,
-                choice(
-                    seq(repeat($.non_structural), $.paragraph),
-                    seq(repeat1($.non_structural), newline_or_eof),
-                ),
-            ),
+        //slide: ($) =>
+        //    seq(
+        //        ":",
+        //        newline,
+        //        choice(
+        //            seq(repeat($.non_structural), $.paragraph),
+        //            seq(repeat1($.non_structural), newline_or_eof),
+        //        ),
+        //    ),
     },
 });
 

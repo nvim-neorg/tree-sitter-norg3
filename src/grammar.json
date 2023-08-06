@@ -1009,8 +1009,17 @@
             ]
           },
           {
-            "type": "SYMBOL",
-            "name": "paragraph"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "paragraph"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "slide"
+              }
+            ]
           },
           {
             "type": "REPEAT",
