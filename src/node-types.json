@@ -696,6 +696,10 @@
           "named": true
         },
         {
+          "type": "slide",
+          "named": true
+        },
+        {
           "type": "title",
           "named": true
         },
@@ -1339,6 +1343,21 @@
         },
         {
           "type": "tag_name",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "slide",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "non_structural",
           "named": true
         }
       ]
