@@ -270,12 +270,13 @@ extern "C" {
         // This data can be stored contiguously in memory without needing terminator characters
         // or the like thanks to the `vector-size` element.
 
-        for (const std::pair< char, std::vector<uint16_t> >& kv : scanner->indents) {
-            uint16_t size = kv.second.size();
-            buffer[total_size] = kv.first;
+        // NOTE: We cannot use range-based for loops as they are a post C++11 addition. Fun.
+        for (std::unordered_map< char, std::vector<uint16_t> >::iterator kv = scanner->indents.begin(); kv != scanner->indents.end(); ++kv) {
+            uint16_t size = kv->second.size();
+            buffer[total_size] = kv->first;
 
             std::memcpy(&buffer[total_size + 1], &size, sizeof(size));
-            std::memcpy(&buffer[total_size + 3], kv.second.data(), size * sizeof(size));
+            std::memcpy(&buffer[total_size + 3], kv->second.data(), size * sizeof(size));
 
             total_size += (size * sizeof(size)) + 3;
         }
