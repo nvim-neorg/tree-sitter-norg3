@@ -54,9 +54,18 @@ struct Scanner {
     // Serves as a lookup table from a character to a token type.
     std::unordered_map<int32_t, TokenType> attached_modifiers;
 
+    // NOTE: Anyone know of a better way of doing this for pre-C++11 compilers? Surely there must be a shorthand.
     Scanner() {
-        typedef std::pair<int32_t, TokenType> Pair;
-        attached_modifiers = std::unordered_map<int32_t, TokenType>({ Pair {'*', BOLD_CLOSE}, Pair {'/', ITALIC_CLOSE}, Pair {'_', UNDERLINE_CLOSE}, Pair {'-', STRIKETHROUGH_CLOSE}, Pair {'%', NULL_MODIFIER_CLOSE}, Pair {'`', VERBATIM_CLOSE}, Pair {'!', SPOILER_CLOSE}, Pair {'^', SUPERSCRIPT_CLOSE}, Pair {',', SUBSCRIPT_CLOSE}, Pair {'&', INLINE_MACRO_CLOSE} });
+        attached_modifiers['*'] = BOLD_CLOSE;
+        attached_modifiers['/'] = ITALIC_CLOSE;
+        attached_modifiers['_'] = UNDERLINE_CLOSE;
+        attached_modifiers['-'] = STRIKETHROUGH_CLOSE;
+        attached_modifiers['%'] = NULL_MODIFIER_CLOSE;
+        attached_modifiers['`'] = VERBATIM_CLOSE;
+        attached_modifiers['!'] = SPOILER_CLOSE;
+        attached_modifiers['^'] = SUPERSCRIPT_CLOSE;
+        attached_modifiers[','] = SUBSCRIPT_CLOSE;
+        attached_modifiers['&'] = INLINE_MACRO_CLOSE;
     }
 
     /**
@@ -261,7 +270,7 @@ extern "C" {
         // This data can be stored contiguously in memory without needing terminator characters
         // or the like thanks to the `vector-size` element.
 
-        for (const std::pair< char, std::vector<uint16_t> >& kv : scanner->indents) {
+        for (const std::pair<char, std::vector<uint16_t>>& kv : scanner->indents) {
             uint16_t size = kv.second.size();
             buffer[total_size] = kv.first;
 
