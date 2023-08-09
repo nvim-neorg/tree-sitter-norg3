@@ -6,8 +6,8 @@ Standalone markup
 (document
   (paragraph
     (bold
-      (bold_open)
-      (bold_close))))
+      (open)
+      (close))))
 
 ================================================================================
 Invalid attached modifiers
@@ -53,8 +53,8 @@ Conflicts vs Closed Markup - Left-flanking, internal
 (document
   (paragraph
     (bold
-      (bold_open)
-      (bold_close))))
+      (open)
+      (close))))
 
 ================================================================================
 Conflicts vs Closed Markup - Left-flanking, external
@@ -65,8 +65,8 @@ Conflicts vs Closed Markup - Left-flanking, external
 (document
   (paragraph
     (bold
-      (bold_open)
-      (bold_close))))
+      (open)
+      (close))))
 
 ================================================================================
 Conflicts vs Closed Markup - Right-flanking, internal
@@ -77,8 +77,8 @@ Conflicts vs Closed Markup - Right-flanking, internal
 (document
   (paragraph
     (bold
-      (bold_open)
-      (bold_close))))
+      (open)
+      (close))))
 
 ================================================================================
 Conflicts vs Closed Markup - Right-flanking, external
@@ -89,8 +89,8 @@ Conflicts vs Closed Markup - Right-flanking, external
 (document
   (paragraph
     (bold
-      (bold_open)
-      (bold_close))))
+      (open)
+      (close))))
 
 ================================================================================
 Conflicts vs Closed Markup - Left-flanking, internal
@@ -101,8 +101,8 @@ Conflicts vs Closed Markup - Left-flanking, internal
 (document
   (paragraph
     (bold
-      (bold_open)
-      (bold_close))))
+      (open)
+      (close))))
 
 ================================================================================
 Consecutive - Duplex, dissimilar
@@ -113,11 +113,11 @@ Consecutive - Duplex, dissimilar
 (document
   (paragraph
     (bold
-      (bold_open)
-      (bold_close))
+      (open)
+      (close))
     (italic
-      (italic_open)
-      (italic_close))))
+      (open)
+      (close))))
 
 ================================================================================
 Consecutive - Duplex, similar
@@ -128,8 +128,8 @@ Consecutive - Duplex, similar
 (document
   (paragraph
     (bold
-      (bold_open)
-      (bold_close))))
+      (open)
+      (close))))
 
 ================================================================================
 Nested - Multiplex
@@ -140,12 +140,12 @@ Nested - Multiplex
 (document
   (paragraph
     (bold
-      (bold_open)
+      (open)
       (italic
-        (italic_open)
-        (italic_close))
-      (bold_close))
+        (open)
+        (close))
+      (close))
     (italic
-      (italic_open)
-      (italic_close))))
+      (open)
+      (close))))
 

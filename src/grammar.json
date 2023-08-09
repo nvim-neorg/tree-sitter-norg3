@@ -6364,8 +6364,13 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "bold_open"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "bold_open"
+            },
+            "named": true,
+            "value": "open"
           },
           {
             "type": "SYMBOL",
@@ -6431,8 +6436,13 @@
             }
           },
           {
-            "type": "SYMBOL",
-            "name": "bold_close"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "bold_close"
+            },
+            "named": true,
+            "value": "close"
           }
         ]
       }
@@ -6444,8 +6454,13 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "italic_open"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "italic_open"
+            },
+            "named": true,
+            "value": "open"
           },
           {
             "type": "SYMBOL",
@@ -6511,8 +6526,13 @@
             }
           },
           {
-            "type": "SYMBOL",
-            "name": "italic_close"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "italic_close"
+            },
+            "named": true,
+            "value": "close"
           }
         ]
       }
@@ -6524,8 +6544,13 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "strikethrough_open"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "strikethrough_open"
+            },
+            "named": true,
+            "value": "open"
           },
           {
             "type": "SYMBOL",
@@ -6591,8 +6616,13 @@
             }
           },
           {
-            "type": "SYMBOL",
-            "name": "strikethrough_close"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "strikethrough_close"
+            },
+            "named": true,
+            "value": "close"
           }
         ]
       }
@@ -6604,8 +6634,13 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "underline_open"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "underline_open"
+            },
+            "named": true,
+            "value": "open"
           },
           {
             "type": "SYMBOL",
@@ -6671,8 +6706,13 @@
             }
           },
           {
-            "type": "SYMBOL",
-            "name": "underline_close"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "underline_close"
+            },
+            "named": true,
+            "value": "close"
           }
         ]
       }
@@ -6684,8 +6724,13 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "spoiler_open"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "spoiler_open"
+            },
+            "named": true,
+            "value": "open"
           },
           {
             "type": "SYMBOL",
@@ -6751,8 +6796,13 @@
             }
           },
           {
-            "type": "SYMBOL",
-            "name": "spoiler_close"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "spoiler_close"
+            },
+            "named": true,
+            "value": "close"
           }
         ]
       }
@@ -6764,8 +6814,13 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "superscript_open"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "superscript_open"
+            },
+            "named": true,
+            "value": "open"
           },
           {
             "type": "SYMBOL",
@@ -6831,8 +6886,13 @@
             }
           },
           {
-            "type": "SYMBOL",
-            "name": "superscript_close"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "superscript_close"
+            },
+            "named": true,
+            "value": "close"
           }
         ]
       }
@@ -6844,8 +6904,13 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "subscript_open"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "subscript_open"
+            },
+            "named": true,
+            "value": "open"
           },
           {
             "type": "SYMBOL",
@@ -6911,8 +6976,13 @@
             }
           },
           {
-            "type": "SYMBOL",
-            "name": "subscript_close"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "subscript_close"
+            },
+            "named": true,
+            "value": "close"
           }
         ]
       }
@@ -6924,8 +6994,13 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "verbatim_open"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "verbatim_open"
+            },
+            "named": true,
+            "value": "open"
           },
           {
             "type": "SYMBOL",
@@ -6973,8 +7048,13 @@
             }
           },
           {
-            "type": "SYMBOL",
-            "name": "verbatim_close"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "verbatim_close"
+            },
+            "named": true,
+            "value": "close"
           }
         ]
       }
@@ -6986,8 +7066,13 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "null_modifier_open"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "null_modifier_open"
+            },
+            "named": true,
+            "value": "open"
           },
           {
             "type": "SYMBOL",
@@ -7053,8 +7138,13 @@
             }
           },
           {
-            "type": "SYMBOL",
-            "name": "null_modifier_close"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "null_modifier_close"
+            },
+            "named": true,
+            "value": "close"
           }
         ]
       }
@@ -7066,16 +7156,26 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "bold_open"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "bold_open"
+            },
+            "named": true,
+            "value": "open"
           },
           {
             "type": "SYMBOL",
             "name": "_bold_inline_paragraph_segment"
           },
           {
-            "type": "SYMBOL",
-            "name": "bold_close"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "bold_close"
+            },
+            "named": true,
+            "value": "close"
           }
         ]
       }
@@ -7087,16 +7187,26 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "italic_open"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "italic_open"
+            },
+            "named": true,
+            "value": "open"
           },
           {
             "type": "SYMBOL",
             "name": "_italic_inline_paragraph_segment"
           },
           {
-            "type": "SYMBOL",
-            "name": "italic_close"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "italic_close"
+            },
+            "named": true,
+            "value": "close"
           }
         ]
       }
@@ -7108,16 +7218,26 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "strikethrough_open"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "strikethrough_open"
+            },
+            "named": true,
+            "value": "open"
           },
           {
             "type": "SYMBOL",
             "name": "_strikethrough_inline_paragraph_segment"
           },
           {
-            "type": "SYMBOL",
-            "name": "strikethrough_close"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "strikethrough_close"
+            },
+            "named": true,
+            "value": "close"
           }
         ]
       }
@@ -7129,16 +7249,26 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "underline_open"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "underline_open"
+            },
+            "named": true,
+            "value": "open"
           },
           {
             "type": "SYMBOL",
             "name": "_underline_inline_paragraph_segment"
           },
           {
-            "type": "SYMBOL",
-            "name": "underline_close"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "underline_close"
+            },
+            "named": true,
+            "value": "close"
           }
         ]
       }
@@ -7150,16 +7280,26 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "spoiler_open"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "spoiler_open"
+            },
+            "named": true,
+            "value": "open"
           },
           {
             "type": "SYMBOL",
             "name": "_spoiler_inline_paragraph_segment"
           },
           {
-            "type": "SYMBOL",
-            "name": "spoiler_close"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "spoiler_close"
+            },
+            "named": true,
+            "value": "close"
           }
         ]
       }
@@ -7171,16 +7311,26 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "superscript_open"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "superscript_open"
+            },
+            "named": true,
+            "value": "open"
           },
           {
             "type": "SYMBOL",
             "name": "_superscript_inline_paragraph_segment"
           },
           {
-            "type": "SYMBOL",
-            "name": "superscript_close"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "superscript_close"
+            },
+            "named": true,
+            "value": "close"
           }
         ]
       }
@@ -7192,16 +7342,26 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "subscript_open"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "subscript_open"
+            },
+            "named": true,
+            "value": "open"
           },
           {
             "type": "SYMBOL",
             "name": "_subscript_inline_paragraph_segment"
           },
           {
-            "type": "SYMBOL",
-            "name": "subscript_close"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "subscript_close"
+            },
+            "named": true,
+            "value": "close"
           }
         ]
       }
@@ -7213,16 +7373,26 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "verbatim_open"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "verbatim_open"
+            },
+            "named": true,
+            "value": "open"
           },
           {
             "type": "SYMBOL",
             "name": "_verbatim_paragraph_segment"
           },
           {
-            "type": "SYMBOL",
-            "name": "verbatim_close"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "verbatim_close"
+            },
+            "named": true,
+            "value": "close"
           }
         ]
       }
@@ -7234,16 +7404,26 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "null_modifier_open"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "null_modifier_open"
+            },
+            "named": true,
+            "value": "open"
           },
           {
             "type": "SYMBOL",
             "name": "_null_modifier_inline_paragraph_segment"
           },
           {
-            "type": "SYMBOL",
-            "name": "null_modifier_close"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "null_modifier_close"
+            },
+            "named": true,
+            "value": "close"
           }
         ]
       }

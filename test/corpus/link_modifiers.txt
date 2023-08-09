@@ -1,5 +1,5 @@
 ================================================================================
-Link modifier at the beginning
+Link Modifier at the Beginning
 ================================================================================
 text:*bold*:text
 --------------------------------------------------------------------------------
@@ -8,12 +8,12 @@ text:*bold*:text
   (paragraph
     (link_modifier)
     (bold
-      (bold_open)
-      (bold_close))
+      (open)
+      (close))
     (link_modifier)))
 
 ================================================================================
-Link modifier in the middle
+Link Modifier in the Middle
 ================================================================================
 preceding text text:*bold*:text succeeding text
 --------------------------------------------------------------------------------
@@ -22,12 +22,12 @@ preceding text text:*bold*:text succeeding text
   (paragraph
     (link_modifier)
     (bold
-      (bold_open)
-      (bold_close))
+      (open)
+      (close))
     (link_modifier)))
 
 ================================================================================
-Left-side link modifier at the beginning
+Left-side Link Modifier at the Beginning
 ================================================================================
 text:*bold*
 --------------------------------------------------------------------------------
@@ -36,11 +36,11 @@ text:*bold*
   (paragraph
     (link_modifier)
     (bold
-      (bold_open)
-      (bold_close))))
+      (open)
+      (close))))
 
 ================================================================================
-Right-side link modifier at the beginning
+Right-side Link Modifier at the Beginning
 ================================================================================
 *bold*:text
 --------------------------------------------------------------------------------
@@ -48,12 +48,12 @@ Right-side link modifier at the beginning
 (document
   (paragraph
     (bold
-      (bold_open)
-      (bold_close))
+      (open)
+      (close))
     (link_modifier)))
 
 ================================================================================
-Left-side link modifier in the middle
+Left-side Link Modifier in the Middle
 ================================================================================
 preceding text text:*bold* succeeding text
 --------------------------------------------------------------------------------
@@ -62,11 +62,11 @@ preceding text text:*bold* succeeding text
   (paragraph
     (link_modifier)
     (bold
-      (bold_open)
-      (bold_close))))
+      (open)
+      (close))))
 
 ================================================================================
-Right-side link modifier in the middle
+Right-side Link Modifier in the Middle
 ================================================================================
 preceding text *bold*:text succeeding text
 --------------------------------------------------------------------------------
@@ -74,12 +74,12 @@ preceding text *bold*:text succeeding text
 (document
   (paragraph
     (bold
-      (bold_open)
-      (bold_close))
+      (open)
+      (close))
     (link_modifier)))
 
 ================================================================================
-Left-side, adjacent, not a modifier, beginning of line
+Left-side, Adjacent, not a Modifier, Beginning of Line
 ================================================================================
 :*bold* succeeding text
 --------------------------------------------------------------------------------
@@ -87,11 +87,11 @@ Left-side, adjacent, not a modifier, beginning of line
 (document
   (paragraph
     (bold
-      (bold_open)
-      (bold_close))))
+      (open)
+      (close))))
 
 ================================================================================
-Left-side, adjacent, not a modifier, middle of line
+Left-side, Adjacent, not a Modifier, Middle of Line
 ================================================================================
 preceding text :*bold*
 --------------------------------------------------------------------------------
@@ -99,11 +99,11 @@ preceding text :*bold*
 (document
   (paragraph
     (bold
-      (bold_open)
-      (bold_close))))
+      (open)
+      (close))))
 
 ================================================================================
-Right-side, adjacent, not a modifier, beginning of line
+Right-side, Adjacent, not a Modifier, Beginning of Line
 ================================================================================
 *bold*: succeeding text
 --------------------------------------------------------------------------------
@@ -111,11 +111,11 @@ Right-side, adjacent, not a modifier, beginning of line
 (document
   (paragraph
     (bold
-      (bold_open)
-      (bold_close))))
+      (open)
+      (close))))
 
 ================================================================================
-Right-side, adjacent, not a modifier, middle of line
+Right-side, Adjacent, not a Modifier, Middle of Line
 ================================================================================
 preceding text *bold*: succeeding text
 --------------------------------------------------------------------------------
@@ -123,11 +123,11 @@ preceding text *bold*: succeeding text
 (document
   (paragraph
     (bold
-      (bold_open)
-      (bold_close))))
+      (open)
+      (close))))
 
 ================================================================================
-Left-side, adjacent punctuation, not a modifier, beginning of line
+Left-side, Adjacent Punctuation, not a Modifier, Beginning of Line
 ================================================================================
 ,:*bold* succeeding text
 --------------------------------------------------------------------------------
@@ -136,7 +136,7 @@ Left-side, adjacent punctuation, not a modifier, beginning of line
   (paragraph))
 
 ================================================================================
-Right-side, adjacent punctuation, not a modifier, beginning of line
+Right-side, Adjacent Punctuation, not a Modifier, Beginning of Line
 ================================================================================
 *bold*:, succeeding text
 --------------------------------------------------------------------------------
@@ -144,11 +144,11 @@ Right-side, adjacent punctuation, not a modifier, beginning of line
 (document
   (paragraph
     (bold
-      (bold_open)
-      (bold_close))))
+      (open)
+      (close))))
 
 ================================================================================
-Left-side, adjacent punctuation, not a modifier, middle of line
+Left-side, Adjacent Punctuation, not a Modifier, Middle of Line
 ================================================================================
 preceding text ,:*bold* succeeding text
 --------------------------------------------------------------------------------
@@ -157,7 +157,7 @@ preceding text ,:*bold* succeeding text
   (paragraph))
 
 ================================================================================
-Right-side, adjacent punctuation, not a modifier, middle of line
+Right-side, Adjacent Punctuation, not a Modifier, Middle of Line
 ================================================================================
 preceding text *bold*:, succeeding text
 --------------------------------------------------------------------------------
@@ -165,5 +165,5 @@ preceding text *bold*:, succeeding text
 (document
   (paragraph
     (bold
-      (bold_open)
-      (bold_close))))
+      (open)
+      (close))))

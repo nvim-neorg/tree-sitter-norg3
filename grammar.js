@@ -1092,7 +1092,7 @@ function attached_modifier($, type) {
     return prec.dynamic(
         1,
         seq(
-            $[type + "_open"],
+            alias($[type + "_open"], $.open),
             paragraph_segment,
             repeat(
                 seq(
@@ -1104,7 +1104,7 @@ function attached_modifier($, type) {
                     ),
                 ),
             ),
-            $[type + "_close"],
+            alias($[type + "_close"], $.close),
         ),
     );
 }
@@ -1113,7 +1113,7 @@ function attached_modifier_verbatim($, type) {
     return prec.dynamic(
         2,
         seq(
-            $[type + "_open"],
+            alias($[type + "_open"], $.open),
             $._verbatim_paragraph_segment,
             repeat(
                 seq(
@@ -1122,7 +1122,7 @@ function attached_modifier_verbatim($, type) {
                     $._verbatim_paragraph_segment,
                 ),
             ),
-            $[type + "_close"],
+            alias($[type + "_close"], $.close),
         ),
     );
 }
@@ -1131,9 +1131,9 @@ function attached_modifier_verbatim_inline($, type) {
     return prec.dynamic(
         2,
         seq(
-            $[type + "_open"],
+            alias($[type + "_open"], $.open),
             $._verbatim_paragraph_segment,
-            $[type + "_close"],
+            alias($[type + "_close"], $.close),
         ),
     );
 }
@@ -1142,9 +1142,9 @@ function attached_modifier_inline($, type) {
     return prec.dynamic(
         1,
         seq(
-            $[type + "_open"],
+            alias($[type + "_open"], $.open),
             $["_" + type + "_inline_paragraph_segment"],
-            $[type + "_close"],
+            alias($[type + "_close"], $.close),
         ),
     );
 }
