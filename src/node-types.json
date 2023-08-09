@@ -1045,6 +1045,10 @@
           "named": true
         },
         {
+          "type": "end",
+          "named": true
+        },
+        {
           "type": "parameter",
           "named": true
         },
@@ -1341,6 +1345,10 @@
       "types": [
         {
           "type": "content",
+          "named": true
+        },
+        {
+          "type": "end",
           "named": true
         },
         {
@@ -2404,6 +2412,10 @@
       "required": true,
       "types": [
         {
+          "type": "end",
+          "named": true
+        },
+        {
           "type": "parameter",
           "named": true
         },
@@ -2555,6 +2567,10 @@
   },
   {
     "type": "definition",
+    "named": true
+  },
+  {
+    "type": "end",
     "named": true
   },
   {

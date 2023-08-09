@@ -67,7 +67,8 @@ Long-range Footnote with Complex Content
       (title)
       (verbatim_ranged_tag
         (tag_name
-          (identifier))))))
+          (identifier))
+        (end)))))
 
 ================================================================================
 Long-range Footnote with Ending not on a Newline
@@ -85,10 +86,10 @@ text ^^
       (title)
       (verbatim_ranged_tag
         (tag_name
-          (identifier)))
+          (identifier))
+        (end))
       (paragraph)
       (MISSING "^^"))))
-
 
 ================================================================================
 Definition
@@ -159,7 +160,8 @@ $$
       (title)
       (verbatim_ranged_tag
         (tag_name
-          (identifier))))))
+          (identifier))
+        (end)))))
 
 ================================================================================
 Long-range Definition with Ending not on a Newline
@@ -177,6 +179,7 @@ text $$
       (title)
       (verbatim_ranged_tag
         (tag_name
-          (identifier)))
+          (identifier))
+        (end))
       (paragraph)
       (MISSING "$$"))))

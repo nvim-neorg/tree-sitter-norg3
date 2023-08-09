@@ -8,7 +8,8 @@ Empty Ranged Tag
 (document
   (verbatim_ranged_tag
     (tag_name
-      (identifier))))
+      (identifier))
+    (end)))
 
 ================================================================================
 Ranged Tag with Whitespace
@@ -21,7 +22,8 @@ Ranged Tag with Whitespace
 (document
   (verbatim_ranged_tag
     (tag_name
-      (identifier))))
+      (identifier))
+    (end)))
 
 ================================================================================
 Ranged Tag with Multiple Lines of Whitespace and Offset End
@@ -37,7 +39,8 @@ Ranged Tag with Multiple Lines of Whitespace and Offset End
   (verbatim_ranged_tag
     (tag_name
       (identifier))
-    (verbatim_content)))
+    (verbatim_content)
+    (end)))
 
 ================================================================================
 Ranged Tag with Many Identifiers and Parameters
@@ -53,7 +56,8 @@ Ranged Tag with Many Identifiers and Parameters
       (identifier)
       (identifier))
     (parameter)
-    (parameter)))
+    (parameter)
+    (end)))
 
 ================================================================================
 Ranged Tag with Many Identifiers and Escaped Parameter
@@ -70,7 +74,8 @@ Ranged Tag with Many Identifiers and Escaped Parameter
       (identifier))
     (parameter
       (escape_sequence
-        (escape_char)))))
+        (escape_char)))
+    (end)))
 
 ================================================================================
 Ranged Tag with Nested `@end`
@@ -84,7 +89,8 @@ Ranged Tag with Nested `@end`
   (verbatim_ranged_tag
     (tag_name
       (identifier))
-    (verbatim_content)))
+    (verbatim_content)
+    (end)))
 
 ================================================================================
 Ranged Tag with Nested `@` Symbols
@@ -99,4 +105,5 @@ Ranged Tag with Nested `@` Symbols
   (verbatim_ranged_tag
     (tag_name
       (identifier))
-    (verbatim_content)))
+    (verbatim_content)
+    (end)))

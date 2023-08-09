@@ -550,7 +550,7 @@ module.exports = grammar({
                         newline,
                     ),
                 ),
-                token(seq("@end", newline_or_eof)),
+                alias(token(seq("@end", newline_or_eof)), $.end),
             ),
 
         ranged_tag: ($) =>
@@ -588,7 +588,7 @@ module.exports = grammar({
                 ),
                 newline,
                 alias(repeat(choice($.non_structural, $.heading)), $.content),
-                token(seq("|end", newline_or_eof)),
+                alias(token(seq("|end", newline_or_eof)), $.end),
             ),
 
         macro_tag: ($) =>
@@ -626,7 +626,7 @@ module.exports = grammar({
                 ),
                 newline,
                 alias(repeat(choice($.non_structural, $.heading)), $.content),
-                token(seq("=end", newline_or_eof)),
+                alias(token(seq("=end", newline_or_eof)), $.end),
             ),
 
         infirm_tag: ($) =>
