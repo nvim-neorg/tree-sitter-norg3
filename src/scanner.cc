@@ -50,9 +50,13 @@ enum TokenType : char {
 struct Scanner {
     TSLexer* lexer;
     // Stores indentation data related to headings, lists and other nestable item types.
-    std::unordered_map<char, std::vector<uint16_t>> indents;
+    std::unordered_map< char, std::vector<uint16_t> > indents;
     // Serves as a lookup table from a character to a token type.
-    std::unordered_map<int32_t, TokenType> attached_modifiers = { {'*', BOLD_CLOSE}, {'/', ITALIC_CLOSE}, {'_', UNDERLINE_CLOSE}, {'-', STRIKETHROUGH_CLOSE}, {'%', NULL_MODIFIER_CLOSE}, {'`', VERBATIM_CLOSE}, {'!', SPOILER_CLOSE}, {'^', SUPERSCRIPT_CLOSE}, {',', SUBSCRIPT_CLOSE}, {'&', INLINE_MACRO_CLOSE} };
+    std::unordered_map<int32_t, TokenType> attached_modifiers;
+
+    Scanner() {
+        attached_modifiers = { {'*', BOLD_CLOSE}, {'/', ITALIC_CLOSE}, {'_', UNDERLINE_CLOSE}, {'-', STRIKETHROUGH_CLOSE}, {'%', NULL_MODIFIER_CLOSE}, {'`', VERBATIM_CLOSE}, {'!', SPOILER_CLOSE}, {'^', SUPERSCRIPT_CLOSE}, {',', SUBSCRIPT_CLOSE}, {'&', INLINE_MACRO_CLOSE} };
+    }
 
     /**
      * Returns `true` if the character provided is a separator character (but not a newline).
@@ -256,7 +260,7 @@ extern "C" {
         // This data can be stored contiguously in memory without needing terminator characters
         // or the like thanks to the `vector-size` element.
 
-        for (const std::pair<char, std::vector<uint16_t>>& kv : scanner->indents) {
+        for (const std::pair< char, std::vector<uint16_t> >& kv : scanner->indents) {
             uint16_t size = kv.second.size();
             buffer[total_size] = kv.first;
 
