@@ -493,12 +493,12 @@ module.exports = grammar({
 
         tag_name: ($) =>
             seq(
-                alias(repeat1(token(prec(1, /[a-zA-Z]/))), $.identifier),
+                alias(repeat1(token(prec(1, /[a-z\-A-Z]/))), $.identifier),
                 repeat(
                     seq(
                         ".",
                         alias(
-                            repeat1(token(prec(1, /[a-zA-Z]/))),
+                            repeat1(token(prec(1, /[a-z\-A-Z]/))),
                             $.identifier,
                         ),
                     ),
@@ -515,7 +515,7 @@ module.exports = grammar({
                         optional(
                             seq(
                                 alias(
-                                    repeat1(choice($._word, $._punctuation)),
+                                    repeat1(choice($._word, $._punctuation, $.escape_sequence)),
                                     $.parameter,
                                 ),
                                 repeat(
@@ -539,14 +539,18 @@ module.exports = grammar({
                     ),
                 ),
                 newline,
-                alias(
-                    repeat(
-                        choice($._word, $._whitespace, $._punctuation, newline),
+                optional(
+                    seq(
+                        alias(
+                            repeat(
+                                choice($._word, $._whitespace, $._punctuation, newline),
+                            ),
+                            $.verbatim_content,
+                        ),
+                        newline,
                     ),
-                    $.verbatim_content,
                 ),
-                newline,
-                "@end",
+                token(seq("@end", newline_or_eof)),
             ),
 
         ranged_tag: ($) =>
@@ -559,7 +563,7 @@ module.exports = grammar({
                         optional(
                             seq(
                                 alias(
-                                    repeat1(choice($._word, $._punctuation)),
+                                    repeat1(choice($._word, $._punctuation, $.escape_sequence)),
                                     $.parameter,
                                 ),
                                 repeat(
@@ -584,7 +588,7 @@ module.exports = grammar({
                 ),
                 newline,
                 alias(repeat(choice($.non_structural, $.heading)), $.content),
-                "|end",
+                token(seq("|end", newline_or_eof)),
             ),
 
         macro_tag: ($) =>
@@ -597,7 +601,7 @@ module.exports = grammar({
                         optional(
                             seq(
                                 alias(
-                                    repeat1(choice($._word, $._punctuation)),
+                                    repeat1(choice($._word, $._punctuation, $.escape_sequence)),
                                     $.parameter,
                                 ),
                                 repeat(
@@ -622,7 +626,7 @@ module.exports = grammar({
                 ),
                 newline,
                 alias(repeat(choice($.non_structural, $.heading)), $.content),
-                "=end",
+                token(seq("=end", newline_or_eof)),
             ),
 
         infirm_tag: ($) =>
@@ -636,7 +640,7 @@ module.exports = grammar({
                         optional(
                             seq(
                                 alias(
-                                    repeat1(choice($._word, $._punctuation)),
+                                    repeat1(choice($._word, $._punctuation, $.escape_sequence)),
                                     $.parameter,
                                 ),
                                 repeat(
@@ -659,7 +663,7 @@ module.exports = grammar({
                         ),
                     ),
                 ),
-                newline,
+                newline_or_eof,
             ),
 
         strong_carryover_tag: ($) =>
@@ -673,7 +677,7 @@ module.exports = grammar({
                         optional(
                             seq(
                                 alias(
-                                    repeat1(choice($._word, $._punctuation)),
+                                    repeat1(choice($._word, $._punctuation, $.escape_sequence)),
                                     $.parameter,
                                 ),
                                 repeat(
@@ -710,7 +714,7 @@ module.exports = grammar({
                         optional(
                             seq(
                                 alias(
-                                    repeat1(choice($._word, $._punctuation)),
+                                    repeat1(choice($._word, $._punctuation, $.escape_sequence)),
                                     $.parameter,
                                 ),
                                 repeat(
