@@ -270,7 +270,7 @@ extern "C" {
         // This data can be stored contiguously in memory without needing terminator characters
         // or the like thanks to the `vector-size` element.
 
-        for (const std::pair<char, std::vector<uint16_t>>& kv : scanner->indents) {
+        for (const std::pair< char, std::vector<uint16_t> >& kv : scanner->indents) {
             uint16_t size = kv.second.size();
             buffer[total_size] = kv.first;
 
