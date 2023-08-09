@@ -55,7 +55,8 @@ struct Scanner {
     std::unordered_map<int32_t, TokenType> attached_modifiers;
 
     Scanner() {
-        attached_modifiers = { {'*', BOLD_CLOSE}, {'/', ITALIC_CLOSE}, {'_', UNDERLINE_CLOSE}, {'-', STRIKETHROUGH_CLOSE}, {'%', NULL_MODIFIER_CLOSE}, {'`', VERBATIM_CLOSE}, {'!', SPOILER_CLOSE}, {'^', SUPERSCRIPT_CLOSE}, {',', SUBSCRIPT_CLOSE}, {'&', INLINE_MACRO_CLOSE} };
+        typedef std::pair<int32_t, TokenType> Pair;
+        attached_modifiers = std::unordered_map<int32_t, TokenType>({ Pair {'*', BOLD_CLOSE}, Pair {'/', ITALIC_CLOSE}, Pair {'_', UNDERLINE_CLOSE}, Pair {'-', STRIKETHROUGH_CLOSE}, Pair {'%', NULL_MODIFIER_CLOSE}, Pair {'`', VERBATIM_CLOSE}, Pair {'!', SPOILER_CLOSE}, Pair {'^', SUPERSCRIPT_CLOSE}, Pair {',', SUBSCRIPT_CLOSE}, Pair {'&', INLINE_MACRO_CLOSE} });
     }
 
     /**
