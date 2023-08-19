@@ -8,6 +8,7 @@ Content
 (document
   (footnote_list
     (footnote_list_single
+      (footnote_single_prefix)
       (title)
       (paragraph))))
 
@@ -23,6 +24,7 @@ Content
 (document
   (footnote_list
     (footnote_list_single
+      (footnote_single_prefix)
       (title)
       (paragraph))))
 
@@ -36,7 +38,9 @@ Long-range Footnote
 (document
   (footnote_list
     (footnote_list_multi
-      (title))))
+      (footnote_multi_prefix)
+      (title)
+      (footnote_multi_end))))
 
 ================================================================================
 Long-range Footnote with Whitespace and Offset Ending
@@ -50,7 +54,9 @@ Long-range Footnote with Whitespace and Offset Ending
 (document
   (footnote_list
     (footnote_list_multi
-      (title))))
+      (footnote_multi_prefix)
+      (title)
+      (footnote_multi_end))))
 
 ================================================================================
 Long-range Footnote with Complex Content
@@ -64,11 +70,13 @@ Long-range Footnote with Complex Content
 (document
   (footnote_list
     (footnote_list_multi
+      (footnote_multi_prefix)
       (title)
       (verbatim_ranged_tag
         (tag_name
           (identifier))
-        (end)))))
+        (end))
+      (footnote_multi_end))))
 
 ================================================================================
 Long-range Footnote with Ending not on a Newline
@@ -83,13 +91,14 @@ text ^^
 (document
   (footnote_list
     (footnote_list_multi
+      (footnote_multi_prefix)
       (title)
       (verbatim_ranged_tag
         (tag_name
           (identifier))
         (end))
       (paragraph)
-      (MISSING "^^"))))
+      (MISSING footnote_multi_end))))
 
 ================================================================================
 Definition
@@ -101,6 +110,7 @@ Content
 (document
   (definition_list
     (definition_list_single
+      (definition_single_prefix)
       (title)
       (paragraph))))
 
@@ -116,6 +126,7 @@ Content
 (document
   (definition_list
     (definition_list_single
+      (definition_single_prefix)
       (title)
       (paragraph))))
 
@@ -129,7 +140,9 @@ $$
 (document
   (definition_list
     (definition_list_multi
-      (title))))
+      (definition_multi_prefix)
+      (title)
+      (definition_multi_end))))
 
 ================================================================================
 Long-range Definition with Whitespace and Offset Ending
@@ -143,7 +156,9 @@ $$ Title
 (document
   (definition_list
     (definition_list_multi
-      (title))))
+      (definition_multi_prefix)
+      (title)
+      (definition_multi_end))))
 
 ================================================================================
 Long-range Definition with Complex Content
@@ -157,11 +172,13 @@ $$
 (document
   (definition_list
     (definition_list_multi
+      (definition_multi_prefix)
       (title)
       (verbatim_ranged_tag
         (tag_name
           (identifier))
-        (end)))))
+        (end))
+      (definition_multi_end))))
 
 ================================================================================
 Long-range Definition with Ending not on a Newline
@@ -176,10 +193,11 @@ text $$
 (document
   (definition_list
     (definition_list_multi
+      (definition_multi_prefix)
       (title)
       (verbatim_ranged_tag
         (tag_name
           (identifier))
         (end))
       (paragraph)
-      (MISSING "$$"))))
+      (MISSING definition_multi_end))))

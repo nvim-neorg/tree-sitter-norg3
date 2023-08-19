@@ -1203,8 +1203,13 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "$"
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "$"
+          },
+          "named": true,
+          "value": "definition_single_prefix"
         },
         {
           "type": "SYMBOL",
@@ -1268,8 +1273,13 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "STRING",
-            "value": "$$"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "$$"
+            },
+            "named": true,
+            "value": "definition_multi_prefix"
           },
           {
             "type": "SYMBOL",
@@ -1329,8 +1339,13 @@
             }
           },
           {
-            "type": "STRING",
-            "value": "$$"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "$$"
+            },
+            "named": true,
+            "value": "definition_multi_end"
           }
         ]
       }
@@ -1352,8 +1367,13 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": "^"
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": "^"
+          },
+          "named": true,
+          "value": "footnote_single_prefix"
         },
         {
           "type": "SYMBOL",
@@ -1417,8 +1437,13 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "STRING",
-            "value": "^^"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "^^"
+            },
+            "named": true,
+            "value": "footnote_multi_prefix"
           },
           {
             "type": "SYMBOL",
@@ -1478,8 +1503,13 @@
             }
           },
           {
-            "type": "STRING",
-            "value": "^^"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "^^"
+            },
+            "named": true,
+            "value": "footnote_multi_end"
           }
         ]
       }
@@ -1501,8 +1531,13 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "STRING",
-          "value": ":"
+          "type": "ALIAS",
+          "content": {
+            "type": "STRING",
+            "value": ":"
+          },
+          "named": true,
+          "value": "table_cell_single_prefix"
         },
         {
           "type": "SYMBOL",
@@ -1566,8 +1601,13 @@
         "type": "SEQ",
         "members": [
           {
-            "type": "STRING",
-            "value": "::"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "::"
+            },
+            "named": true,
+            "value": "table_cell_multi_prefix"
           },
           {
             "type": "SYMBOL",
@@ -1627,8 +1667,13 @@
             }
           },
           {
-            "type": "STRING",
-            "value": "::"
+            "type": "ALIAS",
+            "content": {
+              "type": "STRING",
+              "value": "::"
+            },
+            "named": true,
+            "value": "table_cell_multi_end"
           }
         ]
       }
@@ -7516,7 +7561,7 @@
             }
           },
           "named": true,
-          "value": "heading"
+          "value": "heading_link"
         },
         {
           "type": "ALIAS",
@@ -7525,7 +7570,7 @@
             "value": "$"
           },
           "named": true,
-          "value": "definition"
+          "value": "definition_link"
         },
         {
           "type": "ALIAS",
@@ -7534,7 +7579,7 @@
             "value": "^"
           },
           "named": true,
-          "value": "footnote"
+          "value": "footnote_link"
         }
       ]
     },

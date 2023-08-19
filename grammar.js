@@ -5,6 +5,7 @@ let newline_or_eof = choice("\n", "\r", "\r\n", "\0");
 //  - Abstract repeating patterns (e.g. nestable detached modifiers) into Javascript functions.
 //  - Support link modifiers within inline paragraph segments (titles)
 //  - Add tests for link modifiers, then everything else.
+//  - Make every node have an alias($.node, $.node_prefix). Only some currently do.
 
 module.exports = grammar({
     name: "norg",
@@ -409,7 +410,7 @@ module.exports = grammar({
 
         definition_list_single: ($) =>
             seq(
-                "$",
+                alias("$", $.definition_single_prefix),
                 $._whitespace,
                 optional(seq($.detached_modifier_extension, $._whitespace)),
                 $.title,
@@ -420,13 +421,13 @@ module.exports = grammar({
         definition_list_multi: ($) =>
             prec.right(
                 seq(
-                    "$$",
+                    alias("$$", $.definition_multi_prefix),
                     $._whitespace,
                     optional(seq($.detached_modifier_extension, $._whitespace)),
                     $.title,
                     newline_or_eof,
                     repeat($.non_structural),
-                    "$$",
+                    alias("$$", $.definition_multi_end),
                 ),
             ),
 
@@ -435,7 +436,7 @@ module.exports = grammar({
 
         footnote_list_single: ($) =>
             seq(
-                "^",
+                alias("^", $.footnote_single_prefix),
                 $._whitespace,
                 optional(seq($.detached_modifier_extension, $._whitespace)),
                 $.title,
@@ -446,13 +447,13 @@ module.exports = grammar({
         footnote_list_multi: ($) =>
             prec.right(
                 seq(
-                    "^^",
+                    alias("^^", $.footnote_multi_prefix),
                     $._whitespace,
                     optional(seq($.detached_modifier_extension, $._whitespace)),
                     $.title,
                     newline_or_eof,
                     repeat($.non_structural),
-                    "^^",
+                    alias("^^", $.footnote_multi_end),
                 ),
             ),
 
@@ -460,7 +461,7 @@ module.exports = grammar({
 
         table_cell_single: ($) =>
             seq(
-                ":",
+                alias(":", $.table_cell_single_prefix),
                 $._whitespace,
                 optional(seq($.detached_modifier_extension, $._whitespace)),
                 $.title,
@@ -471,13 +472,13 @@ module.exports = grammar({
         table_cell_multi: ($) =>
             prec.right(
                 seq(
-                    "::",
+                    alias("::", $.table_cell_multi_prefix),
                     $._whitespace,
                     optional(seq($.detached_modifier_extension, $._whitespace)),
                     $.title,
                     newline_or_eof,
                     repeat($.non_structural),
-                    "::",
+                    alias("::", $.table_cell_multi_end),
                 ),
             ),
 
@@ -952,9 +953,10 @@ module.exports = grammar({
 
         link_to_detached_modifier: ($) =>
             choice(
-                alias(repeat1("*"), $.heading),
-                alias("$", $.definition),
-                alias("^", $.footnote),
+                // TODO: Add the rest
+                alias(repeat1("*"), $.heading_link),
+                alias("$", $.definition_link),
+                alias("^", $.footnote_link),
             ),
 
         // FIXME: double newlines are permitted within links here.
