@@ -11,98 +11,24 @@ module.exports = grammar({
     name: "norg",
 
     // Tell treesitter we want to handle whitespace ourselves
-    extras: ($) => [$._preceding_whitespace],
+    extras: ($) => [$._precedingwhitespace],
     externals: ($) => [
-        $._preceding_whitespace,
-
-        $.heading_stars,
-        $.unordered_list_prefix,
-        $.ordered_list_prefix,
-        $.quote_prefix,
-
-        $.weak_delimiting_modifier,
-
-        $.bold_close,
-        $.italic_close,
-        $.strikethrough_close,
-        $.underline_close,
-        $.spoiler_close,
-        $.superscript_close,
-        $.subscript_close,
-        $.verbatim_close,
-        $.null_modifier_close,
-        $.inline_math_close,
-        $.inline_macro_close,
-
-        $._dedent,
+        $._precedingwhitespace,
+        // $.bold_close,
     ],
 
     // TODO: Minimize conflict count
     conflicts: ($) => [
-        [$.bold, $._attached_modifier_conflict_open],
-        [$.italic, $._attached_modifier_conflict_open],
-        [$.strikethrough, $._attached_modifier_conflict_open],
-        [$.underline, $._attached_modifier_conflict_open],
-        [$.spoiler, $._attached_modifier_conflict_open],
-        [$.superscript, $._attached_modifier_conflict_open],
-        [$.subscript, $._attached_modifier_conflict_open],
-        [$.verbatim, $._attached_modifier_conflict_open],
-        [$.null_modifier, $._attached_modifier_conflict_open],
-
-        [$.bold_inline, $._attached_modifier_conflict_open],
-        [$.italic_inline, $._attached_modifier_conflict_open],
-        [$.strikethrough_inline, $._attached_modifier_conflict_open],
-        [$.underline_inline, $._attached_modifier_conflict_open],
-        [$.spoiler_inline, $._attached_modifier_conflict_open],
-        [$.superscript_inline, $._attached_modifier_conflict_open],
-        [$.subscript_inline, $._attached_modifier_conflict_open],
-        [$.verbatim_inline, $._attached_modifier_conflict_open],
-        [$.null_modifier_inline, $._attached_modifier_conflict_open],
-
-        [$._title_inline],
-        [$._bold_paragraph_segment],
-        [$._italic_paragraph_segment],
-        [$._strikethrough_paragraph_segment],
-        [$._underline_paragraph_segment],
-        [$._spoiler_paragraph_segment],
-        [$._superscript_paragraph_segment],
-        [$._subscript_paragraph_segment],
-        [$._subscript_paragraph_segment],
-        [$._null_modifier_paragraph_segment],
-        [$._bold_inline_paragraph_segment],
-        [$._italic_inline_paragraph_segment],
-        [$._strikethrough_inline_paragraph_segment],
-        [$._underline_inline_paragraph_segment],
-        [$._spoiler_inline_paragraph_segment],
-        [$._superscript_inline_paragraph_segment],
-        [$._subscript_inline_paragraph_segment],
-        [$._subscript_inline_paragraph_segment],
-        [$._null_modifier_inline_paragraph_segment],
-        [$._verbatim_paragraph_segment],
-
-        [$.link_modifier, $._paragraph_segment],
+        [$.punctuation, $.bold_open],
     ],
 
-    precedences: ($) => [
-        [$.heading, $.delimiting_modifier],
-        [$.horizontal_line, $.underline_open],
-        [$.footnote_list_single, $.superscript_open],
-        [$.table_cell_single, $.link_modifier],
-    ],
+    precedences: ($) => [],
 
-    inlines: ($) => [$._title_inline],
+    inlines: ($) => [],
 
     supertypes: ($) => [
         $.non_structural,
-        $.nestable_modifier,
-        $.rangeable_detached_modifier,
-        $.tag,
-        $.todo_item,
-        $.delimiting_modifier,
-        $.attached_modifier,
-        $.attached_modifier_inline,
-        $._attached_modifier_conflict_open,
-        $.link_to_detached_modifier,
+        $.punctuation,
     ],
 
     rules: {
@@ -110,1043 +36,181 @@ module.exports = grammar({
             repeat(
                 choice(
                     $.non_structural,
-                    $.heading,
-                    $.strong_delimiting_modifier,
+                    // $.heading,
+                    // $.strong_delimiting_modifier,
                 ),
             ),
 
         non_structural: ($) =>
             choice(
                 $.paragraph,
-                newline,
-                $.nestable_modifier,
-                $.rangeable_detached_modifier,
-                $.tag,
-                $.delimiting_modifier,
-            ),
-
-        _character: (_) => token(/[\p{L}\p{N}]/u),
-        // TODO: Is there a way of shortening this regex? If there were set intersection, we could
-        // do: \p{P}&&[^\n\r]. Apparently \p{P} includes newlines, which causes problems.
-        _punctuation: (_) => token(/[^\n\r\p{Z}\p{L}\p{N}]/u),
-        _word: ($) => prec.right(-1, repeat1($._character)),
-        _whitespace: (_) => token(prec(1, /\p{Zs}+/u)),
-
-        bold_open: (_) => "*",
-        italic_open: (_) => "/",
-        strikethrough_open: (_) => "-",
-        underline_open: (_) => "_",
-        spoiler_open: (_) => "!",
-        superscript_open: (_) => "^",
-        subscript_open: (_) => ",",
-        verbatim_open: (_) => "`",
-        null_modifier_open: (_) => "%",
-        inline_math_open: (_) => "$",
-        inline_macro_open: (_) => "&",
-
-        escape_sequence: ($) => seq("\\", alias(prec(10, /./), $.escape_char)),
-
-        link_modifier: (_) => ":",
-
-        _paragraph_inner: ($) =>
-            prec(-1, choice($._word, $.escape_sequence, $._punctuation)),
-
-        _attached_modifier_array: ($) =>
-            prec.right(
-                1,
-                seq(
-                    repeat1(
-                        choice(
-                            $._attached_modifier_conflict_open,
-                            $.attached_modifier,
-                            // Lower precedence than in the _paragraph_segment
-                            prec(-1, $.link),
-                            prec(-1, $.anchor),
-                        ),
-                    ),
-                    optional($._paragraph_segment),
-                ),
-            ),
-
-        // NOTE: If I wasn't on a deadline with this this would be so much cleaner.
-        // I expect to come back to this someday and rewrite it. It won't require touching
-        // other part of the grammar. The problems that come with this are ensuring that attached
-        // modifiers can only begin *after* a whitespace, but allowing links and other elements to
-        // freely intermix, all while supporting link modifiers.
-        _paragraph_segment: ($) =>
-            prec.right(
-                seq(
-                    choice(
-                        repeat1($._paragraph_inner),
-                        seq(
-                            $._word,
-                            choice(
-                                seq(
-                                    $.link_modifier,
-                                    $.attached_modifier,
-                                    optional(
-                                        choice(
-                                            seq($.link_modifier, $._word),
-                                            seq(
-                                                ":",
-                                                optional(
-                                                    $._attached_modifier_array,
-                                                ),
-                                            ),
-                                        ),
-                                    ),
-                                ),
-                                seq(
-                                    ":",
-                                    $._attached_modifier_conflict_open,
-                                    optional(
-                                        choice(
-                                            $._word,
-                                            $._attached_modifier_array,
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
-                        seq(
-                            $.attached_modifier,
-                            choice(seq($.link_modifier, $._word), ":"),
-                        ),
-                        $._attached_modifier_array,
-                    ),
-                    repeat(
-                        prec.right(
-                            seq(
-                                choice(
-                                    $._whitespace,
-                                    $._punctuation,
-                                    $.link,
-                                    $.anchor,
-                                ),
-                                optional(
-                                    choice(
-                                        repeat1($._paragraph_inner),
-                                        seq(
-                                            $._word,
-                                            choice(
-                                                seq(
-                                                    $.link_modifier,
-                                                    $.attached_modifier,
-                                                    optional(
-                                                        choice(
-                                                            seq(
-                                                                $.link_modifier,
-                                                                $._word,
-                                                            ),
-                                                            seq(
-                                                                ":",
-                                                                optional(
-                                                                    $._attached_modifier_array,
-                                                                ),
-                                                            ),
-                                                        ),
-                                                    ),
-                                                ),
-                                                seq(
-                                                    ":",
-                                                    $._attached_modifier_conflict_open,
-                                                    optional(
-                                                        choice(
-                                                            $._word,
-                                                            $._attached_modifier_array,
-                                                        ),
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                        seq(
-                                            $.attached_modifier,
-                                            choice(
-                                                seq($.link_modifier, $._word),
-                                                ":",
-                                            ),
-                                        ),
-                                        $._attached_modifier_array,
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-
-        paragraph: ($) =>
-            prec.right(
-                seq(
-                    $._paragraph_segment,
-                    repeat(
-                        seq(
-                            newline,
-                            choice(
-                                $._paragraph_segment,
-                                seq($.weak_carryover_tag, $._paragraph_segment),
-                            ),
-                        ),
-                    ),
-                    newline_or_eof,
-                ),
-            ),
-
-        // This is a meta-node to make treesitter do what we want it to.
-        // If you make `$.title` self-reference with a hidden alias (e.g. `alias($.title, "_title")`,
-        // then the content is still marked "nested". As a result when you do `*hello* /world/`, `*hello*`
-        // self-references `title`, which then makes `/world/` a subchild of `*hello*`, even though it absolutely
-        // shouldn't. This node is marked inline in the AST, preventing
-        _title_inline: ($) =>
-            prec.right(
-                seq(
-                    choice(
-                        repeat1($._paragraph_inner),
-                        seq(
-                            repeat1(
-                                choice(
-                                    $._attached_modifier_conflict_open,
-                                    $.attached_modifier_inline,
-                                    $.link_inline,
-                                    $.anchor_inline,
-                                ),
-                            ),
-                            optional($._title_inline),
-                        ),
-                    ),
-                    repeat(
-                        seq(
-                            choice(
-                                $._whitespace,
-                                $.link_inline,
-                                $.anchor_inline,
-                            ),
-                            optional(
-                                choice(
-                                    repeat1($._paragraph_inner),
-                                    seq(
-                                        repeat1(
-                                            choice(
-                                                $._attached_modifier_conflict_open,
-                                                $.attached_modifier_inline,
-                                                $.link_inline,
-                                                $.anchor_inline,
-                                            ),
-                                        ),
-                                        optional($._title_inline),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-
-        title: ($) => $._title_inline,
-
-        heading: ($) =>
-            prec.right(
-                seq(
-                    $.heading_stars,
-                    $._whitespace,
-                    optional(seq($.detached_modifier_extension, $._whitespace)),
-                    $.title,
-                    newline_or_eof,
-                    repeat(choice($.heading, $.non_structural)),
-                    optional(choice($._dedent, $.weak_delimiting_modifier)),
-                ),
-            ),
-
-        nestable_modifier: ($) =>
-            choice($.unordered_list, $.ordered_list, $.quote),
-
-        unordered_list: ($) => prec.right(repeat1($.unordered_list_item)),
-
-        unordered_list_item: ($) =>
-            prec.right(
-                seq(
-                    $.unordered_list_prefix,
-                    $._whitespace,
-                    optional(seq($.detached_modifier_extension, $._whitespace)),
-                    $.paragraph,
-                    repeat($.unordered_list_item),
-                    optional($._dedent),
-                ),
-            ),
-
-        ordered_list: ($) => prec.right(repeat1($.ordered_list_item)),
-
-        ordered_list_item: ($) =>
-            prec.right(
-                seq(
-                    $.ordered_list_prefix,
-                    $._whitespace,
-                    optional(seq($.detached_modifier_extension, $._whitespace)),
-                    $.paragraph,
-                    repeat($.ordered_list_item),
-                    optional($._dedent),
-                ),
-            ),
-
-        quote: ($) => prec.right(repeat1($.quote_item)),
-
-        quote_item: ($) =>
-            prec.right(
-                seq(
-                    $.quote_prefix,
-                    $._whitespace,
-                    optional(seq($.detached_modifier_extension, $._whitespace)),
-                    $.paragraph,
-                    repeat($.quote_item),
-                    optional($._dedent),
-                ),
-            ),
-
-        rangeable_detached_modifier: ($) =>
-            choice($.definition_list, $.footnote_list, $.table),
-
-        definition_list: ($) =>
-            choice($.definition_list_single, $.definition_list_multi),
-
-        definition_list_single: ($) =>
-            seq(
-                alias("$", $.definition_single_prefix),
-                $._whitespace,
-                optional(seq($.detached_modifier_extension, $._whitespace)),
-                $.title,
-                repeat1(newline),
-                $.paragraph,
-            ),
-
-        definition_list_multi: ($) =>
-            prec.right(
-                seq(
-                    alias("$$", $.definition_multi_prefix),
-                    $._whitespace,
-                    optional(seq($.detached_modifier_extension, $._whitespace)),
-                    $.title,
-                    newline_or_eof,
-                    repeat($.non_structural),
-                    alias("$$", $.definition_multi_end),
-                ),
-            ),
-
-        footnote_list: ($) =>
-            choice($.footnote_list_single, $.footnote_list_multi),
-
-        footnote_list_single: ($) =>
-            seq(
-                alias("^", $.footnote_single_prefix),
-                $._whitespace,
-                optional(seq($.detached_modifier_extension, $._whitespace)),
-                $.title,
-                repeat1(newline),
-                $.paragraph,
-            ),
-
-        footnote_list_multi: ($) =>
-            prec.right(
-                seq(
-                    alias("^^", $.footnote_multi_prefix),
-                    $._whitespace,
-                    optional(seq($.detached_modifier_extension, $._whitespace)),
-                    $.title,
-                    newline_or_eof,
-                    repeat($.non_structural),
-                    alias("^^", $.footnote_multi_end),
-                ),
-            ),
-
-        table: ($) => choice($.table_cell_single, $.table_cell_multi),
-
-        table_cell_single: ($) =>
-            seq(
-                alias(":", $.table_cell_single_prefix),
-                $._whitespace,
-                optional(seq($.detached_modifier_extension, $._whitespace)),
-                $.title,
-                repeat1(newline),
-                $.paragraph,
-            ),
-
-        table_cell_multi: ($) =>
-            prec.right(
-                seq(
-                    alias("::", $.table_cell_multi_prefix),
-                    $._whitespace,
-                    optional(seq($.detached_modifier_extension, $._whitespace)),
-                    $.title,
-                    newline_or_eof,
-                    repeat($.non_structural),
-                    alias("::", $.table_cell_multi_end),
-                ),
-            ),
-
-        tag: ($) =>
-            choice(
-                $.verbatim_ranged_tag,
-                $.ranged_tag,
-                $.infirm_tag,
-                $.strong_carryover_tag,
-                $.weak_carryover_tag,
-                $.macro_tag,
-            ),
-
-        tag_name: ($) =>
-            seq(
-                alias(repeat1(token(prec(1, /[a-z\-A-Z]/))), $.identifier),
-                repeat(
-                    seq(
-                        ".",
-                        alias(
-                            repeat1(token(prec(1, /[a-z\-A-Z]/))),
-                            $.identifier,
-                        ),
-                    ),
-                ),
-            ),
-
-        verbatim_ranged_tag: ($) =>
-            seq(
-                "@",
-                $.tag_name,
-                optional(
-                    seq(
-                        $._whitespace,
-                        optional(
-                            seq(
-                                alias(
-                                    repeat1(choice($._word, $._punctuation, $.escape_sequence)),
-                                    $.parameter,
-                                ),
-                                repeat(
-                                    seq(
-                                        $._whitespace,
-                                        optional(
-                                            alias(
-                                                repeat1(
-                                                    choice(
-                                                        $._word,
-                                                        $._punctuation,
-                                                    ),
-                                                ),
-                                                $.parameter,
-                                            ),
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-                newline,
-                optional(
-                    seq(
-                        alias(
-                            repeat(
-                                choice($._word, $._whitespace, $._punctuation, newline),
-                            ),
-                            $.verbatim_content,
-                        ),
-                        newline,
-                    ),
-                ),
-                alias(token(seq("@end", newline_or_eof)), $.end),
-            ),
-
-        ranged_tag: ($) =>
-            seq(
-                token("|"),
-                $.tag_name,
-                optional(
-                    seq(
-                        $._whitespace,
-                        optional(
-                            seq(
-                                alias(
-                                    repeat1(choice($._word, $._punctuation, $.escape_sequence)),
-                                    $.parameter,
-                                ),
-                                repeat(
-                                    seq(
-                                        $._whitespace,
-                                        optional(
-                                            alias(
-                                                repeat1(
-                                                    choice(
-                                                        $._word,
-                                                        $._punctuation,
-                                                    ),
-                                                ),
-                                                $.parameter,
-                                            ),
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-                newline,
-                alias(repeat(choice($.non_structural, $.heading)), $.content),
-                alias(token(seq("|end", newline_or_eof)), $.end),
-            ),
-
-        macro_tag: ($) =>
-            seq(
-                token("="),
-                $.tag_name,
-                optional(
-                    seq(
-                        $._whitespace,
-                        optional(
-                            seq(
-                                alias(
-                                    repeat1(choice($._word, $._punctuation, $.escape_sequence)),
-                                    $.parameter,
-                                ),
-                                repeat(
-                                    seq(
-                                        $._whitespace,
-                                        optional(
-                                            alias(
-                                                repeat1(
-                                                    choice(
-                                                        $._word,
-                                                        $._punctuation,
-                                                    ),
-                                                ),
-                                                $.parameter,
-                                            ),
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-                newline,
-                alias(repeat(choice($.non_structural, $.heading)), $.content),
-                alias(token(seq("=end", newline_or_eof)), $.end),
-            ),
-
-        infirm_tag: ($) =>
-            seq(
-                ".",
-                $.tag_name,
-
-                optional(
-                    seq(
-                        $._whitespace,
-                        optional(
-                            seq(
-                                alias(
-                                    repeat1(choice($._word, $._punctuation, $.escape_sequence)),
-                                    $.parameter,
-                                ),
-                                repeat(
-                                    seq(
-                                        $._whitespace,
-                                        optional(
-                                            alias(
-                                                repeat1(
-                                                    choice(
-                                                        $._word,
-                                                        $._punctuation,
-                                                    ),
-                                                ),
-                                                $.parameter,
-                                            ),
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
                 newline_or_eof,
             ),
 
-        strong_carryover_tag: ($) =>
-            seq(
-                "#",
-                $.tag_name,
+        _character: (_) => token(/[\p{L}\p{N}]/u),
+        punctuation: ($) => choice(
+            "*",
+            "/",
+            ";",
+            prec(1, /\*+/),
+        ),
+        _word: ($) => prec.right(repeat1($._character)),
+        _whitespace: (_) => token(prec(1, /\p{Zs}+/u)),
 
-                optional(
-                    seq(
-                        $._whitespace,
-                        optional(
-                            seq(
-                                alias(
-                                    repeat1(choice($._word, $._punctuation, $.escape_sequence)),
-                                    $.parameter,
-                                ),
-                                repeat(
-                                    seq(
-                                        $._whitespace,
-                                        optional(
-                                            alias(
-                                                repeat1(
-                                                    choice(
-                                                        $._word,
-                                                        $._punctuation,
-                                                    ),
-                                                ),
-                                                $.parameter,
-                                            ),
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
+        escape_sequence: ($) => seq("\\", alias(prec(10, /./), $.escape_char)),
+
+        paragraph: ($) => prec.right(seq(
+            $._paragraph_segment,
+            repeat(seq(newline, $._paragraph_segment)),
+            optional(newline_or_eof),
+        )),
+
+        _word_segment: ($) => prec.right(seq(
+            $._word,
+            optional(
+                choice(
+                    $._ws_segment,
+                    $._punc_segment,
                 ),
-                newline,
-            ),
-
-        weak_carryover_tag: ($) =>
-            seq(
-                "+",
-                $.tag_name,
-
-                optional(
-                    seq(
-                        $._whitespace,
-                        optional(
-                            seq(
-                                alias(
-                                    repeat1(choice($._word, $._punctuation, $.escape_sequence)),
-                                    $.parameter,
-                                ),
-                                repeat(
-                                    seq(
-                                        $._whitespace,
-                                        optional(
-                                            alias(
-                                                repeat1(
-                                                    choice(
-                                                        $._word,
-                                                        $._punctuation,
-                                                    ),
-                                                ),
-                                                $.parameter,
-                                            ),
-                                        ),
-                                    ),
-                                ),
-                            ),
-                        ),
-                    ),
-                ),
-                newline,
-            ),
-
-        todo_item_done: ($) => "x",
-        todo_item_undone: ($) => " ",
-        todo_item_uncertain: ($) => "?",
-        todo_item_urgent: ($) => "!",
-        todo_item_pending: ($) => "-",
-        todo_item_on_hold: ($) => "=",
-        todo_item_cancelled: ($) => "_",
-        todo_item_recurring: ($) =>
-            seq(
-                "+",
-                optional(
-                    seq(
-                        $._whitespace,
-                        alias(
-                            repeat(choice($._word, $._whitespace)),
-                            $.timestamp,
-                        ),
-                    ),
-                ),
-            ),
-        todo_item_priority: ($) => seq("#", $._whitespace, $._word),
-        todo_item_timestamp: ($) =>
-            seq(
-                "@",
-                seq(
-                    $._whitespace,
-                    alias(repeat1(choice($._word, $._whitespace)), $.timestamp),
-                ),
-            ),
-        todo_item_start_date: ($) =>
-            seq(
-                ">",
-                seq(
-                    $._whitespace,
-                    alias(repeat1(choice($._word, $._whitespace)), $.timestamp),
-                ),
-            ),
-        todo_item_due_date: ($) =>
-            seq(
-                "<",
-                seq(
-                    $._whitespace,
-                    alias(repeat1(choice($._word, $._whitespace)), $.timestamp),
-                ),
-            ),
-
-        todo_item: ($) =>
-            choice(
-                $.todo_item_done,
-                $.todo_item_undone,
-                $.todo_item_uncertain,
-                $.todo_item_urgent,
-                $.todo_item_pending,
-                $.todo_item_on_hold,
-                $.todo_item_cancelled,
-                $.todo_item_recurring,
-                $.todo_item_priority,
-                $.todo_item_timestamp,
-                $.todo_item_start_date,
-                $.todo_item_due_date,
-            ),
-
-        detached_modifier_extension: ($) =>
-            seq(
-                "(",
-                $.todo_item,
-                repeat(seq(token(prec(1, "|")), $.todo_item)),
-                ")",
-            ),
-
-        delimiting_modifier: ($) =>
-            choice($.weak_delimiting_modifier, $.horizontal_line),
-
-        strong_delimiting_modifier: ($) =>
-            prec.right(seq("==", repeat("="), newline_or_eof)),
-
-        horizontal_line: ($) =>
-            prec.right(seq("_", repeat1("_"), newline_or_eof)),
-
-        attached_modifier: ($) =>
+            )
+        )),
+        _ws_segment: ($) => prec.right(seq(
+            $._whitespace,
+            optional(
+                choice(
+                    $._paragraph_segment,
+                )
+            )
+        )),
+        _punc_segment: ($) => prec.right(seq(
+            $.punctuation,
+            optional(
+                choice(
+                    $._paragraph_segment,
+                )
+            )
+        )),
+        _att_mod_seg: ($) => prec.right(seq(
             choice(
                 $.bold,
-                $.italic,
-                $.strikethrough,
-                $.underline,
-                $.spoiler,
-                $.superscript,
-                $.subscript,
-                $.null_modifier,
-                $.verbatim,
             ),
-
-        attached_modifier_inline: ($) =>
+            optional(
+                choice(
+                    $._ws_segment,
+                    $._punc_segment,
+                    $._att_mod_seg,
+                )
+            )
+        )),
+        _paragraph_segment: ($) => choice(
+            $._word_segment,
+            $._ws_segment,
+            $._punc_segment,
+            $._att_mod_seg,
+        ),
+        bold_open: (_) => "*",
+        bold_close: (_) => prec(1, "*"),
+        italic_open: (_) => "/",
+        italic_close: (_) => prec(1, "/"),
+        _bold_word_segment: ($) => seq(
+            $._word,
             choice(
-                $.bold_inline,
-                $.italic_inline,
-                $.strikethrough_inline,
-                $.underline_inline,
-                $.spoiler_inline,
-                $.superscript_inline,
-                $.subscript_inline,
-                $.verbatim_inline,
-                $.null_modifier_inline,
-            ),
-
-        _attached_modifier_conflict_open: ($) =>
-            alias(
-                choice(
-                    $.bold_open,
-                    $.italic_open,
-                    $.strikethrough_open,
-                    $.underline_open,
-                    $.spoiler_open,
-                    $.superscript_open,
-                    $.subscript_open,
-                    $.null_modifier_open,
-                    $.verbatim_open,
-                ),
-                "_word",
-            ),
-
-        _bold_paragraph_segment: ($) => attached_modifier_para_seg($, "bold"),
-        _italic_paragraph_segment: ($) =>
-            attached_modifier_para_seg($, "italic"),
-        _strikethrough_paragraph_segment: ($) =>
-            attached_modifier_para_seg($, "strikethrough"),
-        _underline_paragraph_segment: ($) =>
-            attached_modifier_para_seg($, "underline"),
-        _spoiler_paragraph_segment: ($) =>
-            attached_modifier_para_seg($, "spoiler"),
-        _superscript_paragraph_segment: ($) =>
-            attached_modifier_para_seg($, "superscript"),
-        _subscript_paragraph_segment: ($) =>
-            attached_modifier_para_seg($, "subscript"),
-        _null_modifier_paragraph_segment: ($) =>
-            attached_modifier_para_seg($, "null_modifier"),
-        _verbatim_paragraph_segment: ($) =>
-            seq(
-                repeat1(
-                    choice(
-                        $._paragraph_inner,
-                        $._attached_modifier_conflict_open,
-                    ),
-                ),
-                repeat(
-                    seq(
-                        $._whitespace,
-                        repeat1(
-                            choice(
-                                $._paragraph_inner,
-                                $._attached_modifier_conflict_open,
-                            ),
-                        ),
-                    ),
-                ),
-            ),
-
-        _bold_inline_paragraph_segment: ($) =>
-            attached_modifier_para_seg($, "bold", true),
-        _italic_inline_paragraph_segment: ($) =>
-            attached_modifier_para_seg($, "italic", true),
-        _strikethrough_inline_paragraph_segment: ($) =>
-            attached_modifier_para_seg($, "strikethrough", true),
-        _underline_inline_paragraph_segment: ($) =>
-            attached_modifier_para_seg($, "underline", true),
-        _spoiler_inline_paragraph_segment: ($) =>
-            attached_modifier_para_seg($, "spoiler", true),
-        _superscript_inline_paragraph_segment: ($) =>
-            attached_modifier_para_seg($, "superscript", true),
-        _subscript_inline_paragraph_segment: ($) =>
-            attached_modifier_para_seg($, "subscript", true),
-        _null_modifier_inline_paragraph_segment: ($) =>
-            attached_modifier_para_seg($, "null_modifier", true),
-
-        bold: ($) => attached_modifier($, "bold"),
-        italic: ($) => attached_modifier($, "italic"),
-        strikethrough: ($) => attached_modifier($, "strikethrough"),
-        underline: ($) => attached_modifier($, "underline"),
-        spoiler: ($) => attached_modifier($, "spoiler"),
-        superscript: ($) => attached_modifier($, "superscript"),
-        subscript: ($) => attached_modifier($, "subscript"),
-        verbatim: ($) => attached_modifier_verbatim($, "verbatim"),
-        null_modifier: ($) => attached_modifier($, "null_modifier"),
-
-        bold_inline: ($) => attached_modifier_inline($, "bold"),
-        italic_inline: ($) => attached_modifier_inline($, "italic"),
-        strikethrough_inline: ($) =>
-            attached_modifier_inline($, "strikethrough"),
-        underline_inline: ($) => attached_modifier_inline($, "underline"),
-        spoiler_inline: ($) => attached_modifier_inline($, "spoiler"),
-        superscript_inline: ($) => attached_modifier_inline($, "superscript"),
-        subscript_inline: ($) => attached_modifier_inline($, "subscript"),
-        verbatim_inline: ($) =>
-            attached_modifier_verbatim_inline($, "verbatim"),
-        null_modifier_inline: ($) =>
-            attached_modifier_inline($, "null_modifier"),
-
-        link: ($) =>
-            prec.right(seq($.link_location, optional($.link_description))),
-
-        anchor: ($) =>
-            prec.right(
-                seq(
-                    $.link_description,
-                    optional(choice($.link_location, $.link_description)),
-                ),
-            ),
-
-        url: ($) => repeat1(choice($._word, $._punctuation)),
-
-        link_to_detached_modifier: ($) =>
+                $._bold_paragraph_segment,
+                prec(2, seq("*", $._bold_word_segment)),
+                alias($.bold_close, $.close),
+            )
+        ),
+        _bold_ws_segment: ($) => seq(
+            $._whitespace,
+            $._bold_paragraph_segment,
+        ),
+        _bold_punc_segment: ($) => seq(
+            $.punctuation,
             choice(
-                // TODO: Add the rest
-                alias(repeat1("*"), $.heading_link),
-                alias("$", $.definition_link),
-                alias("^", $.footnote_link),
-            ),
-
-        // FIXME: double newlines are permitted within links here.
-        // FIXME: Allow attached modifiers to contain links
-        // TODO: Give the paragraph segments a node name
-        // TODO: Give field names to the description and location
-        link_location: ($) =>
+                $._bold_paragraph_segment,
+                alias($.bold_close, $.close),
+                prec(2, seq("*", $._bold_word_segment)),
+            )
+        ),
+        _bold_paragraph_segment: ($) => choice(
+            $._bold_word_segment,
+            $._bold_ws_segment,
+            $._bold_punc_segment,
             seq(
-                "{",
+                alias(newline, $.newline),
+                repeat($._whitespace),
                 choice(
-                    $.url,
-                    seq(
-                        $.link_to_detached_modifier,
-                        $._whitespace,
-                        $._paragraph_segment,
-                        repeat(seq(newline, $._paragraph_segment)),
-                    ),
-                ),
-                "}",
+                    $._bold_word_segment,
+                    $._bold_punc_segment,
+                )
             ),
+        ),
+        bold: ($) => prec.dynamic(1, seq(
+            alias($.bold_open, $.open),
+            choice(
+                $._bold_word_segment,
+                $._bold_punc_segment,
+                // TODO: free-form
+                // seq("|", $._bold_free_para_seg)
+            )
+        )),
+    }
+})
 
-        link_description: ($) =>
-            seq(
-                "[",
-                $._paragraph_segment,
-                repeat(seq(newline, $._paragraph_segment)),
-                "]",
-            ),
+const ATTACHED_MODIFIER_TYPES = [
+    "bold",
+    "italic",
+]
 
-        link_location_inline: ($) =>
+// TODO: automate
+function gen_attached_modifiers() {
+    const rules = {};
+    ATTACHED_MODIFIER_TYPES.forEach((type) => {
+        const other_modifiers = ATTACHED_MODIFIER_TYPES.filter((t) => t != type);
+        rules["_" + type + "_word_segment"] = ($) => seq(
+            $._word,
+            choice(
+                $["_" + type + "_paragraph_segment"],
+                $[type + "close"],
+            )
+        );
+        rules["_" + type + "_ws_segment"] = ($) => seq(
+            $._whitespace,
+            $["_" + type + "_paragraph_segment"],
+        );
+        rules["_" + type + "_punc_segment"] = ($) => seq(
+            $.punctuation,
+            choice(
+                $["_" + type + "_paragraph_segment"],
+                $[type + "close"],
+            )
+        );
+        rules["_" + type + "_att_mod_seg"] = ($) => seq(
+            choice(...(other_modifiers.map(t => $[t]))),
+            choice(
+                $["_" + type + "_paragraph_segment"],
+                $[type + "close"],
+            )
+        ),
+        rules["_" + type + "_paragraph_segment"] = ($) => choice(
+            $["_" + type + "_word_segment"],
+            $["_" + type + "_ws_segment"],
+            $["_" + type + "_punc_segment"],
             seq(
-                "{",
+                newline,
+                repeat($._whitespace),
                 choice(
-                    $.url,
-                    seq($.link_to_detached_modifier, $._whitespace, $.title),
-                ),
-                "}",
-            ),
-
-        link_description_inline: ($) => seq("[", $.title, "]"),
-
-        link_inline: ($) =>
-            prec.right(
-                2,
-                seq(
-                    $.link_location_inline,
-                    optional($.link_description_inline),
-                ),
-            ),
-
-        anchor_inline: ($) =>
-            prec.right(
-                2,
-                seq(
-                    $.link_description_inline,
-                    optional(
-                        choice(
-                            $.link_location_inline,
-                            $.link_description_inline,
-                        ),
-                    ),
-                ),
-            ),
-
-        //slide: ($) =>
-        //    seq(
-        //        ":",
-        //        newline,
-        //        choice(
-        //            seq(repeat($.non_structural), $.paragraph),
-        //            seq(repeat1($.non_structural), newline_or_eof),
-        //        ),
-        //    ),
-    },
-});
-
-function attached_modifier_para_seg($, type, inline) {
-    const other_attached_modifiers = [
-        "bold",
-        "italic",
-        "strikethrough",
-        "underline",
-        "spoiler",
-        "superscript",
-        "subscript",
-        "null_modifier",
-        "verbatim",
-        "link",
-        "anchor",
-        // "inline_math",
-        // "inline_macro",
-    ]
-        .filter((x) => x != type)
-        .map((x) => $[inline ? x + "_inline" : x]);
-    type = inline ? type + "_inline" : type;
-    const paragraph_segment = $["_" + type + "_paragraph_segment"];
-    return seq(
-        choice(
-            repeat1($._paragraph_inner),
-            seq(
-                repeat1(
-                    choice(
-                        $._attached_modifier_conflict_open,
-                        ...other_attached_modifiers,
-                    ),
-                ),
-                optional(paragraph_segment),
-            ),
-        ),
-        repeat(
-            prec.right(
-                1,
-                seq(
-                    choice($._whitespace, $._punctuation),
-                    choice(
-                        repeat1($._paragraph_inner),
-                        seq(
-                            repeat1(
-                                choice(
-                                    $._attached_modifier_conflict_open,
-                                    ...other_attached_modifiers,
-                                ),
-                            ),
-                            optional(paragraph_segment),
-                        ),
-                    ),
-                ),
-            ),
-        ),
-    );
-}
-
-function attached_modifier($, type) {
-    const paragraph_segment = $["_" + type + "_paragraph_segment"];
-    return prec.dynamic(
-        1,
-        seq(
-            alias($[type + "_open"], $.open),
-            paragraph_segment,
-            repeat(
-                seq(
-                    optional($._whitespace),
-                    newline,
-                    choice(
-                        paragraph_segment,
-                        seq($.weak_carryover_tag, paragraph_segment),
-                    ),
-                ),
-            ),
-            alias($[type + "_close"], $.close),
-        ),
-    );
-}
-
-function attached_modifier_verbatim($, type) {
-    return prec.dynamic(
-        2,
-        seq(
-            alias($[type + "_open"], $.open),
-            $._verbatim_paragraph_segment,
-            repeat(
-                seq(
-                    optional($._whitespace),
-                    newline,
-                    $._verbatim_paragraph_segment,
-                ),
-            ),
-            alias($[type + "_close"], $.close),
-        ),
-    );
-}
-
-function attached_modifier_verbatim_inline($, type) {
-    return prec.dynamic(
-        2,
-        seq(
-            alias($[type + "_open"], $.open),
-            $._verbatim_paragraph_segment,
-            alias($[type + "_close"], $.close),
-        ),
-    );
-}
-
-function attached_modifier_inline($, type) {
-    return prec.dynamic(
-        1,
-        seq(
-            alias($[type + "_open"], $.open),
-            $["_" + type + "_inline_paragraph_segment"],
-            alias($[type + "_close"], $.close),
-        ),
-    );
+                    $["_" + type + "_word_segment"],
+                    $["_" + type + "_punc_segment"],
+                )
+            )
+        )
+        rules[type] = ($) => prec.dynamic(1, seq(
+            $[type + "_open"],
+            choice(
+                $["_" + type + "_word_segment"],
+                $["_" + type + "_punc_segment"],
+            )
+        ));
+    })
 }

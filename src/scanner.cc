@@ -24,6 +24,7 @@ using namespace std;
 // Make TokenType derive from `char` for compact serialization.
 enum TokenType : char {
     WHITESPACE,
+    BOLD_END,
 
     HEADING,
     UNORDERED_LIST,
@@ -112,6 +113,12 @@ struct Scanner {
                 return true;
             }
         }
+        // if (valid_symbols[BOLD_END] && lexer->lookahead == '*') {
+        //     advance();
+        //     lexer->result_symbol = BOLD_END;
+        //     return true;
+        // }
+        return false;
 
         // If the parser expects a heading, list type or quote then attempt to parse said item.
         if ((valid_symbols[HEADING] && lexer->lookahead == '*') || (valid_symbols[UNORDERED_LIST] && lexer->lookahead == '-') || (valid_symbols[ORDERED_LIST] && lexer->lookahead == '~') || (valid_symbols[QUOTE] && lexer->lookahead == '>')) {
