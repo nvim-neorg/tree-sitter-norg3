@@ -1,0 +1,12 @@
+- (x) solve not parse `**` as `bold_close`
+-- sol1: check from external scanner
+-- sol2: remove `prec(1,)` and make conflict case like this: `[$.bold_close, $.punctuation]`
+-- sol3: add additional `/\*+/` token for punctuation which has higher precedence than bold_close
+- (x) solve case `*bold*word`.
+    still same problem, parser keep tries to separate two word as two paragraphs
+    it's not a problem when parsing files because we can just add `newline_or_eof` crucial at the end of the paragraph
+    but when parsing a string, tree-sitter grammar can't detect the *end of a string*
+    hmmm... should I use external scanner for `bold_close` to solve this?
+    -- solution!!! use `bold_close` with `prec(2, seq("*", $._bold_word_seg))`
+- ( ) add other attached modifiers
+- ( ) add free form attached modifiers
