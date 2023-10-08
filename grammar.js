@@ -1,6 +1,16 @@
 let newline = choice("\n", "\r", "\r\n");
 let newline_or_eof = choice("\n", "\r", "\r\n", "\0");
 
+const ATTACHED_MODIFIER_TYPES = [
+    "bold",
+    "italic",
+    "strikethrough",
+    "underline",
+    "spoiler",
+    "superscript",
+    "subscript",
+]
+
 /// General TODOS:
 //  - Abstract repeating patterns (e.g. nestable detached modifiers) into Javascript functions.
 //  - Support link modifiers within inline paragraph segments (titles)
@@ -19,7 +29,12 @@ module.exports = grammar({
     // TODO: Minimize conflict count
     conflicts: ($) => [
         [$.punctuation, $._bold_open],
-        [$.punctuation, $.italic_open],
+        [$.punctuation, $._italic_open],
+        [$.punctuation, $._strikethrough_open],
+        [$.punctuation, $._underline_open],
+        [$.punctuation, $._spoiler_open],
+        [$.punctuation, $._superscript_open],
+        [$.punctuation, $._subscript_open],
         [$.punctuation, $.link_modifier],
         [$.punctuation, $._free_open],
     ],
@@ -119,241 +134,152 @@ module.exports = grammar({
         ),
         link_modifier: (_) => prec.dynamic(1, ":"),
         _free_open: (_) => "|",
-        _bold_open: (_) => "*",
-        _bold_close: ($) => choice(
-            // avoid breaking paragraph to match the bold_close
-            prec(2, seq("*", $._bold_word_segment)),
-            alias(prec(1, "*"), $.close),
-        ),
-        bold_free_open: ($) => seq($._bold_open, $._free_open),
-        _bold_free_close: ($) => choice(
-            prec(2, seq("|*", $._bold_free_word_segment)),
-            alias("|*", $.free_close),
-        ),
-        italic_open: (_) => "/",
-        italic_close: (_) => prec(1, "/"),
-        _bold_word_segment: ($) => seq(
-            $._word,
-            choice(
-                $._bold_ws_segment,
-                $._bold_punc_segment,
-                $._bold_newline_segment,
-                seq($.link_modifier, $._bold_free_att_mod_segment),
-                $._bold_close,
-            )
-        ),
-        _bold_ws_segment: ($) => seq(
-            $._whitespace,
-            $._bold_paragraph_segment,
-        ),
-        _bold_punc_segment: ($) => seq(
-            $.punctuation,
-            choice(
-                $._bold_paragraph_segment,
-                $._bold_close,
-            )
-        ),
-        _bold_att_mod_segment: ($) => seq(
-            choice(
-                $.italic,
-            ),
-            choice(
-                $._bold_ws_segment,
-                $._bold_punc_segment,
-                $._bold_att_mod_segment,
-                seq($.link_modifier, $._bold_word_segment),
-                $._bold_newline_segment,
-                $._bold_close,
-            ),
-        ),
-        _bold_newline_segment: ($) => seq(
-            newline,
-            choice(
-                $._bold_word_segment,
-                $._bold_punc_segment,
-                $._bold_att_mod_segment,
-            )
-        ),
-        _bold_paragraph_segment: ($) => choice(
-            $._bold_word_segment,
-            $._bold_ws_segment,
-            $._bold_punc_segment,
-            $._bold_att_mod_segment,
-            $._bold_newline_segment,
-        ),
-        _bold_free_word_segment: ($) => seq(
-            $._word,
-            choice(
-                $._bold_free_ws_punc_segment,
-                seq($.link_modifier, $._bold_free_att_mod_segment),
-                $._bold_free_close,
-            )
-        ),
-        _bold_free_ws_punc_segment: ($) => seq(
-            choice(
-                $._whitespace,
-                $.punctuation,
-            ),
-            $._bold_free_paragraph_segment,
-        ),
-        _bold_free_att_mod_segment: ($) => seq(
-            choice(
-                $.italic,
-            ),
-            choice(
-                $._bold_free_ws_punc_segment,
-                $._bold_free_att_mod_segment,
-                seq($.link_modifier, $._bold_free_word_segment),
-                $._bold_free_newline_segment,
-                $._bold_free_close,
-            )
-        ),
-        _bold_free_newline_segment: ($) => seq(
-            newline,
-            choice(
-                $._bold_free_word_segment,
-                $._bold_free_ws_punc_segment,
-                $._bold_free_att_mod_segment,
-                $._bold_free_close,
-            )
-        ),
-        _bold_free_paragraph_segment: ($) => choice(
-            $._bold_free_word_segment,
-            $._bold_free_ws_punc_segment,
-            $._bold_free_att_mod_segment,
-            $._bold_free_newline_segment,
-            $._bold_free_close,
-        ),
-        bold: ($) => choice(
-            prec.dynamic(1, seq(
-                alias($._bold_open, $.open),
-                choice(
-                    $._bold_word_segment,
-                    $._bold_punc_segment,
-                    $._bold_att_mod_segment,
-                )
-            )),
-            prec.dynamic(2, seq(
-                alias($.bold_free_open, $.free_open),
-                $._bold_free_paragraph_segment,
-            )),
-        ),
-        _italic_word_segment: ($) => seq(
-            $._word,
-            choice(
-                $._italic_ws_segment,
-                $._italic_punc_segment,
-                // this avoids parser breaks paragraph to match the italic_close
-                prec(2, seq("/", $._italic_word_segment)),
-                alias($.italic_close, $.close),
-            )
-        ),
-        _italic_ws_segment: ($) => seq(
-            $._whitespace,
-            $._italic_paragraph_segment,
-        ),
-        _italic_punc_segment: ($) => seq(
-            $.punctuation,
-            choice(
-                $._italic_paragraph_segment,
-                prec(2, seq("/", $._italic_word_segment)),
-                alias($.italic_close, $.close),
-            )
-        ),
-        _italic_att_mod_segment: ($) => seq(
-            choice(
-                $.bold,
-            ),
-            choice(
-                $._italic_ws_segment,
-                $._italic_punc_segment,
-                $._italic_att_mod_segment,
-                prec(2, seq("/", $._italic_word_segment)),
-                alias($.italic_close, $.close),
-            ),
-        ),
-        _italic_paragraph_segment: ($) => choice(
-            $._italic_word_segment,
-            $._italic_ws_segment,
-            $._italic_punc_segment,
-            $._italic_att_mod_segment,
-            seq(
-                newline,
-                repeat($._whitespace),
-                choice(
-                    $._italic_word_segment,
-                    $._italic_punc_segment,
-                    $._italic_att_mod_segment,
-                )
-            ),
-        ),
-        italic: ($) => prec.dynamic(1, seq(
-            alias($.italic_open, $.open),
-            choice(
-                $._italic_word_segment,
-                $._italic_punc_segment,
-                $._italic_att_mod_segment,
-                // TODO: free-form
-                // seq("|", $._italic_free_para_seg)
-            )
-        )),
+        ...gen_attached_modifiers("bold", "*"),
+        ...gen_attached_modifiers("italic", "/"),
+        ...gen_attached_modifiers("strikethrough", "-"),
+        ...gen_attached_modifiers("underline", "_"),
+        ...gen_attached_modifiers("spoiler", "!"),
+        ...gen_attached_modifiers("superscript", "^"),
+        ...gen_attached_modifiers("subscript", ","),
     }
 })
 
-const ATTACHED_MODIFIER_TYPES = [
-    "bold",
-    "italic",
-]
-
 // TODO: automate
-function gen_attached_modifiers() {
+function gen_attached_modifiers(type, mod) {
     const rules = {};
-    ATTACHED_MODIFIER_TYPES.forEach((type) => {
-        const other_modifiers = ATTACHED_MODIFIER_TYPES.filter((t) => t != type);
-        rules["_" + type + "_word_segment"] = ($) => seq(
-            $._word,
-            choice(
-                $["_" + type + "_paragraph_segment"],
-                $[type + "close"],
-            )
-        );
-        rules["_" + type + "_ws_segment"] = ($) => seq(
-            $._whitespace,
-            $["_" + type + "_paragraph_segment"],
-        );
-        rules["_" + type + "_punc_segment"] = ($) => seq(
-            $.punctuation,
-            choice(
-                $["_" + type + "_paragraph_segment"],
-                $[type + "close"],
-            )
-        );
-        rules["_" + type + "_att_mod_seg"] = ($) => seq(
-            choice(...(other_modifiers.map(t => $[t]))),
-            choice(
-                $["_" + type + "_paragraph_segment"],
-                $[type + "close"],
-            )
-        ),
-        rules["_" + type + "_paragraph_segment"] = ($) => choice(
-            $["_" + type + "_word_segment"],
-            $["_" + type + "_ws_segment"],
-            $["_" + type + "_punc_segment"],
-            seq(
-                newline,
-                repeat($._whitespace),
-                choice(
-                    $["_" + type + "_word_segment"],
-                    $["_" + type + "_punc_segment"],
-                )
-            )
+    const other_modifiers = ATTACHED_MODIFIER_TYPES.filter((t) => t != type);
+    const open = `_${type}_open`;
+    const close = `_${type}_close`;
+    const word_segment = `_${type}_word_segment`;
+    const ws_segment = `_${type}_ws_segment`;
+    const punc_segment = `_${type}_punc_segment`;
+    const att_mod_seg = `_${type}_attached_modifier_segment`;
+    const newline_segment = `_${type}_newline_segment`;
+
+    const free_open = `_${type}_free_open`;
+    const free_close = `_${type}_free_close`;
+    const free_word_segment = `_${type}_free_word_segment`;
+    const free_ws_punc_segment = `_${type}_free_ws_punc_segment`;
+    const free_att_mod_seg = `_${type}_free_attached_modifier_segment`;
+    const free_newline_segment = `_${type}_free_newline_segment`;
+    rules[open] = (_) => mod;
+    rules[close] = ($) => choice(
+        prec(2, seq(mod, $[word_segment])),
+        alias(prec(1, mod), $.close),
+    );
+    rules[free_open] = ($) => seq($[open], $._free_open);
+    rules[free_close] = ($) => choice(
+        prec(2, seq(mod, $[free_word_segment])),
+        alias(prec(1, mod), $.close),
+    );
+    rules[word_segment] = ($) => seq(
+        $._word,
+        choice(
+            $[ws_segment],
+            $[punc_segment],
+            $[newline_segment],
+            $[close],
+            seq($.link_modifier, $[att_mod_seg]),
         )
-        rules[type] = ($) => prec.dynamic(1, seq(
-            $[type + "_open"],
+    );
+    rules[ws_segment] = ($) => seq(
+        $._whitespace,
+        choice(
+            $[word_segment],
+            $[ws_segment],
+            $[punc_segment],
+            $[att_mod_seg],
+            $[newline_segment],
+        )
+    )
+    rules[punc_segment] = ($) => seq(
+        $.punctuation,
+        choice(
+            $[word_segment],
+            $[ws_segment],
+            $[punc_segment],
+            $[att_mod_seg],
+            $[newline_segment],
+            $[close],
+        )
+    );
+    rules[att_mod_seg] = ($) => seq(
+        choice(
+            ...other_modifiers.map(m => $[m])
+        ),
+        choice(
+            $[ws_segment],
+            $[punc_segment],
+            $[att_mod_seg],
+            $[newline_segment],
+            $[close],
+            seq($.link_modifier, $[word_segment]),
+        )
+    );
+    rules[newline_segment] = ($) => seq(
+        newline,
+        choice(
+            $[word_segment],
+            $[punc_segment],
+            $[att_mod_seg],
+        )
+    );
+    rules[free_word_segment] = ($) => seq(
+        $._word,
+        choice(
+            $[free_ws_punc_segment],
+            $[free_close],
+            seq($.link_modifier, $[free_att_mod_seg])
+        )
+    );
+    rules[free_ws_punc_segment] = ($) => seq(
+        choice(
+            $._whitespace,
+            $.punctuation,
+        ),
+        $[free_word_segment],
+        $[free_ws_punc_segment],
+        $[free_att_mod_seg],
+        $[free_newline_segment],
+        $[free_close],
+    )
+    rules[free_att_mod_seg] = ($) => seq(
+        choice(
+            ...other_modifiers.map(m => $[m])
+        ),
+        choice(
+            $[free_ws_punc_segment],
+            $[free_att_mod_seg],
+            $[free_newline_segment],
+            $[free_close],
+            seq($.link_modifier, $[free_word_segment]),
+        )
+    )
+    rules[free_newline_segment] = ($) => seq(
+        newline,
+        choice(
+            $[free_word_segment],
+            $[free_ws_punc_segment],
+            $[free_att_mod_seg],
+            $[free_close],
+        )
+    )
+    rules[type] = ($) => choice(
+        prec.dynamic(1, seq(
+            alias($[open], $.open),
             choice(
-                $["_" + type + "_word_segment"],
-                $["_" + type + "_punc_segment"],
+                $[word_segment],
+                $[punc_segment],
+                $[att_mod_seg],
             )
-        ));
-    })
+        )),
+        prec.dynamic(2, seq(
+            alias($[free_open], $.free_open),
+            $[free_word_segment],
+            $[free_ws_punc_segment],
+            $[free_att_mod_seg],
+            $[free_newline_segment],
+        ))
+    )
+    return rules
 }
