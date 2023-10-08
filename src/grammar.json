@@ -46,6 +46,10 @@
             {
               "type": "STRING",
               "value": "\u0000"
+            },
+            {
+              "type": "STRING",
+              "value": ""
             }
           ]
         },
@@ -439,16 +443,16 @@
       "type": "PREC_RIGHT",
       "value": 0,
       "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "SYMBOL",
-            "name": "_paragraph_segment"
-          },
-          {
-            "type": "REPEAT",
-            "content": {
-              "type": "SEQ",
+        "type": "REPEAT1",
+        "content": {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "_paragraph_segment"
+            },
+            {
+              "type": "CHOICE",
               "members": [
                 {
                   "type": "CHOICE",
@@ -464,46 +468,21 @@
                     {
                       "type": "STRING",
                       "value": "\r\n"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "\u0000"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": ""
                     }
                   ]
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "_paragraph_segment"
                 }
               ]
             }
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "STRING",
-                    "value": "\n"
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "\r"
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "\r\n"
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "\u0000"
-                  }
-                ]
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          }
-        ]
+          ]
+        }
       }
     },
     "_word_segment": {
@@ -4705,6 +4684,10 @@
               {
                 "type": "STRING",
                 "value": "\u0000"
+              },
+              {
+                "type": "STRING",
+                "value": ""
               }
             ]
           },
@@ -5136,6 +5119,10 @@
               {
                 "type": "STRING",
                 "value": "\u0000"
+              },
+              {
+                "type": "STRING",
+                "value": ""
               }
             ]
           },
@@ -5300,6 +5287,10 @@
               {
                 "type": "STRING",
                 "value": "\u0000"
+              },
+              {
+                "type": "STRING",
+                "value": ""
               }
             ]
           },
@@ -5464,6 +5455,10 @@
               {
                 "type": "STRING",
                 "value": "\u0000"
+              },
+              {
+                "type": "STRING",
+                "value": ""
               }
             ]
           },
@@ -5795,6 +5790,10 @@
                     {
                       "type": "STRING",
                       "value": "\u0000"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": ""
                     }
                   ]
                 }
@@ -5983,6 +5982,10 @@
                     {
                       "type": "STRING",
                       "value": "\u0000"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": ""
                     }
                   ]
                 }
@@ -6171,6 +6174,10 @@
                     {
                       "type": "STRING",
                       "value": "\u0000"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": ""
                     }
                   ]
                 }
@@ -6307,6 +6314,10 @@
             {
               "type": "STRING",
               "value": "\u0000"
+            },
+            {
+              "type": "STRING",
+              "value": ""
             }
           ]
         }
@@ -6914,6 +6925,10 @@
               {
                 "type": "STRING",
                 "value": "\u0000"
+              },
+              {
+                "type": "STRING",
+                "value": ""
               }
             ]
           }
@@ -6955,6 +6970,10 @@
               {
                 "type": "STRING",
                 "value": "\u0000"
+              },
+              {
+                "type": "STRING",
+                "value": ""
               }
             ]
           }
@@ -7081,6 +7100,11 @@
   "inline": [],
   "supertypes": [
     "non_structural",
+    "nestable_modifier",
+    "rangeable_detached_modifier",
+    "tag",
+    "todo_item",
+    "delimiting_modifier",
     "punctuation"
   ]
 }
