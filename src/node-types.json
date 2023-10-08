@@ -36,14 +36,6 @@
     "named": true,
     "subtypes": [
       {
-        "type": "",
-        "named": false
-      },
-      {
-        "type": "\u0000",
-        "named": false
-      },
-      {
         "type": "\n",
         "named": false
       },
