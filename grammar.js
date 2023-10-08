@@ -110,6 +110,7 @@ module.exports = grammar({
         _att_mod_seg: ($) => prec.right(seq(
             choice(
                 $.bold,
+                $.italic,
             ),
             optional(
                 choice(
@@ -134,7 +135,11 @@ module.exports = grammar({
         _bold_word_segment: ($) => seq(
             $._word,
             choice(
-                $._bold_paragraph_segment,
+                $._bold_ws_segment,
+                $._bold_punc_segment,
+                // this avoids parser breaks paragraph to match the bold_close
+                // TODO: would `prec(2, $._bold_punc_segment)` be better?
+                // no. that allows *; to be punctuation segment
                 prec(2, seq("*", $._bold_word_segment)),
                 alias($.bold_close, $.close),
             )
@@ -147,20 +152,35 @@ module.exports = grammar({
             $.punctuation,
             choice(
                 $._bold_paragraph_segment,
-                alias($.bold_close, $.close),
                 prec(2, seq("*", $._bold_word_segment)),
+                alias($.bold_close, $.close),
             )
+        ),
+        _bold_att_mod_segment: ($) => seq(
+            choice(
+                $.italic,
+            ),
+            choice(
+                $._bold_ws_segment,
+                $._bold_punc_segment,
+                $._bold_att_mod_segment,
+                prec(2, seq("*", $._bold_word_segment)),
+                alias($.bold_close, $.close),
+            ),
         ),
         _bold_paragraph_segment: ($) => choice(
             $._bold_word_segment,
             $._bold_ws_segment,
             $._bold_punc_segment,
+            $._bold_att_mod_segment,
             seq(
-                alias(newline, $.newline),
+                newline,
+                // parse whitespace first to avoid including paragraph break
                 repeat($._whitespace),
                 choice(
                     $._bold_word_segment,
                     $._bold_punc_segment,
+                    $._bold_att_mod_segment,
                 )
             ),
         ),
@@ -169,8 +189,70 @@ module.exports = grammar({
             choice(
                 $._bold_word_segment,
                 $._bold_punc_segment,
+                $._bold_att_mod_segment,
                 // TODO: free-form
                 // seq("|", $._bold_free_para_seg)
+            )
+        )),
+        _italic_word_segment: ($) => seq(
+            $._word,
+            choice(
+                $._italic_ws_segment,
+                $._italic_punc_segment,
+                // this avoids parser breaks paragraph to match the italic_close
+                // TODO: would `prec(2, $._italic_punc_segment)` be better?
+                // no. that allows *; to be punctuation segment
+                prec(2, seq("*", $._italic_word_segment)),
+                alias($.italic_close, $.close),
+            )
+        ),
+        _italic_ws_segment: ($) => seq(
+            $._whitespace,
+            $._italic_paragraph_segment,
+        ),
+        _italic_punc_segment: ($) => seq(
+            $.punctuation,
+            choice(
+                $._italic_paragraph_segment,
+                prec(2, seq("/", $._italic_word_segment)),
+                alias($.italic_close, $.close),
+            )
+        ),
+        _italic_att_mod_segment: ($) => seq(
+            choice(
+                $.bold,
+            ),
+            choice(
+                $._italic_ws_segment,
+                $._italic_punc_segment,
+                $._italic_att_mod_segment,
+                prec(2, seq("/", $._italic_word_segment)),
+                alias($.italic_close, $.close),
+            ),
+        ),
+        _italic_paragraph_segment: ($) => choice(
+            $._italic_word_segment,
+            $._italic_ws_segment,
+            $._italic_punc_segment,
+            $._italic_att_mod_segment,
+            seq(
+                newline,
+                repeat($._whitespace),
+                choice(
+                    $._italic_word_segment,
+                    $._italic_punc_segment,
+                    $._italic_att_mod_segment,
+                )
+            ),
+        ),
+        italic: ($) => prec.dynamic(1, seq(
+            alias($.italic_open, $.open),
+            choice(
+                $._italic_word_segment,
+                $._italic_punc_segment,
+                $._italic_att_mod_segment,
+                // TODO: free-form
+                // seq("|", $._italic_free_para_seg)
             )
         )),
     }
