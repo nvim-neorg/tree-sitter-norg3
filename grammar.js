@@ -78,7 +78,7 @@ module.exports = grammar({
                 newline_or_eof,
                 $.nestable_modifier,
                 $.rangeable_detached_modifier,
-                // $.tag,
+                $.tag,
                 $.delimiting_modifier,
             ),
 
@@ -305,7 +305,265 @@ module.exports = grammar({
                 ),
             ),
 
-        // TODO: tags
+
+        tag: ($) =>
+            choice(
+                $.verbatim_ranged_tag,
+                $.ranged_tag,
+                $.infirm_tag,
+                $.strong_carryover_tag,
+                $.weak_carryover_tag,
+                $.macro_tag,
+            ),
+
+        tag_name: ($) =>
+            seq(
+                alias(repeat1(token(prec(1, /[a-z\-A-Z]/))), $.identifier),
+                repeat(
+                    seq(
+                        ".",
+                        alias(
+                            repeat1(token(prec(1, /[a-z\-A-Z]/))),
+                            $.identifier,
+                        ),
+                    ),
+                ),
+            ),
+
+        verbatim_ranged_tag: ($) =>
+            seq(
+                "@",
+                $.tag_name,
+                optional(
+                    seq(
+                        $._whitespace,
+                        optional(
+                            seq(
+                                alias(
+                                    repeat1(choice($._word, $.punctuation, $.escape_sequence)),
+                                    $.parameter,
+                                ),
+                                repeat(
+                                    seq(
+                                        $._whitespace,
+                                        optional(
+                                            alias(
+                                                repeat1(
+                                                    choice(
+                                                        $._word,
+                                                        $.punctuation,
+                                                    ),
+                                                ),
+                                                $.parameter,
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                newline,
+                optional(
+                    seq(
+                        alias(
+                            repeat(
+                                choice($._word, $._whitespace, $.punctuation, newline),
+                            ),
+                            $.verbatim_content,
+                        ),
+                        newline,
+                    ),
+                ),
+                alias(token(seq("@end", newline_or_eof)), $.end),
+            ),
+
+        ranged_tag: ($) =>
+            seq(
+                token("|"),
+                $.tag_name,
+                optional(
+                    seq(
+                        $._whitespace,
+                        optional(
+                            seq(
+                                alias(
+                                    repeat1(choice($._word, $.punctuation, $.escape_sequence)),
+                                    $.parameter,
+                                ),
+                                repeat(
+                                    seq(
+                                        $._whitespace,
+                                        optional(
+                                            alias(
+                                                repeat1(
+                                                    choice(
+                                                        $._word,
+                                                        $.punctuation,
+                                                    ),
+                                                ),
+                                                $.parameter,
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                newline,
+                alias(repeat(choice($.non_structural, $.heading)), $.content),
+                alias(token(seq("|end", newline_or_eof)), $.end),
+            ),
+
+        macro_tag: ($) =>
+            seq(
+                token("="),
+                $.tag_name,
+                optional(
+                    seq(
+                        $._whitespace,
+                        optional(
+                            seq(
+                                alias(
+                                    repeat1(choice($._word, $.punctuation, $.escape_sequence)),
+                                    $.parameter,
+                                ),
+                                repeat(
+                                    seq(
+                                        $._whitespace,
+                                        optional(
+                                            alias(
+                                                repeat1(
+                                                    choice(
+                                                        $._word,
+                                                        $.punctuation,
+                                                    ),
+                                                ),
+                                                $.parameter,
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                newline,
+                alias(repeat(choice($.non_structural, $.heading)), $.content),
+                alias(token(seq("=end", newline_or_eof)), $.end),
+            ),
+
+        infirm_tag: ($) =>
+            seq(
+                ".",
+                $.tag_name,
+
+                optional(
+                    seq(
+                        $._whitespace,
+                        optional(
+                            seq(
+                                alias(
+                                    repeat1(choice($._word, $.punctuation, $.escape_sequence)),
+                                    $.parameter,
+                                ),
+                                repeat(
+                                    seq(
+                                        $._whitespace,
+                                        optional(
+                                            alias(
+                                                repeat1(
+                                                    choice(
+                                                        $._word,
+                                                        $.punctuation,
+                                                    ),
+                                                ),
+                                                $.parameter,
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                newline_or_eof,
+            ),
+
+        strong_carryover_tag: ($) =>
+            seq(
+                "#",
+                $.tag_name,
+
+                optional(
+                    seq(
+                        $._whitespace,
+                        optional(
+                            seq(
+                                alias(
+                                    repeat1(choice($._word, $.punctuation, $.escape_sequence)),
+                                    $.parameter,
+                                ),
+                                repeat(
+                                    seq(
+                                        $._whitespace,
+                                        optional(
+                                            alias(
+                                                repeat1(
+                                                    choice(
+                                                        $._word,
+                                                        $.punctuation,
+                                                    ),
+                                                ),
+                                                $.parameter,
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                newline,
+            ),
+
+        weak_carryover_tag: ($) =>
+            seq(
+                "+",
+                $.tag_name,
+
+                optional(
+                    seq(
+                        $._whitespace,
+                        optional(
+                            seq(
+                                alias(
+                                    repeat1(choice($._word, $.punctuation, $.escape_sequence)),
+                                    $.parameter,
+                                ),
+                                repeat(
+                                    seq(
+                                        $._whitespace,
+                                        optional(
+                                            alias(
+                                                repeat1(
+                                                    choice(
+                                                        $._word,
+                                                        $.punctuation,
+                                                    ),
+                                                ),
+                                                $.parameter,
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
+                    ),
+                ),
+                newline,
+            ),
 
         todo_item_done: ($) => "x",
         todo_item_undone: ($) => " ",
