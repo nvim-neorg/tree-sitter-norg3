@@ -1,5 +1,6 @@
 let newline = choice("\n", "\r", "\r\n");
-let newline_or_eof = choice("\n", "\r", "\r\n", "\0");
+// "" is for end-of-string (e.g. test)
+let newline_or_eof = choice("\n", "\r", "\r\n", "\0", "");
 
 const ATTACHED_MODIFIER_TYPES = [
     "bold",
@@ -59,6 +60,11 @@ module.exports = grammar({
 
     supertypes: ($) => [
         $.non_structural,
+        $.nestable_modifier,
+        $.rangeable_detached_modifier,
+        $.tag,
+        $.todo_item,
+        $.delimiting_modifier,
         $.punctuation,
     ],
 
@@ -110,10 +116,8 @@ module.exports = grammar({
 
         escape_sequence: ($) => seq("\\", alias(prec(10, /./), $.escape_char)),
 
-        paragraph: ($) => prec.right(seq(
-            $._paragraph_segment,
-            repeat(seq(newline, $._paragraph_segment)),
-            optional(newline_or_eof),
+        paragraph: ($) => prec.right(repeat1(
+            seq($._paragraph_segment, choice(newline_or_eof)),
         )),
 
         _word_segment: ($) => prec.right(seq(
