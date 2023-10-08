@@ -1,6 +1,5 @@
 let newline = choice("\n", "\r", "\r\n");
-// "" is for end-of-string (e.g. test)
-let newline_or_eof = choice("\n", "\r", "\r\n", "\0", "");
+let newline_or_eof = choice("\n", "\r", "\r\n", "\0");
 
 const ATTACHED_MODIFIER_TYPES = [
     "bold",
@@ -36,7 +35,6 @@ module.exports = grammar({
         $._dedent,
     ],
 
-    // TODO: Minimize conflict count
     conflicts: ($) => [
         [$.punctuation, $._bold_open],
         [$.punctuation, $._italic_open],
@@ -81,7 +79,7 @@ module.exports = grammar({
         non_structural: ($) =>
             choice(
                 $.paragraph,
-                newline_or_eof,
+                newline,
                 $.nestable_modifier,
                 $.rangeable_detached_modifier,
                 $.tag,
@@ -117,7 +115,8 @@ module.exports = grammar({
         escape_sequence: ($) => seq("\\", alias(prec(10, /./), $.escape_char)),
 
         paragraph: ($) => prec.right(repeat1(
-            seq($._paragraph_segment, choice(newline_or_eof)),
+            // "" is for end-of-string (e.g. test)
+            seq($._paragraph_segment, choice(newline_or_eof, "")),
         )),
 
         _word_segment: ($) => prec.right(seq(

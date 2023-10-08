@@ -42,14 +42,6 @@
             {
               "type": "STRING",
               "value": "\r\n"
-            },
-            {
-              "type": "STRING",
-              "value": "\u0000"
-            },
-            {
-              "type": "STRING",
-              "value": ""
             }
           ]
         },
@@ -472,12 +464,12 @@
                     {
                       "type": "STRING",
                       "value": "\u0000"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": ""
                     }
                   ]
+                },
+                {
+                  "type": "STRING",
+                  "value": ""
                 }
               ]
             }
@@ -4684,10 +4676,6 @@
               {
                 "type": "STRING",
                 "value": "\u0000"
-              },
-              {
-                "type": "STRING",
-                "value": ""
               }
             ]
           },
@@ -5119,10 +5107,6 @@
               {
                 "type": "STRING",
                 "value": "\u0000"
-              },
-              {
-                "type": "STRING",
-                "value": ""
               }
             ]
           },
@@ -5287,10 +5271,6 @@
               {
                 "type": "STRING",
                 "value": "\u0000"
-              },
-              {
-                "type": "STRING",
-                "value": ""
               }
             ]
           },
@@ -5455,10 +5435,6 @@
               {
                 "type": "STRING",
                 "value": "\u0000"
-              },
-              {
-                "type": "STRING",
-                "value": ""
               }
             ]
           },
@@ -5790,10 +5766,6 @@
                     {
                       "type": "STRING",
                       "value": "\u0000"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": ""
                     }
                   ]
                 }
@@ -5982,10 +5954,6 @@
                     {
                       "type": "STRING",
                       "value": "\u0000"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": ""
                     }
                   ]
                 }
@@ -6174,10 +6142,6 @@
                     {
                       "type": "STRING",
                       "value": "\u0000"
-                    },
-                    {
-                      "type": "STRING",
-                      "value": ""
                     }
                   ]
                 }
@@ -6314,10 +6278,6 @@
             {
               "type": "STRING",
               "value": "\u0000"
-            },
-            {
-              "type": "STRING",
-              "value": ""
             }
           ]
         }
@@ -6925,10 +6885,6 @@
               {
                 "type": "STRING",
                 "value": "\u0000"
-              },
-              {
-                "type": "STRING",
-                "value": ""
               }
             ]
           }
@@ -6970,10 +6926,6 @@
               {
                 "type": "STRING",
                 "value": "\u0000"
-              },
-              {
-                "type": "STRING",
-                "value": ""
               }
             ]
           }
