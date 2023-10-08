@@ -133,7 +133,10 @@ Left-side, Adjacent Punctuation, not a Modifier, Beginning of Line
 --------------------------------------------------------------------------------
 
 (document
-  (paragraph))
+  (paragraph
+    (bold
+      (open)
+      (close))))
 
 ================================================================================
 Right-side, Adjacent Punctuation, not a Modifier, Beginning of Line
@@ -154,7 +157,10 @@ preceding text ,:*bold* succeeding text
 --------------------------------------------------------------------------------
 
 (document
-  (paragraph))
+  (paragraph
+    (bold
+      (open)
+      (close))))
 
 ================================================================================
 Right-side, Adjacent Punctuation, not a Modifier, Middle of Line
