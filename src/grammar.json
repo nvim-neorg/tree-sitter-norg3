@@ -63,7 +63,43 @@
         },
         {
           "type": "STRING",
-          "value": ";"
+          "value": "-"
+        },
+        {
+          "type": "STRING",
+          "value": "_"
+        },
+        {
+          "type": "STRING",
+          "value": "!"
+        },
+        {
+          "type": "STRING",
+          "value": "^"
+        },
+        {
+          "type": "STRING",
+          "value": ","
+        },
+        {
+          "type": "STRING",
+          "value": "`"
+        },
+        {
+          "type": "STRING",
+          "value": "%"
+        },
+        {
+          "type": "STRING",
+          "value": "$"
+        },
+        {
+          "type": "STRING",
+          "value": "&"
+        },
+        {
+          "type": "STRING",
+          "value": ":"
         },
         {
           "type": "PREC",
@@ -72,12 +108,27 @@
             "type": "PATTERN",
             "value": "\\*+"
           }
+        },
+        {
+          "type": "PREC",
+          "value": 1,
+          "content": {
+            "type": "PATTERN",
+            "value": "\\/+"
+          }
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PATTERN",
+            "value": "[^\\n\\r\\p{Z}\\p{L}\\p{N}]"
+          }
         }
       ]
     },
     "_word": {
       "type": "PREC_RIGHT",
-      "value": 0,
+      "value": -1,
       "content": {
         "type": "REPEAT1",
         "content": {
@@ -213,6 +264,19 @@
                   {
                     "type": "SYMBOL",
                     "name": "_punc_segment"
+                  },
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "link_modifier"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "_att_mod_seg"
+                      }
+                    ]
                   }
                 ]
               },
@@ -316,6 +380,19 @@
                   {
                     "type": "SYMBOL",
                     "name": "_att_mod_seg"
+                  },
+                  {
+                    "type": "SEQ",
+                    "members": [
+                      {
+                        "type": "SYMBOL",
+                        "name": "link_modifier"
+                      },
+                      {
+                        "type": "SYMBOL",
+                        "name": "_word_segment"
+                      }
+                    ]
                   }
                 ]
               },
@@ -347,6 +424,14 @@
           "name": "_att_mod_seg"
         }
       ]
+    },
+    "link_modifier": {
+      "type": "PREC_DYNAMIC",
+      "value": 1,
+      "content": {
+        "type": "STRING",
+        "value": ":"
+      }
     },
     "bold_open": {
       "type": "STRING",
@@ -579,6 +664,14 @@
     [
       "punctuation",
       "bold_open"
+    ],
+    [
+      "punctuation",
+      "italic_open"
+    ],
+    [
+      "punctuation",
+      "link_modifier"
     ]
   ],
   "precedences": [],

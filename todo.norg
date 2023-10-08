@@ -8,5 +8,6 @@
     but when parsing a string, tree-sitter grammar can't detect the *end of a string*
     hmmm... should I use external scanner for `bold_close` to solve this?
     -- solution!!! use `bold_close` with `prec(2, seq("*", $._bold_word_seg))`
-- ( ) add other attached modifiers
+- (x) add link modifier
 - ( ) add free form attached modifiers
+- ( ) add other attached modifiers

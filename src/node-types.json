@@ -30,7 +30,31 @@
     "named": true,
     "subtypes": [
       {
+        "type": "!",
+        "named": false
+      },
+      {
+        "type": "$",
+        "named": false
+      },
+      {
+        "type": "%",
+        "named": false
+      },
+      {
+        "type": "&",
+        "named": false
+      },
+      {
         "type": "*",
+        "named": false
+      },
+      {
+        "type": ",",
+        "named": false
+      },
+      {
+        "type": "-",
         "named": false
       },
       {
@@ -38,7 +62,19 @@
         "named": false
       },
       {
-        "type": ";",
+        "type": ":",
+        "named": false
+      },
+      {
+        "type": "^",
+        "named": false
+      },
+      {
+        "type": "_",
+        "named": false
+      },
+      {
+        "type": "`",
         "named": false
       }
     ]
@@ -91,6 +127,11 @@
     }
   },
   {
+    "type": "link_modifier",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "open",
     "named": true,
     "fields": {}
@@ -105,6 +146,10 @@
       "types": [
         {
           "type": "bold",
+          "named": true
+        },
+        {
+          "type": "link_modifier",
           "named": true
         },
         {
@@ -131,7 +176,31 @@
     "named": false
   },
   {
+    "type": "!",
+    "named": false
+  },
+  {
+    "type": "$",
+    "named": false
+  },
+  {
+    "type": "%",
+    "named": false
+  },
+  {
+    "type": "&",
+    "named": false
+  },
+  {
     "type": "*",
+    "named": false
+  },
+  {
+    "type": ",",
+    "named": false
+  },
+  {
+    "type": "-",
     "named": false
   },
   {
@@ -139,11 +208,23 @@
     "named": false
   },
   {
-    "type": ";",
+    "type": ":",
     "named": false
   },
   {
     "type": "\\",
+    "named": false
+  },
+  {
+    "type": "^",
+    "named": false
+  },
+  {
+    "type": "_",
+    "named": false
+  },
+  {
+    "type": "`",
     "named": false
   },
   {
