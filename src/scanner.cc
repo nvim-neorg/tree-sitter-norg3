@@ -24,7 +24,6 @@ using namespace std;
 // Make TokenType derive from `char` for compact serialization.
 enum TokenType : char {
     WHITESPACE,
-    BOLD_END,
 
     HEADING,
     UNORDERED_LIST,
@@ -33,18 +32,6 @@ enum TokenType : char {
 
     WEAK_DELIMITING_MODIFIER,
 
-    BOLD_CLOSE,
-    ITALIC_CLOSE,
-    STRIKETHROUGH_CLOSE,
-    UNDERLINE_CLOSE,
-    SPOILER_CLOSE,
-    SUPERSCRIPT_CLOSE,
-    SUBSCRIPT_CLOSE,
-    VERBATIM_CLOSE,
-    NULL_MODIFIER_CLOSE,
-    INLINE_MATH_CLOSE,
-    INLINE_MACRO_CLOSE,
-
     DEDENT,
 };
 
@@ -52,22 +39,6 @@ struct Scanner {
     TSLexer* lexer;
     // Stores indentation data related to headings, lists and other nestable item types.
     std::unordered_map< char, std::vector<uint16_t> > indents;
-    // Serves as a lookup table from a character to a token type.
-    std::unordered_map<int32_t, TokenType> attached_modifiers;
-
-    // NOTE: Anyone know of a better way of doing this for pre-C++11 compilers? Surely there must be a shorthand.
-    Scanner() {
-        attached_modifiers['*'] = BOLD_CLOSE;
-        attached_modifiers['/'] = ITALIC_CLOSE;
-        attached_modifiers['_'] = UNDERLINE_CLOSE;
-        attached_modifiers['-'] = STRIKETHROUGH_CLOSE;
-        attached_modifiers['%'] = NULL_MODIFIER_CLOSE;
-        attached_modifiers['`'] = VERBATIM_CLOSE;
-        attached_modifiers['!'] = SPOILER_CLOSE;
-        attached_modifiers['^'] = SUPERSCRIPT_CLOSE;
-        attached_modifiers[','] = SUBSCRIPT_CLOSE;
-        attached_modifiers['&'] = INLINE_MACRO_CLOSE;
-    }
 
     /**
      * Returns `true` if the character provided is a separator character (but not a newline).
@@ -113,12 +84,6 @@ struct Scanner {
                 return true;
             }
         }
-        // if (valid_symbols[BOLD_END] && lexer->lookahead == '*') {
-        //     advance();
-        //     lexer->result_symbol = BOLD_END;
-        //     return true;
-        // }
-        return false;
 
         // If the parser expects a heading, list type or quote then attempt to parse said item.
         if ((valid_symbols[HEADING] && lexer->lookahead == '*') || (valid_symbols[UNORDERED_LIST] && lexer->lookahead == '-') || (valid_symbols[ORDERED_LIST] && lexer->lookahead == '~') || (valid_symbols[QUOTE] && lexer->lookahead == '>')) {
@@ -193,45 +158,6 @@ struct Scanner {
                     case '>': lexer->result_symbol = QUOTE; break;
                 }
                 return true;
-            }
-        }
-
-        // TODO(vhyrro): Parse opening attached modifiers here too and check if there is a double character
-        // afterwards to ensure spec compatibility? The implementation is super simple, just add `"*"` etc.
-        // into the `$.externals` and simply check if there are no double characters here.
-
-        // Closing attached modifier parsing.
-        // Parsing opening attached modifiers can be done entirely through the grammar. The situation
-        // is more tricky with closing modifiers however, as we need to parse them first before we can
-        // find out if they are valid or not (i.e. if they are followed by another punctuation character
-        // or by whitespace).
-
-        int32_t valid_closing_symbol = get_valid_symbol(valid_symbols, BOLD_CLOSE, INLINE_MACRO_CLOSE);
-
-        if (valid_closing_symbol != -1 && !iswspace(lexer->lookahead)) {
-            std::unordered_map<int32_t, TokenType>::iterator iter = attached_modifiers.find(lexer->lookahead);
-
-            if (iter == attached_modifiers.end()) {
-                advance();
-                iter = attached_modifiers.find(lexer->lookahead);
-            }
-
-            if (iter != attached_modifiers.end()) {
-                if (!valid_symbols[iter->second])
-                    return false;
-
-                advance();
-
-                // Ensure that the next character is not the same as the one we just parsed.
-                // As per the spec any double characters like `**` or `//` should be immediately disqualified
-                // from being a valid attached modifier.
-                if ((!lexer->lookahead || iswspace(lexer->lookahead) || iswpunct(lexer->lookahead)) && (lexer->lookahead != iter->first)) {
-                    lexer->mark_end(lexer);
-                    lexer->result_symbol = iter->second;
-                    return true;
-                }
-
-                return false;
             }
         }
 

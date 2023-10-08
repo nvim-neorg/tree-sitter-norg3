@@ -24,6 +24,15 @@ module.exports = grammar({
     extras: ($) => [$._precedingwhitespace],
     externals: ($) => [
         $._precedingwhitespace,
+
+        $.heading_stars,
+        $.unordered_list_prefix,
+        $.ordered_list_prefix,
+        $.quote_prefix,
+
+        $.weak_delimiting_modifier,
+
+        $._dedent,
     ],
 
     // TODO: Minimize conflict count
@@ -39,7 +48,12 @@ module.exports = grammar({
         [$.punctuation, $._free_open],
     ],
 
-    precedences: ($) => [],
+    precedences: ($) => [
+        [$.heading, $.delimiting_modifier],
+        [$.horizontal_line, $.punctuation],
+        [$.footnote_list_single, $.punctuation],
+        [$.definition_list_single, $.punctuation],
+    ],
 
     inlines: ($) => [],
 
@@ -53,8 +67,8 @@ module.exports = grammar({
             repeat(
                 choice(
                     $.non_structural,
-                    // $.heading,
-                    // $.strong_delimiting_modifier,
+                    $.heading,
+                    $.strong_delimiting_modifier,
                 ),
             ),
 
@@ -62,6 +76,10 @@ module.exports = grammar({
             choice(
                 $.paragraph,
                 newline_or_eof,
+                $.nestable_modifier,
+                $.rangeable_detached_modifier,
+                // $.tag,
+                $.delimiting_modifier,
             ),
 
         _character: (_) => token(/[\p{L}\p{N}]/u),
@@ -141,8 +159,234 @@ module.exports = grammar({
         ...gen_attached_modifiers("spoiler", "!"),
         ...gen_attached_modifiers("superscript", "^"),
         ...gen_attached_modifiers("subscript", ","),
+
+        // TODO: title should be one-line paragraph
+        title: ($) => $._paragraph_segment,
+
+        heading: ($) =>
+            prec.right(
+                seq(
+                    $.heading_stars,
+                    $._whitespace,
+                    // optional(seq($.detached_modifier_extension, $._whitespace)),
+                    $.title,
+                    newline_or_eof,
+                    repeat(choice($.heading, $.non_structural)),
+                    optional(choice($._dedent, $.weak_delimiting_modifier)),
+                )
+            ),
+
+        nestable_modifier: ($) =>
+            choice($.unordered_list, $.ordered_list, $.quote),
+
+        unordered_list: ($) => prec.right(repeat1($.unordered_list_item)),
+
+        unordered_list_item: ($) =>
+            prec.right(
+                seq(
+                    $.unordered_list_prefix,
+                    $._whitespace,
+                    optional(seq($.detached_modifier_extension, $._whitespace)),
+                    $.paragraph,
+                    repeat($.unordered_list_item),
+                    optional($._dedent),
+                ),
+            ),
+
+        ordered_list: ($) => prec.right(repeat1($.ordered_list_item)),
+
+        ordered_list_item: ($) =>
+            prec.right(
+                seq(
+                    $.ordered_list_prefix,
+                    $._whitespace,
+                    optional(seq($.detached_modifier_extension, $._whitespace)),
+                    $.paragraph,
+                    repeat($.ordered_list_item),
+                    optional($._dedent),
+                ),
+            ),
+
+        quote: ($) => prec.right(repeat1($.quote_item)),
+
+        quote_item: ($) =>
+            prec.right(
+                seq(
+                    $.quote_prefix,
+                    $._whitespace,
+                    optional(seq($.detached_modifier_extension, $._whitespace)),
+                    $.paragraph,
+                    repeat($.quote_item),
+                    optional($._dedent),
+                ),
+            ),
+
+        rangeable_detached_modifier: ($) =>
+            choice(
+                $.definition_list,
+                $.footnote_list,
+                // $.table
+            ),
+
+        definition_list: ($) =>
+            choice($.definition_list_single, $.definition_list_multi),
+
+        definition_list_single: ($) =>
+            seq(
+                alias("$", $.definition_single_prefix),
+                $._whitespace,
+                optional(seq($.detached_modifier_extension, $._whitespace)),
+                $.title,
+                repeat1(newline),
+                $.paragraph,
+            ),
+
+        definition_list_multi: ($) =>
+            prec.right(
+                seq(
+                    alias("$$", $.definition_multi_prefix),
+                    $._whitespace,
+                    optional(seq($.detached_modifier_extension, $._whitespace)),
+                    $.title,
+                    newline_or_eof,
+                    repeat($.non_structural),
+                    alias("$$", $.definition_multi_end),
+                ),
+            ),
+
+        footnote_list: ($) =>
+            choice($.footnote_list_single, $.footnote_list_multi),
+
+        footnote_list_single: ($) =>
+            seq(
+                alias("^", $.footnote_single_prefix),
+                $._whitespace,
+                optional(seq($.detached_modifier_extension, $._whitespace)),
+                $.title,
+                repeat1(newline),
+                $.paragraph,
+            ),
+
+        footnote_list_multi: ($) =>
+            prec.right(
+                seq(
+                    alias("^^", $.footnote_multi_prefix),
+                    $._whitespace,
+                    optional(seq($.detached_modifier_extension, $._whitespace)),
+                    $.title,
+                    newline_or_eof,
+                    repeat($.non_structural),
+                    alias("^^", $.footnote_multi_end),
+                ),
+            ),
+
+        table: ($) => choice($.table_cell_single, $.table_cell_multi),
+
+        table_cell_single: ($) =>
+            seq(
+                alias(":", $.table_cell_single_prefix),
+                $._whitespace,
+                optional(seq($.detached_modifier_extension, $._whitespace)),
+                $.title,
+                repeat1(newline),
+                $.paragraph,
+            ),
+
+        table_cell_multi: ($) =>
+            prec.right(
+                seq(
+                    alias("::", $.table_cell_multi_prefix),
+                    $._whitespace,
+                    optional(seq($.detached_modifier_extension, $._whitespace)),
+                    $.title,
+                    newline_or_eof,
+                    repeat($.non_structural),
+                    alias("::", $.table_cell_multi_end),
+                ),
+            ),
+
+        // TODO: tags
+
+        todo_item_done: ($) => "x",
+        todo_item_undone: ($) => " ",
+        todo_item_uncertain: ($) => "?",
+        todo_item_urgent: ($) => "!",
+        todo_item_pending: ($) => "-",
+        todo_item_on_hold: ($) => "=",
+        todo_item_cancelled: ($) => "_",
+        todo_item_recurring: ($) =>
+            seq(
+                "+",
+                optional(
+                    seq(
+                        $._whitespace,
+                        alias(
+                            repeat(choice($._word, $._whitespace)),
+                            $.timestamp,
+                        ),
+                    ),
+                ),
+            ),
+        todo_item_priority: ($) => seq("#", $._whitespace, $._word),
+        todo_item_timestamp: ($) =>
+            seq(
+                "@",
+                seq(
+                    $._whitespace,
+                    alias(repeat1(choice($._word, $._whitespace)), $.timestamp),
+                ),
+            ),
+        todo_item_start_date: ($) =>
+            seq(
+                ">",
+                seq(
+                    $._whitespace,
+                    alias(repeat1(choice($._word, $._whitespace)), $.timestamp),
+                ),
+            ),
+        todo_item_due_date: ($) =>
+            seq(
+                "<",
+                seq(
+                    $._whitespace,
+                    alias(repeat1(choice($._word, $._whitespace)), $.timestamp),
+                ),
+            ),
+
+        todo_item: ($) =>
+            choice(
+                $.todo_item_done,
+                $.todo_item_undone,
+                $.todo_item_uncertain,
+                $.todo_item_urgent,
+                $.todo_item_pending,
+                $.todo_item_on_hold,
+                $.todo_item_cancelled,
+                $.todo_item_recurring,
+                $.todo_item_priority,
+                $.todo_item_timestamp,
+                $.todo_item_start_date,
+                $.todo_item_due_date,
+            ),
+
+        detached_modifier_extension: ($) =>
+            seq(
+                "(",
+                $.todo_item,
+                repeat(seq(token(prec(1, "|")), $.todo_item)),
+                ")",
+            ),
+
+        delimiting_modifier: ($) =>
+            choice($.weak_delimiting_modifier, $.horizontal_line),
+
+        strong_delimiting_modifier: ($) =>
+            prec.right(seq("==", repeat("="), newline_or_eof)),
+
+        horizontal_line: ($) =>
+            prec.right(seq("_", repeat1("_"), newline_or_eof)),
     }
-})
+});
 
 // TODO: automate
 function gen_attached_modifiers(type, mod) {
@@ -153,14 +397,14 @@ function gen_attached_modifiers(type, mod) {
     const word_segment = `_${type}_word_segment`;
     const ws_segment = `_${type}_ws_segment`;
     const punc_segment = `_${type}_punc_segment`;
-    const att_mod_seg = `_${type}_attached_modifier_segment`;
+    const att_mod_segment = `_${type}_attached_modifier_segment`;
     const newline_segment = `_${type}_newline_segment`;
 
     const free_open = `_${type}_free_open`;
     const free_close = `_${type}_free_close`;
     const free_word_segment = `_${type}_free_word_segment`;
     const free_ws_punc_segment = `_${type}_free_ws_punc_segment`;
-    const free_att_mod_seg = `_${type}_free_attached_modifier_segment`;
+    const free_att_mod_segment = `_${type}_free_attached_modifier_segment`;
     const free_newline_segment = `_${type}_free_newline_segment`;
     rules[open] = (_) => mod;
     rules[close] = ($) => choice(
@@ -179,7 +423,7 @@ function gen_attached_modifiers(type, mod) {
             $[punc_segment],
             $[newline_segment],
             $[close],
-            seq($.link_modifier, $[att_mod_seg]),
+            seq($.link_modifier, $[att_mod_segment]),
         )
     );
     rules[ws_segment] = ($) => seq(
@@ -188,7 +432,7 @@ function gen_attached_modifiers(type, mod) {
             $[word_segment],
             $[ws_segment],
             $[punc_segment],
-            $[att_mod_seg],
+            $[att_mod_segment],
             $[newline_segment],
         )
     )
@@ -198,19 +442,19 @@ function gen_attached_modifiers(type, mod) {
             $[word_segment],
             $[ws_segment],
             $[punc_segment],
-            $[att_mod_seg],
+            $[att_mod_segment],
             $[newline_segment],
             $[close],
         )
     );
-    rules[att_mod_seg] = ($) => seq(
+    rules[att_mod_segment] = ($) => seq(
         choice(
             ...other_modifiers.map(m => $[m])
         ),
         choice(
             $[ws_segment],
             $[punc_segment],
-            $[att_mod_seg],
+            $[att_mod_segment],
             $[newline_segment],
             $[close],
             seq($.link_modifier, $[word_segment]),
@@ -221,15 +465,16 @@ function gen_attached_modifiers(type, mod) {
         choice(
             $[word_segment],
             $[punc_segment],
-            $[att_mod_seg],
+            $[att_mod_segment],
         )
     );
+
     rules[free_word_segment] = ($) => seq(
         $._word,
         choice(
             $[free_ws_punc_segment],
             $[free_close],
-            seq($.link_modifier, $[free_att_mod_seg])
+            seq($.link_modifier, $[free_att_mod_segment])
         )
     );
     rules[free_ws_punc_segment] = ($) => seq(
@@ -239,17 +484,17 @@ function gen_attached_modifiers(type, mod) {
         ),
         $[free_word_segment],
         $[free_ws_punc_segment],
-        $[free_att_mod_seg],
+        $[free_att_mod_segment],
         $[free_newline_segment],
         $[free_close],
     )
-    rules[free_att_mod_seg] = ($) => seq(
+    rules[free_att_mod_segment] = ($) => seq(
         choice(
             ...other_modifiers.map(m => $[m])
         ),
         choice(
             $[free_ws_punc_segment],
-            $[free_att_mod_seg],
+            $[free_att_mod_segment],
             $[free_newline_segment],
             $[free_close],
             seq($.link_modifier, $[free_word_segment]),
@@ -260,7 +505,7 @@ function gen_attached_modifiers(type, mod) {
         choice(
             $[free_word_segment],
             $[free_ws_punc_segment],
-            $[free_att_mod_seg],
+            $[free_att_mod_segment],
             $[free_close],
         )
     )
@@ -270,14 +515,14 @@ function gen_attached_modifiers(type, mod) {
             choice(
                 $[word_segment],
                 $[punc_segment],
-                $[att_mod_seg],
+                $[att_mod_segment],
             )
         )),
         prec.dynamic(2, seq(
             alias($[free_open], $.free_open),
             $[free_word_segment],
             $[free_ws_punc_segment],
-            $[free_att_mod_seg],
+            $[free_att_mod_segment],
             $[free_newline_segment],
         ))
     )

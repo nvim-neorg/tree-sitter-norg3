@@ -33,14 +33,16 @@ text*
 --------------------------------------------------------------------------------
 
 (document
-  (paragraph)
-  (paragraph)
-  (paragraph)
-  (paragraph)
-  (paragraph)
-  (paragraph)
-  (paragraph)
-  (paragraph))
+  (heading
+    (heading_stars)
+    (title)
+    (paragraph)
+    (paragraph)
+    (paragraph)
+    (paragraph)
+    (paragraph)
+    (paragraph)
+    (paragraph)))
 
 ================================================================================
 Conflicts vs Closed Markup - Left-flanking, internal

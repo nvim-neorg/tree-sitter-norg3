@@ -12,8 +12,17 @@
 - (x) add free form attached modifiers
 -- (x) sol1: make new `_bold_free_...` and `_bold_free_inline_...`. easy and dirty
 -- (-) sol2: set BOLD_FREE state to `true` when external scanner parsed BOLD_FREE_OPEN. hard
-- (x) add other attached modifiers
+- ( ) add other attached modifiers
 -- (x) test multiple attached modifier
 -- (x) abstract those into JS functions
+-- (x) add all non verbatim attached modifiers
+-- ( ) add all verbatim attached modifiers
+- ( ) add links/anchors
+- ( ) revert all block types
+-- (x) nestable modifier
+-- (x) rangeable detached modifier
+-- (x) delimiting modifier
+-- ( ) tag
+- ( ) revert escape sequence
 
 free form은 prec.left로 완성 여부 확인하면 되지 않을까?

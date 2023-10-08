@@ -20,7 +20,19 @@
         "named": false
       },
       {
+        "type": "delimiting_modifier",
+        "named": true
+      },
+      {
+        "type": "nestable_modifier",
+        "named": true
+      },
+      {
         "type": "paragraph",
+        "named": true
+      },
+      {
+        "type": "rangeable_detached_modifier",
         "named": true
       }
     ]
@@ -139,6 +151,117 @@
     }
   },
   {
+    "type": "definition_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "definition_list_multi",
+          "named": true
+        },
+        {
+          "type": "definition_list_single",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "definition_list_multi",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "definition_multi_end",
+          "named": true
+        },
+        {
+          "type": "definition_multi_prefix",
+          "named": true
+        },
+        {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
+        {
+          "type": "non_structural",
+          "named": true
+        },
+        {
+          "type": "title",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "definition_list_single",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "definition_single_prefix",
+          "named": true
+        },
+        {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
+        {
+          "type": "paragraph",
+          "named": true
+        },
+        {
+          "type": "title",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "delimiting_modifier",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "horizontal_line",
+          "named": true
+        },
+        {
+          "type": "weak_delimiting_modifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "detached_modifier_extension",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "todo_item",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "document",
     "named": true,
     "fields": {},
@@ -147,7 +270,92 @@
       "required": false,
       "types": [
         {
+          "type": "heading",
+          "named": true
+        },
+        {
           "type": "non_structural",
+          "named": true
+        },
+        {
+          "type": "strong_delimiting_modifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "footnote_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "footnote_list_multi",
+          "named": true
+        },
+        {
+          "type": "footnote_list_single",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "footnote_list_multi",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
+        {
+          "type": "footnote_multi_end",
+          "named": true
+        },
+        {
+          "type": "footnote_multi_prefix",
+          "named": true
+        },
+        {
+          "type": "non_structural",
+          "named": true
+        },
+        {
+          "type": "title",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "footnote_list_single",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
+        {
+          "type": "footnote_single_prefix",
+          "named": true
+        },
+        {
+          "type": "paragraph",
+          "named": true
+        },
+        {
+          "type": "title",
           "named": true
         }
       ]
@@ -155,6 +363,42 @@
   },
   {
     "type": "free_open",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "heading",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "heading",
+          "named": true
+        },
+        {
+          "type": "heading_stars",
+          "named": true
+        },
+        {
+          "type": "non_structural",
+          "named": true
+        },
+        {
+          "type": "title",
+          "named": true
+        },
+        {
+          "type": "weak_delimiting_modifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "horizontal_line",
     "named": true,
     "fields": {}
   },
@@ -219,9 +463,74 @@
     "fields": {}
   },
   {
+    "type": "nestable_modifier",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "ordered_list",
+          "named": true
+        },
+        {
+          "type": "quote",
+          "named": true
+        },
+        {
+          "type": "unordered_list",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "open",
     "named": true,
     "fields": {}
+  },
+  {
+    "type": "ordered_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "ordered_list_item",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "ordered_list_item",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
+        {
+          "type": "ordered_list_item",
+          "named": true
+        },
+        {
+          "type": "ordered_list_prefix",
+          "named": true
+        },
+        {
+          "type": "paragraph",
+          "named": true
+        }
+      ]
+    }
   },
   {
     "type": "paragraph",
@@ -245,6 +554,67 @@
         },
         {
           "type": "punctuation",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "quote",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "quote_item",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "quote_item",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
+        {
+          "type": "paragraph",
+          "named": true
+        },
+        {
+          "type": "quote_item",
+          "named": true
+        },
+        {
+          "type": "quote_prefix",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "rangeable_detached_modifier",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "definition_list",
+          "named": true
+        },
+        {
+          "type": "footnote_list",
           "named": true
         }
       ]
@@ -361,6 +731,11 @@
     }
   },
   {
+    "type": "strong_delimiting_modifier",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "subscript",
     "named": true,
     "fields": {},
@@ -471,6 +846,240 @@
     }
   },
   {
+    "type": "table_cell_multi",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
+        {
+          "type": "non_structural",
+          "named": true
+        },
+        {
+          "type": "table_cell_multi_end",
+          "named": true
+        },
+        {
+          "type": "table_cell_multi_prefix",
+          "named": true
+        },
+        {
+          "type": "title",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "table_cell_single",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
+        {
+          "type": "paragraph",
+          "named": true
+        },
+        {
+          "type": "table_cell_single_prefix",
+          "named": true
+        },
+        {
+          "type": "title",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "timestamp",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "title",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "bold",
+          "named": true
+        },
+        {
+          "type": "italic",
+          "named": true
+        },
+        {
+          "type": "link_modifier",
+          "named": true
+        },
+        {
+          "type": "punctuation",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "todo_item",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "todo_item_cancelled",
+          "named": true
+        },
+        {
+          "type": "todo_item_done",
+          "named": true
+        },
+        {
+          "type": "todo_item_due_date",
+          "named": true
+        },
+        {
+          "type": "todo_item_on_hold",
+          "named": true
+        },
+        {
+          "type": "todo_item_pending",
+          "named": true
+        },
+        {
+          "type": "todo_item_priority",
+          "named": true
+        },
+        {
+          "type": "todo_item_recurring",
+          "named": true
+        },
+        {
+          "type": "todo_item_start_date",
+          "named": true
+        },
+        {
+          "type": "todo_item_timestamp",
+          "named": true
+        },
+        {
+          "type": "todo_item_uncertain",
+          "named": true
+        },
+        {
+          "type": "todo_item_undone",
+          "named": true
+        },
+        {
+          "type": "todo_item_urgent",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "todo_item_cancelled",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "todo_item_due_date",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "timestamp",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "todo_item_on_hold",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "todo_item_pending",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "todo_item_priority",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "todo_item_recurring",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": false,
+      "types": [
+        {
+          "type": "timestamp",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "todo_item_start_date",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "timestamp",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "todo_item_timestamp",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "timestamp",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "todo_item_urgent",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "underline",
     "named": true,
     "fields": {},
@@ -526,6 +1135,48 @@
     }
   },
   {
+    "type": "unordered_list",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "unordered_list_item",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "unordered_list_item",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
+        {
+          "type": "paragraph",
+          "named": true
+        },
+        {
+          "type": "unordered_list_item",
+          "named": true
+        },
+        {
+          "type": "unordered_list_prefix",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "\u0000",
     "named": false
   },
@@ -546,6 +1197,10 @@
     "named": false
   },
   {
+    "type": "#",
+    "named": false
+  },
+  {
     "type": "$",
     "named": false
   },
@@ -558,7 +1213,19 @@
     "named": false
   },
   {
+    "type": "(",
+    "named": false
+  },
+  {
+    "type": ")",
+    "named": false
+  },
+  {
     "type": "*",
+    "named": false
+  },
+  {
+    "type": "+",
     "named": false
   },
   {
@@ -575,6 +1242,26 @@
   },
   {
     "type": ":",
+    "named": false
+  },
+  {
+    "type": "<",
+    "named": false
+  },
+  {
+    "type": "=",
+    "named": false
+  },
+  {
+    "type": "==",
+    "named": false
+  },
+  {
+    "type": ">",
+    "named": false
+  },
+  {
+    "type": "@",
     "named": false
   },
   {
@@ -598,7 +1285,75 @@
     "named": true
   },
   {
+    "type": "definition_multi_end",
+    "named": true
+  },
+  {
+    "type": "definition_multi_prefix",
+    "named": true
+  },
+  {
+    "type": "definition_single_prefix",
+    "named": true
+  },
+  {
     "type": "escape_char",
+    "named": true
+  },
+  {
+    "type": "footnote_multi_end",
+    "named": true
+  },
+  {
+    "type": "footnote_multi_prefix",
+    "named": true
+  },
+  {
+    "type": "footnote_single_prefix",
+    "named": true
+  },
+  {
+    "type": "heading_stars",
+    "named": true
+  },
+  {
+    "type": "ordered_list_prefix",
+    "named": true
+  },
+  {
+    "type": "quote_prefix",
+    "named": true
+  },
+  {
+    "type": "table_cell_multi_end",
+    "named": true
+  },
+  {
+    "type": "table_cell_multi_prefix",
+    "named": true
+  },
+  {
+    "type": "table_cell_single_prefix",
+    "named": true
+  },
+  {
+    "type": "todo_item_done",
+    "named": true
+  },
+  {
+    "type": "todo_item_uncertain",
+    "named": true
+  },
+  {
+    "type": "todo_item_undone",
+    "named": true
+  },
+  {
+    "type": "unordered_list_prefix",
+    "named": true
+  },
+  {
+    "type": "weak_delimiting_modifier",
     "named": true
   },
   {
