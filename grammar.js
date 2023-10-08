@@ -756,7 +756,7 @@ function gen_attached_modifiers(type, mod) {
     rules[free_open] = ($) => seq($[open], $._free_open);
     rules[free_close] = ($) => choice(
         prec(2, seq(mod, $[free_word_segment])),
-        alias(prec(1, mod), $.close),
+        alias(prec(1, "|" + mod), $.free_close),
     );
     rules[word_segment] = ($) => seq(
         $._word,
@@ -824,11 +824,13 @@ function gen_attached_modifiers(type, mod) {
             $._whitespace,
             $.punctuation,
         ),
-        $[free_word_segment],
-        $[free_ws_punc_segment],
-        $[free_att_mod_segment],
-        $[free_newline_segment],
-        $[free_close],
+        choice(
+            $[free_word_segment],
+            $[free_ws_punc_segment],
+            $[free_att_mod_segment],
+            $[free_newline_segment],
+            $[free_close],
+        )
     )
     rules[free_att_mod_segment] = ($) => seq(
         choice(
@@ -862,10 +864,12 @@ function gen_attached_modifiers(type, mod) {
         )),
         prec.dynamic(2, seq(
             alias($[free_open], $.free_open),
-            $[free_word_segment],
-            $[free_ws_punc_segment],
-            $[free_att_mod_segment],
-            $[free_newline_segment],
+            choice(
+                $[free_word_segment],
+                $[free_ws_punc_segment],
+                $[free_att_mod_segment],
+                $[free_newline_segment],
+            )
         ))
     )
     return rules
