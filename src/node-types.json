@@ -96,10 +96,6 @@
           "named": true
         },
         {
-          "type": "newline",
-          "named": true
-        },
-        {
           "type": "open",
           "named": true
         },
@@ -144,10 +140,6 @@
         },
         {
           "type": "close",
-          "named": true
-        },
-        {
-          "type": "newline",
           "named": true
         },
         {
@@ -268,10 +260,6 @@
   },
   {
     "type": "escape_char",
-    "named": true
-  },
-  {
-    "type": "newline",
     "named": true
   }
 ]
