@@ -45,6 +45,8 @@ module.exports = grammar({
         [$.punctuation, $._subscript_open],
         [$.punctuation, $.link_modifier],
         [$.punctuation, $._free_open],
+
+        [$.table_cell_single, $.punctuation],
     ],
 
     precedences: ($) => [
@@ -228,7 +230,7 @@ module.exports = grammar({
             choice(
                 $.definition_list,
                 $.footnote_list,
-                // $.table
+                $.table
             ),
 
         definition_list: ($) =>
@@ -646,10 +648,89 @@ module.exports = grammar({
 
         horizontal_line: ($) =>
             prec.right(seq("_", repeat1("_"), newline_or_eof)),
+
+        link: ($) =>
+            prec.right(
+                seq(
+                    $.link_description,
+                    optional(choice($.link_location, $.link_description)),
+                )
+            ),
+
+        url: ($) => repeat1(choice($._word, $.punctuation)),
+
+        link_to_detached_modifier: ($) =>
+            choice(
+                // TODO: Add the rest
+                alias(repeat1("*"), $.heading_link),
+                alias("$", $.definition_link),
+                alias("^", $.footnote_link),
+            ),
+
+        // FIXME: double newlines are permitted within links here.
+        // FIXME: Allow attached modifiers to contain links
+        // TODO: Give the paragraph segments a node name
+        // TODO: Give field names to the description and location
+        link_location: ($) =>
+            seq(
+                "{",
+                choice(
+                    $.url,
+                    seq(
+                        $.link_to_detached_modifier,
+                        $._whitespace,
+                        $._paragraph_segment,
+                        repeat(seq(newline, $._paragraph_segment)),
+                    ),
+                ),
+                "}",
+            ),
+
+        link_description: ($) =>
+            seq(
+                "[",
+                $._paragraph_segment,
+                repeat(seq(newline, $._paragraph_segment)),
+                "]",
+            ),
+
+        link_location_inline: ($) =>
+            seq(
+                "{",
+                choice(
+                    $.url,
+                    seq($.link_to_detached_modifier, $._whitespace, $.title),
+                ),
+                "}",
+            ),
+
+        link_description_inline: ($) => seq("[", $.title, "]"),
+
+        link_inline: ($) =>
+            prec.right(
+                2,
+                seq(
+                    $.link_location_inline,
+                    optional($.link_description_inline),
+                ),
+            ),
+
+        anchor_inline: ($) =>
+            prec.right(
+                2,
+                seq(
+                    $.link_description_inline,
+                    optional(
+                        choice(
+                            $.link_location_inline,
+                            $.link_description_inline,
+                        ),
+                    ),
+                ),
+            ),
     }
 });
 
-// TODO: automate
 function gen_attached_modifiers(type, mod) {
     const rules = {};
     const other_modifiers = ATTACHED_MODIFIER_TYPES.filter((t) => t != type);
