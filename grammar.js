@@ -14,7 +14,6 @@ module.exports = grammar({
     extras: ($) => [$._precedingwhitespace],
     externals: ($) => [
         $._precedingwhitespace,
-        // $.bold_close,
     ],
 
     // TODO: Minimize conflict count
@@ -52,22 +51,23 @@ module.exports = grammar({
         _character: (_) => token(/[\p{L}\p{N}]/u),
         punctuation: ($) => choice(
             // to make conflict with attached modifier openers
-            "*",
-            "/",
-            "-",
-            "_",
-            "!",
-            "^",
-            ",",
-            "`",
-            "%",
-            "$",
-            "&",
+            // & repeated attached modifiers
+            // the following code makes tokens like * and /\*\*+/
+            ...[
+                "*",
+                "/",
+                "-",
+                "_",
+                "!",
+                "^",
+                ",",
+                "`",
+                "%",
+                "$",
+                "&",
+            ].map(m => [m, prec(1, token(seq(m, repeat1(m))))]).flat(),
             // conflict with link modifier is also needed
             ":",
-            // TODO: add more repeated modifier cases
-            prec(1, /\*+/),
-            prec(1, /\/+/),
             token(/[^\n\r\p{Z}\p{L}\p{N}]/u),
         ),
         _word: ($) => prec.right(-1, repeat1($._character)),
@@ -129,7 +129,11 @@ module.exports = grammar({
         ),
         link_modifier: (_) => prec.dynamic(1, ":"),
         bold_open: (_) => "*",
-        bold_close: (_) => prec(1, "*"),
+        _bold_close: ($) => choice(
+            // avoid breaking paragraph to match the bold_close
+            prec(2, seq("*", $._bold_word_segment)),
+            alias(prec(1, "*"), $.close),
+        ),
         italic_open: (_) => "/",
         italic_close: (_) => prec(1, "/"),
         _bold_word_segment: ($) => seq(
@@ -137,11 +141,8 @@ module.exports = grammar({
             choice(
                 $._bold_ws_segment,
                 $._bold_punc_segment,
-                // this avoids parser breaks paragraph to match the bold_close
-                // TODO: would `prec(2, $._bold_punc_segment)` be better?
-                // no. that allows *; to be punctuation segment
-                prec(2, seq("*", $._bold_word_segment)),
-                alias($.bold_close, $.close),
+                $._bold_newline_segment,
+                $._bold_close,
             )
         ),
         _bold_ws_segment: ($) => seq(
@@ -152,8 +153,7 @@ module.exports = grammar({
             $.punctuation,
             choice(
                 $._bold_paragraph_segment,
-                prec(2, seq("*", $._bold_word_segment)),
-                alias($.bold_close, $.close),
+                $._bold_close,
             )
         ),
         _bold_att_mod_segment: ($) => seq(
@@ -164,25 +164,24 @@ module.exports = grammar({
                 $._bold_ws_segment,
                 $._bold_punc_segment,
                 $._bold_att_mod_segment,
-                prec(2, seq("*", $._bold_word_segment)),
-                alias($.bold_close, $.close),
+                $._bold_newline_segment,
+                $._bold_close,
             ),
+        ),
+        _bold_newline_segment: ($) => seq(
+            newline,
+            choice(
+                $._bold_word_segment,
+                $._bold_punc_segment,
+                $._bold_att_mod_segment,
+            )
         ),
         _bold_paragraph_segment: ($) => choice(
             $._bold_word_segment,
             $._bold_ws_segment,
             $._bold_punc_segment,
             $._bold_att_mod_segment,
-            seq(
-                newline,
-                // parse whitespace first to avoid including paragraph break
-                repeat($._whitespace),
-                choice(
-                    $._bold_word_segment,
-                    $._bold_punc_segment,
-                    $._bold_att_mod_segment,
-                )
-            ),
+            $._bold_newline_segment,
         ),
         bold: ($) => prec.dynamic(1, seq(
             alias($.bold_open, $.open),
@@ -200,8 +199,6 @@ module.exports = grammar({
                 $._italic_ws_segment,
                 $._italic_punc_segment,
                 // this avoids parser breaks paragraph to match the italic_close
-                // TODO: would `prec(2, $._italic_punc_segment)` be better?
-                // no. that allows *; to be punctuation segment
                 prec(2, seq("*", $._italic_word_segment)),
                 alias($.italic_close, $.close),
             )
