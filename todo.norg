@@ -9,9 +9,9 @@
     hmmm... should I use external scanner for `bold_close` to solve this?
     -- solution!!! use `bold_close` with `prec(2, seq("*", $._bold_word_seg))`
 - (x) add link modifier
-- ( ) add free form attached modifiers
--- sol1: make new `_bold_free_...` and `_bold_free_inline_...`. easy and dirty
--- sol2: set BOLD_FREE state to `true` when external scanner parsed BOLD_FREE_OPEN. hard
+- (x) add free form attached modifiers
+-- (x) sol1: make new `_bold_free_...` and `_bold_free_inline_...`. easy and dirty
+-- (-) sol2: set BOLD_FREE state to `true` when external scanner parsed BOLD_FREE_OPEN. hard
 - ( ) add other attached modifiers
 -- (x) test multiple attached modifier
 -- ( ) abstract those into JS functions

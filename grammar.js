@@ -18,9 +18,10 @@ module.exports = grammar({
 
     // TODO: Minimize conflict count
     conflicts: ($) => [
-        [$.punctuation, $.bold_open],
+        [$.punctuation, $._bold_open],
         [$.punctuation, $.italic_open],
         [$.punctuation, $.link_modifier],
+        [$.punctuation, $._free_open],
     ],
 
     precedences: ($) => [],
@@ -68,6 +69,7 @@ module.exports = grammar({
             ].map(m => [m, prec(1, token(seq(m, repeat1(m))))]).flat(),
             // conflict with link modifier is also needed
             ":",
+            "|",
             token(/[^\n\r\p{Z}\p{L}\p{N}]/u),
         ),
         _word: ($) => prec.right(-1, repeat1($._character)),
@@ -85,27 +87,17 @@ module.exports = grammar({
             $._word,
             optional(
                 choice(
-                    $._ws_segment,
-                    $._punc_segment,
+                    $._ws_punc_segment,
                     seq($.link_modifier, $._att_mod_seg),
                 ),
             )
         )),
-        _ws_segment: ($) => prec.right(seq(
-            $._whitespace,
-            optional(
-                choice(
-                    $._paragraph_segment,
-                )
-            )
-        )),
-        _punc_segment: ($) => prec.right(seq(
-            $.punctuation,
-            optional(
-                choice(
-                    $._paragraph_segment,
-                )
-            )
+        _ws_punc_segment: ($) => prec.right(seq(
+            choice(
+                $._whitespace,
+                $.punctuation,
+            ),
+            optional($._paragraph_segment)
         )),
         _att_mod_seg: ($) => prec.right(seq(
             choice(
@@ -114,8 +106,7 @@ module.exports = grammar({
             ),
             optional(
                 choice(
-                    $._ws_segment,
-                    $._punc_segment,
+                    $._ws_punc_segment,
                     $._att_mod_seg,
                     seq($.link_modifier, $._word_segment),
                 )
@@ -123,16 +114,21 @@ module.exports = grammar({
         )),
         _paragraph_segment: ($) => choice(
             $._word_segment,
-            $._ws_segment,
-            $._punc_segment,
+            $._ws_punc_segment,
             $._att_mod_seg,
         ),
         link_modifier: (_) => prec.dynamic(1, ":"),
-        bold_open: (_) => "*",
+        _free_open: (_) => "|",
+        _bold_open: (_) => "*",
         _bold_close: ($) => choice(
             // avoid breaking paragraph to match the bold_close
             prec(2, seq("*", $._bold_word_segment)),
             alias(prec(1, "*"), $.close),
+        ),
+        bold_free_open: ($) => seq($._bold_open, $._free_open),
+        _bold_free_close: ($) => choice(
+            prec(2, seq("|*", $._bold_free_word_segment)),
+            alias("|*", $.free_close),
         ),
         italic_open: (_) => "/",
         italic_close: (_) => prec(1, "/"),
@@ -142,6 +138,7 @@ module.exports = grammar({
                 $._bold_ws_segment,
                 $._bold_punc_segment,
                 $._bold_newline_segment,
+                seq($.link_modifier, $._bold_free_att_mod_segment),
                 $._bold_close,
             )
         ),
@@ -164,6 +161,7 @@ module.exports = grammar({
                 $._bold_ws_segment,
                 $._bold_punc_segment,
                 $._bold_att_mod_segment,
+                seq($.link_modifier, $._bold_word_segment),
                 $._bold_newline_segment,
                 $._bold_close,
             ),
@@ -183,23 +181,70 @@ module.exports = grammar({
             $._bold_att_mod_segment,
             $._bold_newline_segment,
         ),
-        bold: ($) => prec.dynamic(1, seq(
-            alias($.bold_open, $.open),
+        _bold_free_word_segment: ($) => seq(
+            $._word,
             choice(
-                $._bold_word_segment,
-                $._bold_punc_segment,
-                $._bold_att_mod_segment,
-                // TODO: free-form
-                // seq("|", $._bold_free_para_seg)
+                $._bold_free_ws_punc_segment,
+                seq($.link_modifier, $._bold_free_att_mod_segment),
+                $._bold_free_close,
             )
-        )),
+        ),
+        _bold_free_ws_punc_segment: ($) => seq(
+            choice(
+                $._whitespace,
+                $.punctuation,
+            ),
+            $._bold_free_paragraph_segment,
+        ),
+        _bold_free_att_mod_segment: ($) => seq(
+            choice(
+                $.italic,
+            ),
+            choice(
+                $._bold_free_ws_punc_segment,
+                $._bold_free_att_mod_segment,
+                seq($.link_modifier, $._bold_free_word_segment),
+                $._bold_free_newline_segment,
+                $._bold_free_close,
+            )
+        ),
+        _bold_free_newline_segment: ($) => seq(
+            newline,
+            choice(
+                $._bold_free_word_segment,
+                $._bold_free_ws_punc_segment,
+                $._bold_free_att_mod_segment,
+                $._bold_free_close,
+            )
+        ),
+        _bold_free_paragraph_segment: ($) => choice(
+            $._bold_free_word_segment,
+            $._bold_free_ws_punc_segment,
+            $._bold_free_att_mod_segment,
+            $._bold_free_newline_segment,
+            $._bold_free_close,
+        ),
+        bold: ($) => choice(
+            prec.dynamic(1, seq(
+                alias($._bold_open, $.open),
+                choice(
+                    $._bold_word_segment,
+                    $._bold_punc_segment,
+                    $._bold_att_mod_segment,
+                )
+            )),
+            prec.dynamic(2, seq(
+                alias($.bold_free_open, $.free_open),
+                $._bold_free_paragraph_segment,
+            )),
+        ),
         _italic_word_segment: ($) => seq(
             $._word,
             choice(
                 $._italic_ws_segment,
                 $._italic_punc_segment,
                 // this avoids parser breaks paragraph to match the italic_close
-                prec(2, seq("*", $._italic_word_segment)),
+                prec(2, seq("/", $._italic_word_segment)),
                 alias($.italic_close, $.close),
             )
         ),
