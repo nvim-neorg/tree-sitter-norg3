@@ -20,6 +20,8 @@ module.exports = grammar({
     // TODO: Minimize conflict count
     conflicts: ($) => [
         [$.punctuation, $.bold_open],
+        [$.punctuation, $.italic_open],
+        [$.punctuation, $.link_modifier],
     ],
 
     precedences: ($) => [],
@@ -49,12 +51,26 @@ module.exports = grammar({
 
         _character: (_) => token(/[\p{L}\p{N}]/u),
         punctuation: ($) => choice(
+            // to make conflict with attached modifier openers
             "*",
             "/",
-            ";",
+            "-",
+            "_",
+            "!",
+            "^",
+            ",",
+            "`",
+            "%",
+            "$",
+            "&",
+            // conflict with link modifier is also needed
+            ":",
+            // TODO: add more repeated modifier cases
             prec(1, /\*+/),
+            prec(1, /\/+/),
+            token(/[^\n\r\p{Z}\p{L}\p{N}]/u),
         ),
-        _word: ($) => prec.right(repeat1($._character)),
+        _word: ($) => prec.right(-1, repeat1($._character)),
         _whitespace: (_) => token(prec(1, /\p{Zs}+/u)),
 
         escape_sequence: ($) => seq("\\", alias(prec(10, /./), $.escape_char)),
@@ -71,6 +87,7 @@ module.exports = grammar({
                 choice(
                     $._ws_segment,
                     $._punc_segment,
+                    seq($.link_modifier, $._att_mod_seg),
                 ),
             )
         )),
@@ -99,6 +116,7 @@ module.exports = grammar({
                     $._ws_segment,
                     $._punc_segment,
                     $._att_mod_seg,
+                    seq($.link_modifier, $._word_segment),
                 )
             )
         )),
@@ -108,6 +126,7 @@ module.exports = grammar({
             $._punc_segment,
             $._att_mod_seg,
         ),
+        link_modifier: (_) => prec.dynamic(1, ":"),
         bold_open: (_) => "*",
         bold_close: (_) => prec(1, "*"),
         italic_open: (_) => "/",
