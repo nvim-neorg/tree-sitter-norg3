@@ -1243,10 +1243,6 @@
                 {
                   "type": "SYMBOL",
                   "name": "_punctuation"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "escape_sequence"
                 }
               ]
             },
@@ -2634,10 +2630,6 @@
                 {
                   "type": "SYMBOL",
                   "name": "_punctuation"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "escape_sequence"
                 }
               ]
             },
@@ -4025,10 +4017,6 @@
                 {
                   "type": "SYMBOL",
                   "name": "_punctuation"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "escape_sequence"
                 }
               ]
             },
@@ -5416,10 +5404,6 @@
                 {
                   "type": "SYMBOL",
                   "name": "_punctuation"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "escape_sequence"
                 }
               ]
             },
@@ -6807,10 +6791,6 @@
                 {
                   "type": "SYMBOL",
                   "name": "_punctuation"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "escape_sequence"
                 }
               ]
             },
@@ -8198,10 +8178,6 @@
                 {
                   "type": "SYMBOL",
                   "name": "_punctuation"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "escape_sequence"
                 }
               ]
             },
@@ -9589,10 +9565,6 @@
                 {
                   "type": "SYMBOL",
                   "name": "_punctuation"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "escape_sequence"
                 }
               ]
             },
@@ -10750,10 +10722,6 @@
                 {
                   "type": "SYMBOL",
                   "name": "_punctuation"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "escape_sequence"
                 }
               ]
             },
@@ -11635,10 +11603,6 @@
                 {
                   "type": "SYMBOL",
                   "name": "_punctuation"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "escape_sequence"
                 }
               ]
             },
@@ -12520,10 +12484,6 @@
                 {
                   "type": "SYMBOL",
                   "name": "_punctuation"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "escape_sequence"
                 }
               ]
             },
@@ -13405,10 +13365,6 @@
                 {
                   "type": "SYMBOL",
                   "name": "_punctuation"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "escape_sequence"
                 }
               ]
             },
@@ -16678,17 +16634,8 @@
             "type": "CHOICE",
             "members": [
               {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "link_location"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "link_description"
-                  }
-                ]
+                "type": "SYMBOL",
+                "name": "link_location"
               },
               {
                 "type": "BLANK"

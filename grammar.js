@@ -729,7 +729,7 @@ module.exports = grammar({
             prec.right(
                 seq(
                     $.link_description,
-                    optional(choice($.link_location, $.link_description)),
+                    optional($.link_location),
                 ),
             ),
 
@@ -1020,7 +1020,6 @@ function gen_attached_modifier(type, mod, verbatim, not_inline) {
             seq(
                 choice(
                     $._punctuation,
-                    $.escape_sequence,
                 ),
                 choice(
                     ...[
