@@ -19,6 +19,7 @@
 -- (x) add all verbatim attached modifiers
 - ( ) add links/anchors
 -- ( ) add tests for links/anchors
+-- IDEA: link_description == attached modifier (with higher precedence than punctuation)
 - (x) revert all block types
 -- (x) nestable modifier
 -- (x) rangeable detached modifier
@@ -26,6 +27,3 @@
 -- (x) tag
 -- (x) test reverted block type grammars
 - (x) revert escape sequence
-- ( ) check all works fine with more test cases
-- (!) resolve precedence edge cases:
--- `[is this *bold]*]`
