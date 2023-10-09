@@ -56,6 +56,8 @@ module.exports = grammar({
         [$._punctuation, $._free_open],
 
         [$.table_cell_single, $.punctuation],
+        // make conflict for paragraph itself to allow breaking by precedence level on runtime
+        [$.paragraph],
     ],
 
     precedences: ($) => [
@@ -125,9 +127,10 @@ module.exports = grammar({
                 "&",
                 // make seperate twice-repeated tokens (e.g. "$$") to make conflict with rangeable_detached_modifiers
             ].map(m => [m, m + m, prec(1, token(seq(m + m, repeat1(m))))]).flat(),
-            // conflict with link modifier is also needed
+            // conflict with various types of modifiers/prefixs
             ":",
             "|",
+            "@",
             token(/[^\n\r\p{Z}\p{L}\p{N}]/u),
         ),
         // these are for breaking attached modifier when structural modifiers come after eol
@@ -170,7 +173,7 @@ module.exports = grammar({
         ...gen_verbatim_attached_modifier("inline_math", "$"),
         ...gen_verbatim_attached_modifier("inline_macro", "&"),
 
-        paragraph: ($) => prec.right(repeat1(
+        paragraph: ($) => (repeat1(
             // "" is for end-of-string (e.g. test)
             seq($._paragraph_segment, choice(newline_or_eof, "")),
         )),
@@ -396,12 +399,16 @@ module.exports = grammar({
 
         tag_name: ($) =>
             seq(
-                alias(repeat1(token(prec(1, /[a-z\-A-Z]/))), $.identifier),
+                alias(repeat1(
+                    prec(1, token(prec(1, /[a-z\-A-Z]/)))
+                ), $.identifier),
                 repeat(
                     seq(
                         ".",
                         alias(
-                            repeat1(token(prec(1, /[a-z\-A-Z]/))),
+                            repeat1(
+                    prec(1, token(prec(1, /[a-z\-A-Z]/)))
+                            ),
                             $.identifier,
                         ),
                     ),
@@ -409,6 +416,7 @@ module.exports = grammar({
             ),
 
         verbatim_ranged_tag: ($) =>
+            prec.dynamic(5,
             seq(
                 "@",
                 $.tag_name,
@@ -455,10 +463,12 @@ module.exports = grammar({
                 ),
                 alias(token(seq("@end", newline_or_eof)), $.end),
             ),
+            ),
 
         ranged_tag: ($) =>
+            prec.dynamic(4,
             seq(
-                token("|"),
+                "|",
                 $.tag_name,
                 optional(
                     seq(
@@ -492,6 +502,7 @@ module.exports = grammar({
                 newline,
                 alias(repeat(choice($.non_structural, $.heading)), $.content),
                 alias(token(seq("|end", newline_or_eof)), $.end),
+            ),
             ),
 
         macro_tag: ($) =>
