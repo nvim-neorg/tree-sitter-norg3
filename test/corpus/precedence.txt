@@ -1,27 +1,14 @@
 ================================================================================
-ranged tag vs paragraph
-================================================================================
-this is paragraph
-|example
-and this isn't
-|end
---------------------------------------------------------------------------------
-(document
-  (paragraph)
-  (ranged_tag
-    (tag_name
-      (identifier))
-    (content
-      (paragraph))
-    (end)))
-
-================================================================================
-attached modifier vs ranged tag
+paragraph vs ranged tag
 ================================================================================
 *not bold
 |example
 text*
 |end
+
+*this is a
+|example
+bold*
 --------------------------------------------------------------------------------
 (document
   (paragraph)
@@ -30,4 +17,33 @@ text*
       (identifier))
     (content
       (paragraph))
-    (end)))
+    (end))
+  (paragraph
+    (bold
+      (open)
+      (close))))
+
+================================================================================
+paragraph vs verbatim ranged tag
+================================================================================
+*not bold
+@code
+text*
+@end
+
+*this is a
+@code
+bold*
+--------------------------------------------------------------------------------
+(document
+  (paragraph)
+  (verbatim_ranged_tag
+    (tag_name
+      (identifier))
+    (verbatim_content)
+    (end))
+  (paragraph
+    (bold
+      (open)
+      (close))))
+
