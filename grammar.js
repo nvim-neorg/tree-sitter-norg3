@@ -122,7 +122,16 @@ module.exports = grammar({
         _word: ($) => prec.right(-1, repeat1($._character)),
         _whitespace: (_) => token(prec(1, /\p{Zs}+/u)),
 
-        escape_sequence: ($) => seq("\\", alias(prec(10, /./), $.escape_char)),
+        escape_sequence: ($) => seq(
+            "\\",
+            alias(
+                choice(
+                    prec(10, /(\r\n|[\s\S])/),
+                    $.punctuation,
+                ),
+                $.escape_char
+            )
+        ),
 
         link_modifier: (_) => prec.dynamic(1, ":"),
         _free_open: (_) => "|",
@@ -157,6 +166,7 @@ module.exports = grammar({
             choice(
                 $._whitespace,
                 $.punctuation,
+                $.escape_sequence,
             ),
             optional($._paragraph_segment)
         )),
@@ -190,6 +200,7 @@ module.exports = grammar({
             choice(
                 $._whitespace,
                 $.punctuation,
+                $.escape_sequence,
             ),
             optional($._inline_paragraph_segment)
         )),
@@ -831,7 +842,10 @@ function gen_attached_modifier(type, mod, verbatim, not_inline) {
         )
     )
     rules[punc_segment] = ($) => seq(
-        $.punctuation,
+        choice(
+            $.punctuation,
+            $.escape_sequence,
+        ),
         choice(
             ...[
                 $[word_segment],
