@@ -62,6 +62,8 @@ module.exports = grammar({
         [$.horizontal_line, $.punctuation],
         [$.footnote_list_single, $.punctuation],
         [$.definition_list_single, $.punctuation],
+        [$.footnote_list_multi, $.punctuation],
+        [$.definition_list_multi, $.punctuation],
     ],
 
     inlines: ($) => [],
@@ -113,7 +115,7 @@ module.exports = grammar({
                 "%",
                 "$",
                 "&",
-            ].map(m => [m, prec(1, token(seq(m, repeat1(m))))]).flat(),
+            ].map(m => [m, m + m, prec(1, token(seq(m + m, repeat1(m))))]).flat(),
             // conflict with link modifier is also needed
             ":",
             "|",
@@ -544,7 +546,7 @@ module.exports = grammar({
                         ),
                     ),
                 ),
-                newline_or_eof,
+                choice(newline_or_eof, ""),
             ),
 
         strong_carryover_tag: ($) =>
@@ -880,6 +882,7 @@ function gen_attached_modifier(type, mod, verbatim, not_inline) {
             choice(
                 ...[
                     $[word_segment],
+                    // FIXME: `- ` is allowed, but have smaller prec
                     $[punc_segment],
                     verbatim ? null : $[att_mod_segment],
                 ].filter(n => n !== null)

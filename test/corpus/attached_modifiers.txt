@@ -149,3 +149,36 @@ Nested - Multiplex
       (open)
       (close))))
 
+================================================================================
+Reset attached modifiers after detached modifier
+================================================================================
+- _:
+- _x_
+--------------------------------------------------------------------------------
+
+(document
+  (unordered_list
+    (unordered_list_item
+      (unordered_list_prefix)
+      (paragraph))
+    (unordered_list_item
+      (unordered_list_prefix)
+      (paragraph
+        (underline
+          (open)
+          (close))))))
+
+================================================================================
+Repeated attached modifiers should be treated as raw text
+================================================================================
+^^, text, ^^
+%%text%%
+%%%text%%%
+*///example//*
+--------------------------------------------------------------------------------
+
+(document
+  (paragraph
+    (bold
+      (open)
+      (close))))
