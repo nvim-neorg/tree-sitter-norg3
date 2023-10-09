@@ -12,11 +12,11 @@
 - (x) add free form attached modifiers
 -- (x) sol1: make new `_bold_free_...` and `_bold_free_inline_...`. easy and dirty
 -- (-) sol2: set BOLD_FREE state to `true` when external scanner parsed BOLD_FREE_OPEN. hard
-- ( ) add other attached modifiers
+- (x) add other attached modifiers
 -- (x) test multiple attached modifier
 -- (x) abstract those into JS functions
 -- (x) add all non verbatim attached modifiers
--- ( ) add all verbatim attached modifiers
+-- (x) add all verbatim attached modifiers
 - ( ) add links/anchors
 -- ( ) add tests for links/anchors
 - (x) revert all block types
@@ -26,5 +26,4 @@
 -- (x) tag
 -- (x) test reverted block type grammars
 - (x) revert escape sequence
-
-free form은 prec.left로 완성 여부 확인하면 되지 않을까?
+- ( ) check all works fine with more test cases
