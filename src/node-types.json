@@ -250,6 +250,14 @@
           "named": true
         },
         {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
+          "type": "inline_math",
+          "named": true
+        },
+        {
           "type": "italic",
           "named": true
         },
@@ -597,6 +605,68 @@
     }
   },
   {
+    "type": "inline_macro",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "close",
+          "named": true
+        },
+        {
+          "type": "free_close",
+          "named": true
+        },
+        {
+          "type": "free_open",
+          "named": true
+        },
+        {
+          "type": "open",
+          "named": true
+        },
+        {
+          "type": "punctuation",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "inline_math",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "close",
+          "named": true
+        },
+        {
+          "type": "free_close",
+          "named": true
+        },
+        {
+          "type": "free_open",
+          "named": true
+        },
+        {
+          "type": "open",
+          "named": true
+        },
+        {
+          "type": "punctuation",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "italic",
     "named": true,
     "fields": {},
@@ -618,6 +688,14 @@
         },
         {
           "type": "free_open",
+          "named": true
+        },
+        {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
+          "type": "inline_math",
           "named": true
         },
         {
@@ -673,6 +751,14 @@
       "types": [
         {
           "type": "bold",
+          "named": true
+        },
+        {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
+          "type": "inline_math",
           "named": true
         },
         {
@@ -743,6 +829,14 @@
       "types": [
         {
           "type": "bold",
+          "named": true
+        },
+        {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
+          "type": "inline_math",
           "named": true
         },
         {
@@ -965,6 +1059,14 @@
           "named": true
         },
         {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
+          "type": "inline_math",
+          "named": true
+        },
+        {
           "type": "italic",
           "named": true
         },
@@ -1120,6 +1222,14 @@
           "named": true
         },
         {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
+          "type": "inline_math",
+          "named": true
+        },
+        {
           "type": "italic",
           "named": true
         },
@@ -1184,6 +1294,14 @@
         },
         {
           "type": "free_open",
+          "named": true
+        },
+        {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
+          "type": "inline_math",
           "named": true
         },
         {
@@ -1278,6 +1396,14 @@
           "named": true
         },
         {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
+          "type": "inline_math",
+          "named": true
+        },
+        {
           "type": "italic",
           "named": true
         },
@@ -1342,6 +1468,14 @@
         },
         {
           "type": "free_open",
+          "named": true
+        },
+        {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
+          "type": "inline_math",
           "named": true
         },
         {
@@ -1497,6 +1631,14 @@
           "named": true
         },
         {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
+          "type": "inline_math",
+          "named": true
+        },
+        {
           "type": "italic",
           "named": true
         },
@@ -1646,6 +1788,14 @@
         },
         {
           "type": "free_open",
+          "named": true
+        },
+        {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
+          "type": "inline_math",
           "named": true
         },
         {
