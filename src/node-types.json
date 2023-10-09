@@ -619,11 +619,6 @@
     }
   },
   {
-    "type": "heading_link",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "horizontal_line",
     "named": true,
     "fields": {}
@@ -802,212 +797,9 @@
     }
   },
   {
-    "type": "link_description",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "bold",
-          "named": true
-        },
-        {
-          "type": "escape_sequence",
-          "named": true
-        },
-        {
-          "type": "inline_macro",
-          "named": true
-        },
-        {
-          "type": "inline_math",
-          "named": true
-        },
-        {
-          "type": "italic",
-          "named": true
-        },
-        {
-          "type": "link_modifier",
-          "named": true
-        },
-        {
-          "type": "null_modifier",
-          "named": true
-        },
-        {
-          "type": "punctuation",
-          "named": true
-        },
-        {
-          "type": "spoiler",
-          "named": true
-        },
-        {
-          "type": "strikethrough",
-          "named": true
-        },
-        {
-          "type": "subscript",
-          "named": true
-        },
-        {
-          "type": "superscript",
-          "named": true
-        },
-        {
-          "type": "underline",
-          "named": true
-        },
-        {
-          "type": "verbatim",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "link_description_inline",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "title",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "link_location",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "bold",
-          "named": true
-        },
-        {
-          "type": "escape_sequence",
-          "named": true
-        },
-        {
-          "type": "inline_macro",
-          "named": true
-        },
-        {
-          "type": "inline_math",
-          "named": true
-        },
-        {
-          "type": "italic",
-          "named": true
-        },
-        {
-          "type": "link_modifier",
-          "named": true
-        },
-        {
-          "type": "link_to_detached_modifier",
-          "named": true
-        },
-        {
-          "type": "null_modifier",
-          "named": true
-        },
-        {
-          "type": "punctuation",
-          "named": true
-        },
-        {
-          "type": "spoiler",
-          "named": true
-        },
-        {
-          "type": "strikethrough",
-          "named": true
-        },
-        {
-          "type": "subscript",
-          "named": true
-        },
-        {
-          "type": "superscript",
-          "named": true
-        },
-        {
-          "type": "underline",
-          "named": true
-        },
-        {
-          "type": "url",
-          "named": true
-        },
-        {
-          "type": "verbatim",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
-    "type": "link_location_inline",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": true,
-      "types": [
-        {
-          "type": "link_to_detached_modifier",
-          "named": true
-        },
-        {
-          "type": "title",
-          "named": true
-        },
-        {
-          "type": "url",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "link_modifier",
     "named": true,
     "fields": {}
-  },
-  {
-    "type": "link_to_detached_modifier",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "definition_link",
-          "named": true
-        },
-        {
-          "type": "footnote_link",
-          "named": true
-        },
-        {
-          "type": "heading_link",
-          "named": true
-        }
-      ]
-    }
   },
   {
     "type": "macro_tag",
@@ -1984,21 +1776,6 @@
     }
   },
   {
-    "type": "url",
-    "named": true,
-    "fields": {},
-    "children": {
-      "multiple": true,
-      "required": false,
-      "types": [
-        {
-          "type": "punctuation",
-          "named": true
-        }
-      ]
-    }
-  },
-  {
     "type": "verbatim",
     "named": true,
     "fields": {},
@@ -2215,15 +1992,7 @@
     "named": false
   },
   {
-    "type": "[",
-    "named": false
-  },
-  {
     "type": "\\",
-    "named": false
-  },
-  {
-    "type": "]",
     "named": false
   },
   {
@@ -2255,10 +2024,6 @@
     "named": true
   },
   {
-    "type": "definition_link",
-    "named": true
-  },
-  {
     "type": "definition_multi_end",
     "named": true
   },
@@ -2276,10 +2041,6 @@
   },
   {
     "type": "escape_char",
-    "named": true
-  },
-  {
-    "type": "footnote_link",
     "named": true
   },
   {
@@ -2343,15 +2104,7 @@
     "named": true
   },
   {
-    "type": "{",
-    "named": false
-  },
-  {
     "type": "|",
-    "named": false
-  },
-  {
-    "type": "}",
     "named": false
   },
   {

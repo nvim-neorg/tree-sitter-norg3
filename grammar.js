@@ -55,7 +55,6 @@ module.exports = grammar({
         [$._punctuation, $.link_modifier],
         [$._punctuation, $._free_open],
 
-        [$.table_cell_single, $.punctuation],
         // make conflict for paragraph itself to allow breaking by precedence level on runtime
         [$.paragraph],
     ],
@@ -733,93 +732,15 @@ module.exports = grammar({
         horizontal_line: ($) =>
             prec.right(seq("_", repeat1("_"), newline_or_eof)),
 
-        link: ($) =>
-            prec.right(seq($.link_location, optional($.link_description))),
-
-        anchor: ($) =>
-            prec.right(
-                seq(
-                    $.link_description,
-                    optional($.link_location),
-                ),
-            ),
-
-        url: ($) => repeat1(choice($._word, $.punctuation)),
-
-        link_to_detached_modifier: ($) =>
-            choice(
-                // TODO: Add the rest
-                alias(repeat1("*"), $.heading_link),
-                alias("$", $.definition_link),
-                alias("^", $.footnote_link),
-            ),
-
-        // FIXME: double newlines are permitted within links here.
-        // FIXME: Allow attached modifiers to contain links
-        // TODO: Give the paragraph segments a node name
-        // TODO: Give field names to the description and location
-        link_location: ($) =>
-            seq(
-                "{",
-                choice(
-                    $.url,
-                    seq(
-                        $.link_to_detached_modifier,
-                        $._whitespace,
-                        $._paragraph_segment,
-                        repeat(seq(newline, $._paragraph_segment)),
-                    ),
-                ),
-                "}",
-            ),
-
-        link_description: ($) =>
-            seq(
-                "[",
-                $._paragraph_segment,
-                repeat(seq(newline, $._paragraph_segment)),
-                "]",
-            ),
-
-        link_location_inline: ($) =>
-            seq(
-                "{",
-                choice(
-                    $.url,
-                    seq($.link_to_detached_modifier, $._whitespace, $.title),
-                ),
-                "}",
-            ),
-
-        link_description_inline: ($) => seq("[", $.title, "]"),
-
-        link_inline: ($) =>
-            prec.right(
-                2,
-                seq(
-                    $.link_location_inline,
-                    optional($.link_description_inline),
-                ),
-            ),
-
-        anchor_inline: ($) =>
-            prec.right(
-                2,
-                seq(
-                    $.link_description_inline,
-                    optional(
-                        choice(
-                            $.link_location_inline,
-                            $.link_description_inline,
-                        ),
-                    ),
-                ),
-            ),
+        // TODO: linkables
 
         // TODO: slide
     },
 });
 
+// TODO: use this function to make rule for link_description,
+// link_description is basically attached modifier
+// (with higher precedence level than verbatim attached modifier)
 function gen_attached_modifier(type, mod, verbatim, not_inline) {
     const rules = {};
     const other_modifiers = ATTACHED_MODIFIER_TYPES.filter((t) => t != type);
@@ -949,7 +870,7 @@ function gen_attached_modifier(type, mod, verbatim, not_inline) {
             choice(
                 ...[
                     $[word_segment],
-                    // FIXME: `- ` is allowed, but have smaller prec
+                    // FIXME: should `- \n` be allowed here? (see norg-specs/issues/24)
                     $[safe_punc_segment],
                     verbatim ? null : $[att_mod_segment],
                 ].filter(n => n !== null)
