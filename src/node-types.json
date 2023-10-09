@@ -536,6 +536,10 @@
       "required": true,
       "types": [
         {
+          "type": "detached_modifier_extension",
+          "named": true
+        },
+        {
           "type": "heading",
           "named": true
         },

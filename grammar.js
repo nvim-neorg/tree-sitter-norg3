@@ -27,9 +27,9 @@ module.exports = grammar({
     name: "norg",
 
     // Tell treesitter we want to handle whitespace ourselves
-    extras: ($) => [$._precedingwhitespace],
+    extras: ($) => [$._preceding_whitespace],
     externals: ($) => [
-        $._precedingwhitespace,
+        $._preceding_whitespace,
 
         $.heading_stars,
         $.unordered_list_prefix,
@@ -186,12 +186,12 @@ module.exports = grammar({
                 seq(
                     $.heading_stars,
                     $._whitespace,
-                    // optional(seq($.detached_modifier_extension, $._whitespace)),
+                    optional(seq($.detached_modifier_extension, $._whitespace)),
                     $.title,
                     newline_or_eof,
                     repeat(choice($.heading, $.non_structural)),
                     optional(choice($._dedent, $.weak_delimiting_modifier)),
-                )
+                ),
             ),
 
         nestable_modifier: ($) =>
@@ -240,11 +240,7 @@ module.exports = grammar({
             ),
 
         rangeable_detached_modifier: ($) =>
-            choice(
-                $.definition_list,
-                $.footnote_list,
-                $.table
-            ),
+            choice($.definition_list, $.footnote_list, $.table),
 
         definition_list: ($) =>
             choice($.definition_list_single, $.definition_list_multi),
@@ -322,7 +318,6 @@ module.exports = grammar({
                     alias("::", $.table_cell_multi_end),
                 ),
             ),
-
 
         tag: ($) =>
             choice(
@@ -663,11 +658,14 @@ module.exports = grammar({
             prec.right(seq("_", repeat1("_"), newline_or_eof)),
 
         link: ($) =>
+            prec.right(seq($.link_location, optional($.link_description))),
+
+        anchor: ($) =>
             prec.right(
                 seq(
                     $.link_description,
                     optional(choice($.link_location, $.link_description)),
-                )
+                ),
             ),
 
         url: ($) => repeat1(choice($._word, $.punctuation)),
@@ -741,7 +739,7 @@ module.exports = grammar({
                     ),
                 ),
             ),
-    }
+    },
 });
 
 function gen_attached_modifiers(type, mod) {
