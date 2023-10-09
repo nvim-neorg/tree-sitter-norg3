@@ -101,6 +101,12 @@ module.exports = grammar({
             ),
 
         _character: (_) => token(/[\p{L}\p{N}]/u),
+        punctuation: ($) => choice(
+            $._punctuation,
+            $._heading_conflict,
+            $._ul_conflict,
+            $._ol_conflict,
+        ),
         _punctuation: ($) => choice(
             // to make conflict with attached modifier openers
             // & repeated attached modifiers
@@ -124,12 +130,6 @@ module.exports = grammar({
             "|",
             token(/[^\n\r\p{Z}\p{L}\p{N}]/u),
         ),
-        punctuation: ($) => choice(
-            $._punctuation,
-            $._heading_conflict,
-            $._ul_conflict,
-            $._ol_conflict,
-        ),
         // these are for breaking attached modifier when structural modifiers come after eol
         _heading_conflict: (_) => choice(
             "*", prec(1, token(seq("*", repeat1("*"))))
@@ -140,6 +140,7 @@ module.exports = grammar({
         _ol_conflict: (_) => choice(
             "~", prec(1, token(seq("~", repeat1("~"))))
         ),
+
         _word: ($) => prec.right(-1, repeat1($._character)),
         _whitespace: (_) => token(prec(1, /\p{Zs}+/u)),
 
@@ -826,6 +827,7 @@ function gen_attached_modifier(type, mod, verbatim, not_inline) {
     const free_close = `_${prefix + type}_free_close`;
     const free_word_segment = `_${prefix + type}_free_word_segment`;
     const free_ws_punc_segment = `_${prefix + type}_free_ws_punc_segment`;
+    const free_safe_punc_segment = `_${prefix + type}_free_safe_punc_segment`;
     const free_att_mod_segment = `_${prefix + type}_free_attached_modifier_segment`;
     const free_newline_segment = `_${type}_free_newline_segment`;
 
@@ -879,40 +881,6 @@ function gen_attached_modifier(type, mod, verbatim, not_inline) {
             ].filter(n => n !== null)
         )
     );
-    rules[safe_punc_segment] = ($) => choice(
-        seq(
-            choice(
-                $._heading_conflict,
-                $._ul_conflict,
-                $._ol_conflict,
-            ),
-            choice(
-                ...[
-                    $[word_segment],
-                    $[punc_segment],
-                    verbatim ? null : $[att_mod_segment],
-                    not_inline ? $[newline_segment] : null,
-                    $[close],
-                ].filter(n => n !== null)
-            )
-        ),
-        seq(
-            choice(
-                $._punctuation,
-                $.escape_sequence,
-            ),
-            choice(
-                ...[
-                    $[word_segment],
-                    $[ws_segment],
-                    $[punc_segment],
-                    verbatim ? null : $[att_mod_segment],
-                    not_inline ? $[newline_segment] : null,
-                    $[close],
-                ].filter(n => n !== null)
-            )
-        )
-    );
     if (!verbatim) {
         rules[att_mod_segment] = ($) => seq(
             choice(
@@ -931,6 +899,40 @@ function gen_attached_modifier(type, mod, verbatim, not_inline) {
         );
     }
     if (not_inline) {
+        rules[safe_punc_segment] = ($) => choice(
+            seq(
+                choice(
+                    $._heading_conflict,
+                    $._ul_conflict,
+                    $._ol_conflict,
+                ),
+                choice(
+                    ...[
+                        $[word_segment],
+                        $[punc_segment],
+                        verbatim ? null : $[att_mod_segment],
+                        not_inline ? $[newline_segment] : null,
+                        $[close],
+                    ].filter(n => n !== null)
+                )
+            ),
+            seq(
+                choice(
+                    $._punctuation,
+                    $.escape_sequence,
+                ),
+                choice(
+                    ...[
+                        $[word_segment],
+                        $[ws_segment],
+                        $[punc_segment],
+                        verbatim ? null : $[att_mod_segment],
+                        not_inline ? $[newline_segment] : null,
+                        $[close],
+                    ].filter(n => n !== null)
+                )
+            )
+        );
         rules[newline_segment] = ($) => seq(
             newline,
             choice(
@@ -965,7 +967,7 @@ function gen_attached_modifier(type, mod, verbatim, not_inline) {
                 $[free_word_segment],
                 $[free_ws_punc_segment],
                 verbatim ? null : $[free_att_mod_segment],
-                not_inline ? $[newline_segment] : null,
+                not_inline ? $[free_newline_segment] : null,
                 $[free_close],
             ].filter(n => n !== null)
         )
@@ -979,7 +981,7 @@ function gen_attached_modifier(type, mod, verbatim, not_inline) {
                 ...[
                     $[free_ws_punc_segment],
                     $[free_att_mod_segment],
-                    not_inline ? $[newline_segment] : null,
+                    not_inline ? $[free_newline_segment] : null,
                     $[free_close],
                     seq($.link_modifier, $[free_word_segment]),
                 ].filter(n => n !== null)
@@ -987,12 +989,56 @@ function gen_attached_modifier(type, mod, verbatim, not_inline) {
         )
     }
     if (not_inline) {
+        rules[free_safe_punc_segment] = ($) => choice(
+            seq(
+                choice(
+                    $._heading_conflict,
+                    $._ul_conflict,
+                    $._ol_conflict,
+                ),
+                choice(
+                    ...[
+                        $[free_word_segment],
+                        seq(
+                            $.punctuation,
+                            choice(
+                                ...[
+                                    $[free_word_segment],
+                                    $[free_ws_punc_segment],
+                                    verbatim ? null : $[free_att_mod_segment],
+                                    $[free_newline_segment],
+                                    $[free_close],
+                                ].filter(n => n !== null)
+                            )
+                        ),
+                        verbatim ? null : $[free_att_mod_segment],
+                        $[free_newline_segment],
+                        $[free_close],
+                    ].filter(n => n !== null)
+                )
+            ),
+            seq(
+                choice(
+                    $._punctuation,
+                    $.escape_sequence,
+                ),
+                choice(
+                    ...[
+                        $[free_word_segment],
+                        $[free_ws_punc_segment],
+                        verbatim ? null : $[free_att_mod_segment],
+                        $[free_newline_segment],
+                        $[free_close],
+                    ].filter(n => n !== null)
+                )
+            )
+        );
         rules[free_newline_segment] = ($) => seq(
             newline,
             choice(
                 ...[
                     $[free_word_segment],
-                    $[free_ws_punc_segment],
+                    $[free_safe_punc_segment],
                     verbatim ? null : $[free_att_mod_segment],
                     $[free_close],
                 ].filter(n => n !== null)

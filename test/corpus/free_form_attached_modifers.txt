@@ -69,3 +69,22 @@ _| some text ||_
     (underline
       (free_open)
       (free_close))))
+
+================================================================================
+Break attached modifiers before detached modifier (free form)
+================================================================================
+- _|:
+- _|x|_
+--------------------------------------------------------------------------------
+
+(document
+  (unordered_list
+    (unordered_list_item
+      (unordered_list_prefix)
+      (paragraph))
+    (unordered_list_item
+      (unordered_list_prefix)
+      (paragraph
+        (underline
+          (free_open)
+          (free_close))))))
