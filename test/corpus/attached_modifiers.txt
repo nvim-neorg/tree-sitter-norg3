@@ -150,7 +150,7 @@ Nested - Multiplex
       (close))))
 
 ================================================================================
-Reset attached modifiers after detached modifier
+Break attached modifiers before detached modifier
 ================================================================================
 - _:
 - _x_
