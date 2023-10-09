@@ -9,6 +9,12 @@ const ATTACHED_MODIFIER_TYPES = [
     "spoiler",
     "superscript",
     "subscript",
+
+    "verbatim",
+    "null_modifier",
+    // TODO: activate these
+    // "inline_math",
+    // "inline_macro",
 ]
 
 /// General TODOS:
@@ -43,6 +49,10 @@ module.exports = grammar({
         [$.punctuation, $._spoiler_open],
         [$.punctuation, $._superscript_open],
         [$.punctuation, $._subscript_open],
+        [$.punctuation, $._verbatim_open],
+        [$.punctuation, $._null_modifier_open],
+        [$.punctuation, $._inline_math_open],
+        [$.punctuation, $._inline_macro_open],
         [$.punctuation, $.link_modifier],
         [$.punctuation, $._free_open],
 
@@ -139,8 +149,7 @@ module.exports = grammar({
         )),
         _att_mod_seg: ($) => prec.right(seq(
             choice(
-                $.bold,
-                $.italic,
+                ...ATTACHED_MODIFIER_TYPES.map(n => $[n])
             ),
             optional(
                 choice(
@@ -164,6 +173,10 @@ module.exports = grammar({
         ...gen_attached_modifiers("spoiler", "!"),
         ...gen_attached_modifiers("superscript", "^"),
         ...gen_attached_modifiers("subscript", ","),
+        ...gen_verbatim_attached_modifier("verbatim", "`"),
+        ...gen_verbatim_attached_modifier("null_modifier", "%"),
+        ...gen_verbatim_attached_modifier("inline_math", "$"),
+        ...gen_verbatim_attached_modifier("inline_macro", "&"),
 
         // TODO: title should be one-line paragraph
         title: ($) => $._paragraph_segment,
@@ -873,4 +886,107 @@ function gen_attached_modifiers(type, mod) {
         ))
     )
     return rules
+}
+
+function gen_verbatim_attached_modifier(type, mod) {
+    const rules = {};
+    const open = `_${type}_open`;
+    const close = `_${type}_close`;
+    const word_segment = `_${type}_word_segment`;
+    const punc_segment = `_${type}_punc_segment`;
+    const ws_segment = `_${type}_ws_segment`;
+    const newline_segment = `_${type}_newline_segment`;
+
+    const free_open = `_${type}_free_open`;
+    const free_close = `_${type}_free_close`;
+    const free_word_segment = `_${type}_free_word_segment`;
+    const free_ws_punc_segment = `_${type}_free_ws_segment`;
+    const free_newline_segment = `_${type}_free_newline_segment`;
+    rules[open] = (_) => mod;
+    rules[close] = ($) => choice(
+        prec(2, seq(mod, $[word_segment])),
+        alias(prec(1, mod), $.close),
+    );
+    rules[free_open] = ($) => seq($[open], $._free_open);
+    rules[free_close] = ($) => choice(
+        prec(2, seq(mod, $[free_word_segment])),
+        alias(prec(1, "|" + mod), $.free_close),
+    )
+    rules[word_segment] = ($) => seq(
+        $._word,
+        choice(
+            $[ws_segment],
+            $[punc_segment],
+            $[close],
+        )
+    )
+    rules[punc_segment] = ($) => seq(
+        $.punctuation,
+        choice(
+            $[ws_segment],
+            $[word_segment],
+            $[punc_segment],
+            $[close],
+        )
+    )
+    rules[ws_segment] = ($) => seq(
+        $._whitespace,
+        choice(
+            $[word_segment],
+            $[punc_segment],
+            $[newline_segment],
+        )
+    );
+    rules[newline_segment] = ($) => seq(
+        newline,
+        choice(
+            $[word_segment],
+            $[punc_segment],
+        )
+    )
+
+    rules[free_word_segment] = ($) => seq(
+        $._word,
+        choice(
+            $[free_ws_punc_segment],
+            $[free_close],
+        )
+    );
+    rules[free_ws_punc_segment] = ($) => seq(
+        choice(
+            $._whitespace,
+            $.punctuation,
+        ),
+        choice(
+            $[free_word_segment],
+            $[free_ws_punc_segment],
+            $[free_newline_segment],
+            $[free_close],
+        )
+    )
+    rules[free_newline_segment] = ($) => seq(
+        newline,
+        choice(
+            $[free_word_segment],
+            $[free_ws_punc_segment],
+            $[free_close],
+        )
+    )
+    rules[type] = ($) => choice(
+        prec.dynamic(3, seq(
+            alias($[open], $.open),
+            choice(
+                $[word_segment],
+                $[punc_segment],
+            )
+        )),
+        prec.dynamic(4, seq(
+            alias($[free_open], $.free_open),
+            choice(
+                $[free_word_segment],
+                $[free_ws_punc_segment],
+            )
+        ))
+    )
+    return rules;
 }
