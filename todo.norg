@@ -25,6 +25,6 @@
 -- (x) delimiting modifier
 -- (x) tag
 -- (x) test reverted block type grammars
-- ( ) revert escape sequence
+- (x) revert escape sequence
 
 free form은 prec.left로 완성 여부 확인하면 되지 않을까?

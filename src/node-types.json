@@ -242,6 +242,10 @@
           "named": true
         },
         {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
           "type": "free_close",
           "named": true
         },
@@ -617,6 +621,10 @@
           "named": true
         },
         {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
           "type": "free_close",
           "named": true
         },
@@ -645,6 +653,10 @@
       "types": [
         {
           "type": "close",
+          "named": true
+        },
+        {
+          "type": "escape_sequence",
           "named": true
         },
         {
@@ -680,6 +692,10 @@
         },
         {
           "type": "close",
+          "named": true
+        },
+        {
+          "type": "escape_sequence",
           "named": true
         },
         {
@@ -751,6 +767,10 @@
       "types": [
         {
           "type": "bold",
+          "named": true
+        },
+        {
+          "type": "escape_sequence",
           "named": true
         },
         {
@@ -829,6 +849,10 @@
       "types": [
         {
           "type": "bold",
+          "named": true
+        },
+        {
+          "type": "escape_sequence",
           "named": true
         },
         {
@@ -981,6 +1005,10 @@
           "named": true
         },
         {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
           "type": "free_close",
           "named": true
         },
@@ -1056,6 +1084,10 @@
       "types": [
         {
           "type": "bold",
+          "named": true
+        },
+        {
+          "type": "escape_sequence",
           "named": true
         },
         {
@@ -1214,6 +1246,10 @@
           "named": true
         },
         {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
           "type": "free_close",
           "named": true
         },
@@ -1286,6 +1322,10 @@
         },
         {
           "type": "close",
+          "named": true
+        },
+        {
+          "type": "escape_sequence",
           "named": true
         },
         {
@@ -1388,6 +1428,10 @@
           "named": true
         },
         {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
           "type": "free_close",
           "named": true
         },
@@ -1460,6 +1504,10 @@
         },
         {
           "type": "close",
+          "named": true
+        },
+        {
+          "type": "escape_sequence",
           "named": true
         },
         {
@@ -1631,6 +1679,10 @@
           "named": true
         },
         {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
           "type": "inline_macro",
           "named": true
         },
@@ -1783,6 +1835,10 @@
           "named": true
         },
         {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
           "type": "free_close",
           "named": true
         },
@@ -1908,6 +1964,10 @@
       "types": [
         {
           "type": "close",
+          "named": true
+        },
+        {
+          "type": "escape_sequence",
           "named": true
         },
         {
