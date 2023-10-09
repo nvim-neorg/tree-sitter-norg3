@@ -41,29 +41,31 @@ module.exports = grammar({
 
     conflicts: ($) => [
         [$.punctuation, $._bold_open],
-        [$.punctuation, $._italic_open],
-        [$.punctuation, $._strikethrough_open],
-        [$.punctuation, $._underline_open],
-        [$.punctuation, $._spoiler_open],
-        [$.punctuation, $._superscript_open],
-        [$.punctuation, $._subscript_open],
-        [$.punctuation, $._verbatim_open],
-        [$.punctuation, $._null_modifier_open],
-        [$.punctuation, $._inline_math_open],
-        [$.punctuation, $._inline_macro_open],
-        [$.punctuation, $.link_modifier],
-        [$.punctuation, $._free_open],
+        [$._heading_conflict, $._bold_open],
+        [$._punctuation, $._italic_open],
+        [$._ul_conflict, $._strikethrough_open],
+        [$._punctuation, $._underline_open],
+        [$._punctuation, $._spoiler_open],
+        [$._punctuation, $._superscript_open],
+        [$._punctuation, $._subscript_open],
+        [$._punctuation, $._verbatim_open],
+        [$._punctuation, $._null_modifier_open],
+        [$._punctuation, $._inline_math_open],
+        [$._punctuation, $._inline_macro_open],
+        [$._punctuation, $.link_modifier],
+        [$._punctuation, $._free_open],
 
         [$.table_cell_single, $.punctuation],
     ],
 
     precedences: ($) => [
         [$.heading, $.delimiting_modifier],
-        [$.horizontal_line, $.punctuation],
-        [$.footnote_list_single, $.punctuation],
-        [$.definition_list_single, $.punctuation],
-        [$.footnote_list_multi, $.punctuation],
-        [$.definition_list_multi, $.punctuation],
+        [$.horizontal_line, $._punctuation],
+        [$.footnote_list_single, $._punctuation],
+        [$.definition_list_single, $._punctuation],
+        [$.footnote_list_multi, $._punctuation],
+        [$.definition_list_multi, $._punctuation],
+        [$.table_cell_single, $._punctuation],
     ],
 
     inlines: ($) => [],
@@ -99,14 +101,14 @@ module.exports = grammar({
             ),
 
         _character: (_) => token(/[\p{L}\p{N}]/u),
-        punctuation: ($) => choice(
+        _punctuation: ($) => choice(
             // to make conflict with attached modifier openers
             // & repeated attached modifiers
             // the following code makes tokens like * and /\*\*+/
             ...[
-                "*",
+                // "*",
                 "/",
-                "-",
+                // "-",
                 "_",
                 "!",
                 "^",
@@ -115,11 +117,28 @@ module.exports = grammar({
                 "%",
                 "$",
                 "&",
+                // make seperate twice-repeated tokens (e.g. "$$") to make conflict with rangeable_detached_modifiers
             ].map(m => [m, m + m, prec(1, token(seq(m + m, repeat1(m))))]).flat(),
             // conflict with link modifier is also needed
             ":",
             "|",
             token(/[^\n\r\p{Z}\p{L}\p{N}]/u),
+        ),
+        punctuation: ($) => choice(
+            $._punctuation,
+            $._heading_conflict,
+            $._ul_conflict,
+            $._ol_conflict,
+        ),
+        // these are for breaking attached modifier when structural modifiers come after eol
+        _heading_conflict: (_) => choice(
+            "*", prec(1, token(seq("*", repeat1("*"))))
+        ),
+        _ul_conflict: (_) => choice(
+            "-", prec(1, token(seq("-", repeat1("-"))))
+        ),
+        _ol_conflict: (_) => choice(
+            "~", prec(1, token(seq("~", repeat1("~"))))
         ),
         _word: ($) => prec.right(-1, repeat1($._character)),
         _whitespace: (_) => token(prec(1, /\p{Zs}+/u)),
@@ -799,6 +818,7 @@ function gen_attached_modifier(type, mod, verbatim, not_inline) {
     const word_segment = `_${prefix + type}_word_segment`;
     const ws_segment = `_${prefix + type}_ws_segment`;
     const punc_segment = `_${prefix + type}_punc_segment`;
+    const safe_punc_segment = `_${prefix + type}_safe_punc_segment`;
     const att_mod_segment = `_${prefix + type}_attached_modifier_segment`;
     const newline_segment = `_${type}_newline_segment`;
 
@@ -859,6 +879,40 @@ function gen_attached_modifier(type, mod, verbatim, not_inline) {
             ].filter(n => n !== null)
         )
     );
+    rules[safe_punc_segment] = ($) => choice(
+        seq(
+            choice(
+                $._heading_conflict,
+                $._ul_conflict,
+                $._ol_conflict,
+            ),
+            choice(
+                ...[
+                    $[word_segment],
+                    $[punc_segment],
+                    verbatim ? null : $[att_mod_segment],
+                    not_inline ? $[newline_segment] : null,
+                    $[close],
+                ].filter(n => n !== null)
+            )
+        ),
+        seq(
+            choice(
+                $._punctuation,
+                $.escape_sequence,
+            ),
+            choice(
+                ...[
+                    $[word_segment],
+                    $[ws_segment],
+                    $[punc_segment],
+                    verbatim ? null : $[att_mod_segment],
+                    not_inline ? $[newline_segment] : null,
+                    $[close],
+                ].filter(n => n !== null)
+            )
+        )
+    );
     if (!verbatim) {
         rules[att_mod_segment] = ($) => seq(
             choice(
@@ -883,7 +937,7 @@ function gen_attached_modifier(type, mod, verbatim, not_inline) {
                 ...[
                     $[word_segment],
                     // FIXME: `- ` is allowed, but have smaller prec
-                    $[punc_segment],
+                    $[safe_punc_segment],
                     verbatim ? null : $[att_mod_segment],
                 ].filter(n => n !== null)
             )
