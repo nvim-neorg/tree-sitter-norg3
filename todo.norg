@@ -27,3 +27,12 @@
 -- (x) test reverted block type grammars
 - (x) revert escape sequence
 - ( ) check all works fine with more test cases
+- (!) resolve precedence edge cases:
+-- `[is this *bold]*]`
+-- :
+    @code
+    paragraph
+    |next-ranged-tag
+    valid
+    |end
+    @end
