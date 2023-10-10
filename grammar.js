@@ -977,7 +977,7 @@ function gen_attached_modifier(type, mod, verbatim, not_inline) {
         )
     }
     rules[prefix + type] = ($) => choice(
-        prec.dynamic(1, seq(
+        prec.dynamic(verbatim ? 3 : 1, seq(
             alias($[open], $.open),
             choice(
                 ...[
@@ -987,7 +987,7 @@ function gen_attached_modifier(type, mod, verbatim, not_inline) {
                 ].filter(n => n !== null)
             )
         )),
-        prec.dynamic(2, seq(
+        prec.dynamic(verbatim ? 4 : 2, seq(
             alias($[free_open], $.free_open),
             choice(
                 ...[
