@@ -66,10 +66,14 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "bold",
+          "named": true
+        },
+        {
+          "type": "maybe_opening_modifier",
           "named": true
         },
         {
@@ -92,11 +96,6 @@
     }
   },
   {
-    "type": "punctuation",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "word",
     "named": true,
     "fields": {}
@@ -114,10 +113,6 @@
     "named": false
   },
   {
-    "type": "*",
-    "named": false
-  },
-  {
     "type": "bold_close",
     "named": true
   },
@@ -126,7 +121,15 @@
     "named": true
   },
   {
+    "type": "maybe_opening_modifier",
+    "named": true
+  },
+  {
     "type": "paragraph_break",
+    "named": true
+  },
+  {
+    "type": "punctuation",
     "named": true
   },
   {
