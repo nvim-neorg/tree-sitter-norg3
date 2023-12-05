@@ -11,9 +11,9 @@ module.exports = grammar({
 
     // Tell treesitter we want to handle whitespace ourselves
     extras: ($) => [$._preceding_whitespace],
-    externals: ($) => [$._preceding_whitespace],
+    externals: ($) => [$._preceding_whitespace, $.bold_open, $.bold_close],
 
-    conflicts: ($) => [[$.paragraph, $.open_conflict], [$.bold, $.open_conflict, $.punctuation], [$.bold, $.punctuation]],
+    conflicts: ($) => [[$.paragraph, $.open_conflict]],
 
     precedences: ($) => [],
 
@@ -45,17 +45,11 @@ module.exports = grammar({
                 ),
             ),
 
-        open_conflict: ($) => prec.right(seq(choice("*"), $.word)),
+        open_conflict: ($) => prec.right(seq(choice($.bold_open), $.word)),
 
         paragraph_break: (_) => token(seq(newline, newline_or_eof)),
 
         bold: ($) =>
-        prec.dynamic(1,
-            seq(
-                alias("*", $.bold_open),
-                $.paragraph,
-                alias(token(prec(1, "*")), $.bold_close),
-            ),
-        ),
+            prec.dynamic(1, seq($.bold_open, $.paragraph, $.bold_close)),
     },
 });

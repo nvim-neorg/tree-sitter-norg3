@@ -24,6 +24,9 @@ using namespace std;
 // Make TokenType derive from `char` for compact serialization.
 enum TokenType : char {
     WHITESPACE,
+
+    BOLD_OPEN,
+    BOLD_CLOSE,
 };
 
 struct Scanner {
@@ -71,6 +74,26 @@ struct Scanner {
                 lexer->result_symbol = WHITESPACE;
                 return true;
             }
+        }
+
+        if ((valid_symbols[BOLD_OPEN] || valid_symbols[BOLD_CLOSE]) && lexer->lookahead == '*') {
+            skip();
+
+            if (lexer->lookahead == '*') {
+                skip();
+                return false;
+            }
+
+            if (valid_symbols[BOLD_CLOSE] && iswspace(lexer->lookahead)) {
+                lexer->result_symbol = BOLD_CLOSE;
+                return true;
+            }
+            else if (valid_symbols[BOLD_OPEN] && !iswspace(lexer->lookahead)) {
+                lexer->result_symbol = BOLD_OPEN;
+                return true;
+            }
+
+            return false;
         }
 
         return false;
