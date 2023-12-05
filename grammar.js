@@ -13,12 +13,20 @@ module.exports = grammar({
     extras: ($) => [$._preceding_whitespace],
     externals: ($) => [
         $._preceding_whitespace,
+
         $.bold_open,
         $.bold_close,
+
+        $.italic_open,
+        $.italic_close,
+
         $.maybe_opening_modifier,
     ],
 
-    conflicts: ($) => [[$.paragraph, $.open_conflict]],
+    conflicts: ($) => [
+        [$.open_conflict, $.bold],
+        [$.open_conflict, $.italic],
+    ],
 
     precedences: ($) => [],
 
@@ -48,7 +56,8 @@ module.exports = grammar({
                                 $.maybe_opening_modifier,
                                 choice(
                                     $.open_conflict,
-                                    prec.dynamic(1, $.bold),
+                                    $.bold,
+                                    $.italic,
                                     $.punctuation,
                                 ),
                             ),
@@ -67,7 +76,8 @@ module.exports = grammar({
                                             $.maybe_opening_modifier,
                                             choice(
                                                 $.open_conflict,
-                                                prec.dynamic(1, $.bold),
+                                                $.bold,
+                                                $.italic,
                                                 $.punctuation,
                                             ),
                                         ),
@@ -79,10 +89,15 @@ module.exports = grammar({
                 ),
             ),
 
-        open_conflict: ($) => seq(choice($.bold_open), $.word),
+        open_conflict: ($) =>
+            prec.dynamic(
+                -1,
+                seq(repeat1(choice($.bold_open, $.italic_open)), $.word),
+            ),
 
         paragraph_break: (_) => token(prec(1, seq(newline, newline_or_eof))),
 
         bold: ($) => seq($.bold_open, $.paragraph, $.bold_close),
+        italic: ($) => seq($.italic_open, $.paragraph, $.italic_close),
     },
 });
