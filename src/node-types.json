@@ -46,9 +46,13 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "bold_open",
+          "named": true
+        },
         {
           "type": "word",
           "named": true
