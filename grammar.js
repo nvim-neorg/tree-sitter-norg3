@@ -6,6 +6,9 @@ let newline_or_eof = choice("\n", "\r", "\r\n", "\0");
 //  - Add tests for link modifiers, then everything else.
 //  - Make every node have an alias($.node, $.node_prefix). Only some currently do.
 
+// KNOWN ISSUES:
+// - *./text/* fails (issue with $.paragraph grammar disallowing such an order)
+
 module.exports = grammar({
     name: "norg",
 
@@ -47,38 +50,50 @@ module.exports = grammar({
         paragraph: ($) =>
             prec.right(
                 seq(
-                    repeat1(
-                        choice(
-                            $.word,
-                            $.punctuation,
-                            $.whitespace,
-                            seq(
-                                $.maybe_opening_modifier,
+                    choice(
+                        $.word,
+                        $.punctuation,
+                        $.whitespace,
+                        $.open_conflict,
+                        $.bold,
+                        $.italic,
+                    ),
+                    optional(
+                        seq(
+                            repeat1(
                                 choice(
-                                    $.open_conflict,
-                                    $.bold,
-                                    $.italic,
+                                    $.word,
                                     $.punctuation,
+                                    $.whitespace,
+                                    seq(
+                                        $.maybe_opening_modifier,
+                                        choice(
+                                            $.open_conflict,
+                                            $.bold,
+                                            $.italic,
+                                            $.punctuation,
+                                        ),
+                                    ),
                                 ),
                             ),
-                        ),
-                    ),
-                    repeat(
-                        prec.right(
-                            seq(
-                                newline,
-                                repeat1(
-                                    choice(
-                                        $.word,
-                                        $.punctuation,
-                                        $.whitespace,
-                                        seq(
-                                            $.maybe_opening_modifier,
+                            repeat(
+                                prec.right(
+                                    seq(
+                                        newline,
+                                        repeat1(
                                             choice(
-                                                $.open_conflict,
-                                                $.bold,
-                                                $.italic,
+                                                $.word,
                                                 $.punctuation,
+                                                $.whitespace,
+                                                seq(
+                                                    $.maybe_opening_modifier,
+                                                    choice(
+                                                        $.open_conflict,
+                                                        $.bold,
+                                                        $.italic,
+                                                        $.punctuation,
+                                                    ),
+                                                ),
                                             ),
                                         ),
                                     ),
