@@ -21,21 +21,29 @@
 // scanner.
 using namespace std;
 
+#define BOLD_OFFSET 1
+#define ITALIC_OFFSET 3
+#define UNDERLINE_OFFSET 5
+
 // Make TokenType derive from `char` for compact serialization.
 enum TokenType : char {
     WHITESPACE,
 
-    BOLD_OPEN,
+    BOLD_OPEN = '*',
     BOLD_CLOSE,
 
-    ITALIC_OPEN,
+    ITALIC_OPEN = '/',
     ITALIC_CLOSE,
+
+    UNDERLINE_OPEN = '_',
+    UNDERLINE_CLOSE,
 
     MAYBE_OPENING_MODIFIER,
 };
 
 struct Scanner {
     TSLexer* lexer;
+
     /**
      * Returns `true` if the character provided is a separator character (but not a newline).
      */
@@ -81,8 +89,24 @@ struct Scanner {
             }
         }
 
-        if ((valid_symbols[BOLD_OPEN] || valid_symbols[BOLD_CLOSE] || valid_symbols[ITALIC_OPEN] || valid_symbols[ITALIC_CLOSE]) && (lexer->lookahead == '*' || lexer->lookahead == '/')) {
+        if (valid_symbols[BOLD_OPEN] || valid_symbols[BOLD_CLOSE] || valid_symbols[ITALIC_OPEN] || valid_symbols[ITALIC_CLOSE] || valid_symbols[UNDERLINE_OPEN] || valid_symbols[UNDERLINE_CLOSE]) {
             const int32_t character = lexer->lookahead;
+
+            size_t offset = 0;
+
+            switch (character) {
+                case (char)BOLD_OPEN:
+                    offset = BOLD_OFFSET;
+                    break;
+                case (char)ITALIC_OPEN:
+                    offset = ITALIC_OFFSET;
+                    break;
+                case (char)UNDERLINE_OPEN:
+                    offset = UNDERLINE_OFFSET;
+                    break;
+                default:
+                    return false;
+            }
 
             skip();
 
@@ -91,21 +115,12 @@ struct Scanner {
                 return false;
             }
 
-            if (valid_symbols[BOLD_CLOSE] && character == '*' && (iswspace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
-                lexer->result_symbol = BOLD_CLOSE;
+            if (valid_symbols[offset + 1] && (iswspace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
+                lexer->result_symbol = offset + 1;
                 return true;
             }
-            else if (valid_symbols[BOLD_OPEN] && character == '*' && !iswspace(lexer->lookahead)) {
-                lexer->result_symbol = BOLD_OPEN;
-                return true;
-            }
-
-            if (valid_symbols[ITALIC_CLOSE] && character == '/' && (iswspace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
-                lexer->result_symbol = ITALIC_CLOSE;
-                return true;
-            }
-            else if (valid_symbols[ITALIC_OPEN] && character == '/' && !iswspace(lexer->lookahead)) {
-                lexer->result_symbol = ITALIC_OPEN;
+            else if (valid_symbols[offset] && !iswspace(lexer->lookahead)) {
+                lexer->result_symbol = offset;
                 return true;
             }
 
@@ -116,7 +131,7 @@ struct Scanner {
             while (is_whitespace(lexer->lookahead))
                 advance();
 
-            if (lexer->lookahead == '*' || lexer->lookahead == '/') {
+            if (lexer->lookahead == '*' || lexer->lookahead == '/' || lexer->lookahead == '_') {
                 lexer->result_symbol = MAYBE_OPENING_MODIFIER;
                 return true;
             }

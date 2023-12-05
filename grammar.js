@@ -23,12 +23,16 @@ module.exports = grammar({
         $.italic_open,
         $.italic_close,
 
+        $.underline_open,
+        $.underline_close,
+
         $.maybe_opening_modifier,
     ],
 
     conflicts: ($) => [
         [$.open_conflict, $.bold],
         [$.open_conflict, $.italic],
+        [$.open_conflict, $.underline],
     ],
 
     precedences: ($) => [],
@@ -57,6 +61,7 @@ module.exports = grammar({
                         $.open_conflict,
                         $.bold,
                         $.italic,
+                        $.underline,
                     ),
                     optional(
                         seq(
@@ -71,6 +76,7 @@ module.exports = grammar({
                                             $.open_conflict,
                                             $.bold,
                                             $.italic,
+                                            $.underline,
                                             $.punctuation,
                                         ),
                                     ),
@@ -91,6 +97,7 @@ module.exports = grammar({
                                                         $.open_conflict,
                                                         $.bold,
                                                         $.italic,
+                                                        $.underline,
                                                         $.punctuation,
                                                     ),
                                                 ),
@@ -107,12 +114,18 @@ module.exports = grammar({
         open_conflict: ($) =>
             prec.dynamic(
                 -1,
-                seq(repeat1(choice($.bold_open, $.italic_open)), $.word),
+                seq(
+                    repeat1(
+                        choice($.bold_open, $.italic_open, $.underline_open),
+                    ),
+                    $.word,
+                ),
             ),
 
         paragraph_break: (_) => token(prec(1, seq(newline, newline_or_eof))),
 
         bold: ($) => seq($.bold_open, $.paragraph, $.bold_close),
         italic: ($) => seq($.italic_open, $.paragraph, $.italic_close),
+        underline: ($) => seq($.underline_open, $.paragraph, $.underline_close),
     },
 });

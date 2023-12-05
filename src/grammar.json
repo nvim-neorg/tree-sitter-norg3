@@ -85,6 +85,10 @@
               {
                 "type": "SYMBOL",
                 "name": "italic"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "underline"
               }
             ]
           },
@@ -132,6 +136,10 @@
                                 {
                                   "type": "SYMBOL",
                                   "name": "italic"
+                                },
+                                {
+                                  "type": "SYMBOL",
+                                  "name": "underline"
                                 },
                                 {
                                   "type": "SYMBOL",
@@ -210,6 +218,10 @@
                                         },
                                         {
                                           "type": "SYMBOL",
+                                          "name": "underline"
+                                        },
+                                        {
+                                          "type": "SYMBOL",
                                           "name": "punctuation"
                                         }
                                       ]
@@ -251,6 +263,10 @@
                 {
                   "type": "SYMBOL",
                   "name": "italic_open"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "underline_open"
                 }
               ]
             }
@@ -345,6 +361,23 @@
           "name": "italic_close"
         }
       ]
+    },
+    "underline": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "underline_open"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "paragraph"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "underline_close"
+        }
+      ]
     }
   },
   "extras": [
@@ -361,6 +394,10 @@
     [
       "open_conflict",
       "italic"
+    ],
+    [
+      "open_conflict",
+      "underline"
     ]
   ],
   "precedences": [],
@@ -384,6 +421,14 @@
     {
       "type": "SYMBOL",
       "name": "italic_close"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "underline_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "underline_close"
     },
     {
       "type": "SYMBOL",
