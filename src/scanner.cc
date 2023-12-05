@@ -28,6 +28,9 @@ enum TokenType : char {
     BOLD_OPEN,
     BOLD_CLOSE,
 
+    ITALIC_OPEN,
+    ITALIC_CLOSE,
+
     MAYBE_OPENING_MODIFIER,
 };
 
@@ -78,20 +81,31 @@ struct Scanner {
             }
         }
 
-        if ((valid_symbols[BOLD_OPEN] || valid_symbols[BOLD_CLOSE]) && lexer->lookahead == '*') {
+        if ((valid_symbols[BOLD_OPEN] || valid_symbols[BOLD_CLOSE] || valid_symbols[ITALIC_OPEN] || valid_symbols[ITALIC_CLOSE]) && (lexer->lookahead == '*' || lexer->lookahead == '/')) {
+            const int32_t character = lexer->lookahead;
+
             skip();
 
-            if (lexer->lookahead == '*') {
+            if (lexer->lookahead == character) {
                 skip();
                 return false;
             }
 
-            if (valid_symbols[BOLD_CLOSE] && iswspace(lexer->lookahead)) {
+            if (valid_symbols[BOLD_CLOSE] && character == '*' && (iswspace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
                 lexer->result_symbol = BOLD_CLOSE;
                 return true;
             }
-            else if (valid_symbols[BOLD_OPEN] && !iswspace(lexer->lookahead)) {
+            else if (valid_symbols[BOLD_OPEN] && character == '*' && !iswspace(lexer->lookahead)) {
                 lexer->result_symbol = BOLD_OPEN;
+                return true;
+            }
+
+            if (valid_symbols[ITALIC_CLOSE] && character == '/' && (iswspace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
+                lexer->result_symbol = ITALIC_CLOSE;
+                return true;
+            }
+            else if (valid_symbols[ITALIC_OPEN] && character == '/' && !iswspace(lexer->lookahead)) {
+                lexer->result_symbol = ITALIC_OPEN;
                 return true;
             }
 
@@ -102,7 +116,7 @@ struct Scanner {
             while (is_whitespace(lexer->lookahead))
                 advance();
 
-            if (lexer->lookahead == '*') {
+            if (lexer->lookahead == '*' || lexer->lookahead == '/') {
                 lexer->result_symbol = MAYBE_OPENING_MODIFIER;
                 return true;
             }
