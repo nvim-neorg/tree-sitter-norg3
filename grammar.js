@@ -11,7 +11,12 @@ module.exports = grammar({
 
     // Tell treesitter we want to handle whitespace ourselves
     extras: ($) => [$._preceding_whitespace],
-    externals: ($) => [$._preceding_whitespace, $.bold_open, $.bold_close],
+    externals: ($) => [
+        $._preceding_whitespace,
+        $.bold_open,
+        $.bold_close,
+        $.maybe_opening_modifier,
+    ],
 
     conflicts: ($) => [[$.paragraph, $.open_conflict]],
 
@@ -26,30 +31,58 @@ module.exports = grammar({
 
         _character: (_) => token(/[\p{L}\p{N}]/u),
 
-        punctuation: ($) => choice("*", token(/[^\n\r\p{Z}\p{L}\p{N}]/u)),
+        punctuation: ($) => token(/[^\n\r\p{Z}\p{L}\p{N}]/u),
 
         word: ($) => prec.right(repeat1($._character)),
         whitespace: (_) => token(prec(1, /\p{Zs}+/u)),
 
         paragraph: ($) =>
             prec.right(
-                repeat1(
-                    choice(
-                        $.word,
-                        newline,
-                        $.open_conflict,
-                        $.punctuation,
-                        $.whitespace,
-                        $.bold,
+                seq(
+                    repeat1(
+                        choice(
+                            $.word,
+                            $.punctuation,
+                            $.whitespace,
+                            seq(
+                                $.maybe_opening_modifier,
+                                choice(
+                                    $.open_conflict,
+                                    prec.dynamic(1, $.bold),
+                                    $.punctuation,
+                                ),
+                            ),
+                        ),
+                    ),
+                    repeat(
+                        prec.right(
+                            seq(
+                                newline,
+                                repeat1(
+                                    choice(
+                                        $.word,
+                                        $.punctuation,
+                                        $.whitespace,
+                                        seq(
+                                            $.maybe_opening_modifier,
+                                            choice(
+                                                $.open_conflict,
+                                                prec.dynamic(1, $.bold),
+                                                $.punctuation,
+                                            ),
+                                        ),
+                                    ),
+                                ),
+                            ),
+                        ),
                     ),
                 ),
             ),
 
-        open_conflict: ($) => prec.right(seq(choice($.bold_open), $.word)),
+        open_conflict: ($) => seq(choice($.bold_open), $.word),
 
-        paragraph_break: (_) => token(seq(newline, newline_or_eof)),
+        paragraph_break: (_) => token(prec(1, seq(newline, newline_or_eof))),
 
-        bold: ($) =>
-            prec.dynamic(1, seq($.bold_open, $.paragraph, $.bold_close)),
+        bold: ($) => seq($.bold_open, $.paragraph, $.bold_close),
     },
 });

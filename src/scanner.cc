@@ -27,6 +27,8 @@ enum TokenType : char {
 
     BOLD_OPEN,
     BOLD_CLOSE,
+
+    MAYBE_OPENING_MODIFIER,
 };
 
 struct Scanner {
@@ -90,6 +92,18 @@ struct Scanner {
             }
             else if (valid_symbols[BOLD_OPEN] && !iswspace(lexer->lookahead)) {
                 lexer->result_symbol = BOLD_OPEN;
+                return true;
+            }
+
+            return false;
+        }
+
+        if (valid_symbols[MAYBE_OPENING_MODIFIER] && is_whitespace(lexer->lookahead)) {
+            while (is_whitespace(lexer->lookahead))
+                advance();
+
+            if (lexer->lookahead == '*') {
+                lexer->result_symbol = MAYBE_OPENING_MODIFIER;
                 return true;
             }
 
