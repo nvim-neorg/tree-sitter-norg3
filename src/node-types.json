@@ -81,6 +81,10 @@
           "named": true
         },
         {
+          "type": "underline_open",
+          "named": true
+        },
+        {
           "type": "word",
           "named": true
         }
@@ -116,11 +120,38 @@
           "named": true
         },
         {
+          "type": "underline",
+          "named": true
+        },
+        {
           "type": "whitespace",
           "named": true
         },
         {
           "type": "word",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "underline",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "paragraph",
+          "named": true
+        },
+        {
+          "type": "underline_close",
+          "named": true
+        },
+        {
+          "type": "underline_open",
           "named": true
         }
       ]
@@ -169,6 +200,14 @@
   },
   {
     "type": "punctuation",
+    "named": true
+  },
+  {
+    "type": "underline_close",
+    "named": true
+  },
+  {
+    "type": "underline_open",
     "named": true
   },
   {
