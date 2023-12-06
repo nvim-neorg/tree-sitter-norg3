@@ -57,223 +57,116 @@
       "type": "PREC_RIGHT",
       "value": 0,
       "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "word"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "punctuation"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "whitespace"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "open_conflict"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "bold"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "italic"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "underline"
-              }
-            ]
-          },
-          {
-            "type": "CHOICE",
-            "members": [
-              {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "REPEAT1",
-                    "content": {
-                      "type": "CHOICE",
-                      "members": [
-                        {
-                          "type": "SYMBOL",
-                          "name": "word"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "punctuation"
-                        },
-                        {
-                          "type": "SYMBOL",
-                          "name": "whitespace"
-                        },
-                        {
-                          "type": "SEQ",
-                          "members": [
-                            {
-                              "type": "SYMBOL",
-                              "name": "maybe_opening_modifier"
-                            },
-                            {
-                              "type": "CHOICE",
-                              "members": [
-                                {
-                                  "type": "SYMBOL",
-                                  "name": "open_conflict"
-                                },
-                                {
-                                  "type": "SYMBOL",
-                                  "name": "bold"
-                                },
-                                {
-                                  "type": "SYMBOL",
-                                  "name": "italic"
-                                },
-                                {
-                                  "type": "SYMBOL",
-                                  "name": "underline"
-                                },
-                                {
-                                  "type": "SYMBOL",
-                                  "name": "punctuation"
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
+        "type": "REPEAT1",
+        "content": {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SYMBOL",
+              "name": "word"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "punctuation"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "whitespace"
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "whitespace"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "punctuation"
                     }
-                  },
-                  {
-                    "type": "REPEAT",
-                    "content": {
-                      "type": "PREC_RIGHT",
-                      "value": 0,
-                      "content": {
-                        "type": "SEQ",
-                        "members": [
-                          {
-                            "type": "CHOICE",
-                            "members": [
-                              {
-                                "type": "STRING",
-                                "value": "\n"
-                              },
-                              {
-                                "type": "STRING",
-                                "value": "\r"
-                              },
-                              {
-                                "type": "STRING",
-                                "value": "\r\n"
-                              }
-                            ]
-                          },
-                          {
-                            "type": "REPEAT1",
-                            "content": {
-                              "type": "CHOICE",
-                              "members": [
-                                {
-                                  "type": "SYMBOL",
-                                  "name": "word"
-                                },
-                                {
-                                  "type": "SYMBOL",
-                                  "name": "punctuation"
-                                },
-                                {
-                                  "type": "SYMBOL",
-                                  "name": "whitespace"
-                                },
-                                {
-                                  "type": "SEQ",
-                                  "members": [
-                                    {
-                                      "type": "SYMBOL",
-                                      "name": "maybe_opening_modifier"
-                                    },
-                                    {
-                                      "type": "CHOICE",
-                                      "members": [
-                                        {
-                                          "type": "SYMBOL",
-                                          "name": "open_conflict"
-                                        },
-                                        {
-                                          "type": "SYMBOL",
-                                          "name": "bold"
-                                        },
-                                        {
-                                          "type": "SYMBOL",
-                                          "name": "italic"
-                                        },
-                                        {
-                                          "type": "SYMBOL",
-                                          "name": "underline"
-                                        },
-                                        {
-                                          "type": "SYMBOL",
-                                          "name": "punctuation"
-                                        }
-                                      ]
-                                    }
-                                  ]
-                                }
-                              ]
-                            }
-                          }
-                        ]
-                      }
+                  ]
+                },
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "open_conflict"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "bold"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "italic"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "underline"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "strikethrough"
                     }
-                  }
-                ]
-              },
-              {
-                "type": "BLANK"
-              }
-            ]
-          }
-        ]
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "CHOICE",
+                  "members": [
+                    {
+                      "type": "STRING",
+                      "value": "\n"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "\r"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "\r\n"
+                    }
+                  ]
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "paragraph"
+                }
+              ]
+            }
+          ]
+        }
       }
     },
     "open_conflict": {
       "type": "PREC_DYNAMIC",
       "value": -1,
       "content": {
-        "type": "SEQ",
+        "type": "CHOICE",
         "members": [
           {
-            "type": "REPEAT1",
-            "content": {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "bold_open"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "italic_open"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "underline_open"
-                }
-              ]
-            }
+            "type": "SYMBOL",
+            "name": "bold_open"
           },
           {
             "type": "SYMBOL",
-            "name": "word"
+            "name": "italic_open"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "underline_open"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "strikethrough_open"
           }
         ]
       }
@@ -378,6 +271,23 @@
           "name": "underline_close"
         }
       ]
+    },
+    "strikethrough": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "strikethrough_open"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "paragraph"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "strikethrough_close"
+        }
+      ]
     }
   },
   "extras": [
@@ -398,6 +308,10 @@
     [
       "open_conflict",
       "underline"
+    ],
+    [
+      "open_conflict",
+      "strikethrough"
     ]
   ],
   "precedences": [],
@@ -432,10 +346,20 @@
     },
     {
       "type": "SYMBOL",
+      "name": "strikethrough_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "strikethrough_close"
+    },
+    {
+      "type": "SYMBOL",
       "name": "maybe_opening_modifier"
     }
   ],
-  "inline": [],
+  "inline": [
+    "paragraph"
+  ],
   "supertypes": []
 }
 

@@ -24,6 +24,7 @@ using namespace std;
 #define BOLD_OFFSET 1
 #define ITALIC_OFFSET 3
 #define UNDERLINE_OFFSET 5
+#define STRIKETHROUGH_OFFSET 7
 
 // Make TokenType derive from `char` for compact serialization.
 enum TokenType : char {
@@ -37,6 +38,10 @@ enum TokenType : char {
 
     UNDERLINE_OPEN = '_',
     UNDERLINE_CLOSE,
+
+
+    STRIKETHROUGH_OPEN = '-',
+    STRIKETHROUGH_CLOSE,
 
     MAYBE_OPENING_MODIFIER,
 };
@@ -104,6 +109,9 @@ struct Scanner {
                 case (char)UNDERLINE_OPEN:
                     offset = UNDERLINE_OFFSET;
                     break;
+                case (char)STRIKETHROUGH_OPEN:
+                    offset = STRIKETHROUGH_OFFSET;
+                    break;
                 default:
                     return false;
             }
@@ -131,7 +139,7 @@ struct Scanner {
             while (is_whitespace(lexer->lookahead))
                 advance();
 
-            if (lexer->lookahead == '*' || lexer->lookahead == '/' || lexer->lookahead == '_') {
+            if (lexer->lookahead == '*' || lexer->lookahead == '/' || lexer->lookahead == '_' || lexer->lookahead == '-') {
                 lexer->result_symbol = MAYBE_OPENING_MODIFIER;
                 return true;
             }

@@ -26,6 +26,9 @@ module.exports = grammar({
         $.underline_open,
         $.underline_close,
 
+        $.strikethrough_open,
+        $.strikethrough_close,
+
         $.maybe_opening_modifier,
     ],
 
@@ -33,11 +36,12 @@ module.exports = grammar({
         [$.open_conflict, $.bold],
         [$.open_conflict, $.italic],
         [$.open_conflict, $.underline],
+        [$.open_conflict, $.strikethrough],
     ],
 
     precedences: ($) => [],
 
-    inlines: ($) => [],
+    inline: ($) => [$.paragraph],
 
     supertypes: ($) => [],
 
@@ -53,60 +57,22 @@ module.exports = grammar({
 
         paragraph: ($) =>
             prec.right(
-                seq(
+                repeat1(
                     choice(
                         $.word,
                         $.punctuation,
                         $.whitespace,
-                        $.open_conflict,
-                        $.bold,
-                        $.italic,
-                        $.underline,
-                    ),
-                    optional(
                         seq(
-                            repeat1(
-                                choice(
-                                    $.word,
-                                    $.punctuation,
-                                    $.whitespace,
-                                    seq(
-                                        $.maybe_opening_modifier,
-                                        choice(
-                                            $.open_conflict,
-                                            $.bold,
-                                            $.italic,
-                                            $.underline,
-                                            $.punctuation,
-                                        ),
-                                    ),
-                                ),
-                            ),
-                            repeat(
-                                prec.right(
-                                    seq(
-                                        newline,
-                                        repeat1(
-                                            choice(
-                                                $.word,
-                                                $.punctuation,
-                                                $.whitespace,
-                                                seq(
-                                                    $.maybe_opening_modifier,
-                                                    choice(
-                                                        $.open_conflict,
-                                                        $.bold,
-                                                        $.italic,
-                                                        $.underline,
-                                                        $.punctuation,
-                                                    ),
-                                                ),
-                                            ),
-                                        ),
-                                    ),
-                                ),
+                            choice($.whitespace, $.punctuation),
+                            choice(
+                                $.open_conflict,
+                                $.bold,
+                                $.italic,
+                                $.underline,
+                                $.strikethrough,
                             ),
                         ),
+                        seq(newline, $.paragraph),
                     ),
                 ),
             ),
@@ -114,11 +80,11 @@ module.exports = grammar({
         open_conflict: ($) =>
             prec.dynamic(
                 -1,
-                seq(
-                    repeat1(
-                        choice($.bold_open, $.italic_open, $.underline_open),
-                    ),
-                    $.word,
+                choice(
+                    $.bold_open,
+                    $.italic_open,
+                    $.underline_open,
+                    $.strikethrough_open,
                 ),
             ),
 
@@ -127,5 +93,7 @@ module.exports = grammar({
         bold: ($) => seq($.bold_open, $.paragraph, $.bold_close),
         italic: ($) => seq($.italic_open, $.paragraph, $.italic_close),
         underline: ($) => seq($.underline_open, $.paragraph, $.underline_close),
+        strikethrough: ($) =>
+            seq($.strikethrough_open, $.paragraph, $.strikethrough_close),
     },
 });
