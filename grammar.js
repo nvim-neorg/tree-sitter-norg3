@@ -17,6 +17,10 @@ module.exports = grammar({
     externals: ($) => [
         $._preceding_whitespace,
 
+        $.punctuation,
+
+        $.maybe_opening_modifier,
+
         $.bold_open,
         $.bold_close,
 
@@ -28,8 +32,6 @@ module.exports = grammar({
 
         $.strikethrough_open,
         $.strikethrough_close,
-
-        $.maybe_opening_modifier,
     ],
 
     conflicts: ($) => [
@@ -63,13 +65,14 @@ module.exports = grammar({
                         $.punctuation,
                         $.whitespace,
                         seq(
-                            choice($.whitespace, $.punctuation),
+                            choice($.maybe_opening_modifier, $.punctuation),
                             choice(
-                                $.open_conflict,
                                 $.bold,
                                 $.italic,
                                 $.underline,
                                 $.strikethrough,
+                                $.punctuation,
+                                $.open_conflict,
                             ),
                         ),
                         seq(newline, $.paragraph),
@@ -80,11 +83,14 @@ module.exports = grammar({
         open_conflict: ($) =>
             prec.dynamic(
                 -1,
-                choice(
-                    $.bold_open,
-                    $.italic_open,
-                    $.underline_open,
-                    $.strikethrough_open,
+                seq(
+                    choice(
+                        $.bold_open,
+                        $.italic_open,
+                        $.underline_open,
+                        $.strikethrough_open,
+                    ),
+                    $.paragraph,
                 ),
             ),
 

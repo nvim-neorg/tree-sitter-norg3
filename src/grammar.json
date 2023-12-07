@@ -81,7 +81,7 @@
                   "members": [
                     {
                       "type": "SYMBOL",
-                      "name": "whitespace"
+                      "name": "maybe_opening_modifier"
                     },
                     {
                       "type": "SYMBOL",
@@ -92,10 +92,6 @@
                 {
                   "type": "CHOICE",
                   "members": [
-                    {
-                      "type": "SYMBOL",
-                      "name": "open_conflict"
-                    },
                     {
                       "type": "SYMBOL",
                       "name": "bold"
@@ -111,6 +107,14 @@
                     {
                       "type": "SYMBOL",
                       "name": "strikethrough"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "punctuation"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "open_conflict"
                     }
                   ]
                 }
@@ -150,23 +154,32 @@
       "type": "PREC_DYNAMIC",
       "value": -1,
       "content": {
-        "type": "CHOICE",
+        "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "bold_open"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "bold_open"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "italic_open"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "underline_open"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "strikethrough_open"
+              }
+            ]
           },
           {
             "type": "SYMBOL",
-            "name": "italic_open"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "underline_open"
-          },
-          {
-            "type": "SYMBOL",
-            "name": "strikethrough_open"
+            "name": "paragraph"
           }
         ]
       }
@@ -322,6 +335,14 @@
     },
     {
       "type": "SYMBOL",
+      "name": "punctuation"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "maybe_opening_modifier"
+    },
+    {
+      "type": "SYMBOL",
       "name": "bold_open"
     },
     {
@@ -351,10 +372,6 @@
     {
       "type": "SYMBOL",
       "name": "strikethrough_close"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "maybe_opening_modifier"
     }
   ],
   "inline": [

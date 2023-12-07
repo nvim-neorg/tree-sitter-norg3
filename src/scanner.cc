@@ -1,7 +1,9 @@
+#include <bitset>
 #include <cwctype>
 #include <iostream>
 #include <algorithm>
 #include <cstring>
+#include <ratio>
 #include <unordered_map>
 #include <vector>
 #include <list>
@@ -21,33 +23,59 @@
 // scanner.
 using namespace std;
 
-#define BOLD_OFFSET 1
-#define ITALIC_OFFSET 3
-#define UNDERLINE_OFFSET 5
-#define STRIKETHROUGH_OFFSET 7
-
 // Make TokenType derive from `char` for compact serialization.
 enum TokenType : char {
     WHITESPACE,
 
-    BOLD_OPEN = '*',
-    BOLD_CLOSE,
-
-    ITALIC_OPEN = '/',
-    ITALIC_CLOSE,
-
-    UNDERLINE_OPEN = '_',
-    UNDERLINE_CLOSE,
-
-
-    STRIKETHROUGH_OPEN = '-',
-    STRIKETHROUGH_CLOSE,
+    PUNCTUATION,
 
     MAYBE_OPENING_MODIFIER,
+
+    BOLD_OPEN,
+    BOLD_CLOSE,
+
+    ITALIC_OPEN,
+    ITALIC_CLOSE,
+
+    UNDERLINE_OPEN,
+    UNDERLINE_CLOSE,
+
+    STRIKETHROUGH_OPEN,
+    STRIKETHROUGH_CLOSE,
 };
+
+TokenType char_to_token(int32_t c) {
+    switch (c) {
+        case '*':
+            return BOLD_OPEN;
+        case '/':
+            return ITALIC_OPEN;
+        case '_':
+            return UNDERLINE_OPEN;
+        case '-':
+            return STRIKETHROUGH_OPEN;
+    }
+
+    return WHITESPACE;
+}
+
+int32_t token_to_index(TokenType token) {
+    switch (token) {
+        case BOLD_OPEN: return 0;
+        case ITALIC_OPEN: return 1;
+        case UNDERLINE_OPEN: return 1;
+        case STRIKETHROUGH_OPEN: return 1;
+        default: return -1;
+    }
+}
 
 struct Scanner {
     TSLexer* lexer;
+    std::bitset<8> attached_modifiers;
+
+    Scanner() {
+        attached_modifiers.reset();
+    }
 
     /**
      * Returns `true` if the character provided is a separator character (but not a newline).
@@ -94,47 +122,6 @@ struct Scanner {
             }
         }
 
-        if (valid_symbols[BOLD_OPEN] || valid_symbols[BOLD_CLOSE] || valid_symbols[ITALIC_OPEN] || valid_symbols[ITALIC_CLOSE] || valid_symbols[UNDERLINE_OPEN] || valid_symbols[UNDERLINE_CLOSE]) {
-            const int32_t character = lexer->lookahead;
-
-            size_t offset = 0;
-
-            switch (character) {
-                case (char)BOLD_OPEN:
-                    offset = BOLD_OFFSET;
-                    break;
-                case (char)ITALIC_OPEN:
-                    offset = ITALIC_OFFSET;
-                    break;
-                case (char)UNDERLINE_OPEN:
-                    offset = UNDERLINE_OFFSET;
-                    break;
-                case (char)STRIKETHROUGH_OPEN:
-                    offset = STRIKETHROUGH_OFFSET;
-                    break;
-                default:
-                    return false;
-            }
-
-            skip();
-
-            if (lexer->lookahead == character) {
-                skip();
-                return false;
-            }
-
-            if (valid_symbols[offset + 1] && (iswspace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
-                lexer->result_symbol = offset + 1;
-                return true;
-            }
-            else if (valid_symbols[offset] && !iswspace(lexer->lookahead)) {
-                lexer->result_symbol = offset;
-                return true;
-            }
-
-            return false;
-        }
-
         if (valid_symbols[MAYBE_OPENING_MODIFIER] && is_whitespace(lexer->lookahead)) {
             while (is_whitespace(lexer->lookahead))
                 advance();
@@ -146,6 +133,43 @@ struct Scanner {
 
             return false;
         }
+
+        const TokenType next_token = char_to_token(lexer->lookahead);
+
+        if (next_token != 0 && (valid_symbols[next_token] || valid_symbols[next_token + 1])) {
+            const int32_t character = lexer->lookahead;
+
+            advance();
+
+            if (lexer->lookahead == character) {
+                advance();
+                lexer->result_symbol = PUNCTUATION;
+                return true;
+            }
+
+            const int32_t index = token_to_index(next_token);
+
+            if (index != -1) {
+                if (attached_modifiers.test(index))
+                    return false;
+
+                attached_modifiers.set(index, true);
+            }
+
+            if (valid_symbols[next_token + 1] && (iswspace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
+                lexer->result_symbol = next_token + 1;
+                return true;
+            }
+            else if (valid_symbols[next_token] && !iswspace(lexer->lookahead)) {
+                lexer->result_symbol = next_token;
+                return true;
+            }
+
+            lexer->result_symbol = PUNCTUATION;
+            attached_modifiers.set(index, false);
+            return true;
+        }
+
 
         return false;
     }
@@ -170,11 +194,19 @@ extern "C" {
 
     unsigned tree_sitter_norg_external_scanner_serialize(void *payload,
             char *buffer) {
-        return 0;
+        Scanner* scanner = static_cast<Scanner* >(payload);
+
+        memcpy(&buffer, &scanner->attached_modifiers, sizeof(scanner->attached_modifiers));
+
+        return sizeof(unsigned long);
     }
 
     void tree_sitter_norg_external_scanner_deserialize(void *payload,
             const char *buffer,
             unsigned length) {
+
+        Scanner* scanner = static_cast<Scanner* >(payload);
+
+        memcpy(&scanner->attached_modifiers, &buffer, sizeof(scanner->attached_modifiers));
     }
 }
