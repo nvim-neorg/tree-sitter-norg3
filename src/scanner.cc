@@ -42,6 +42,15 @@ enum TokenType : char {
 
     STRIKETHROUGH_OPEN,
     STRIKETHROUGH_CLOSE,
+
+    SPOILER_OPEN,
+    SPOILER_CLOSE,
+
+    SUPERSCRIPT_OPEN,
+    SUPERSCRIPT_CLOSE,
+
+    SUBSCRIPT_OPEN,
+    SUBSCRIPT_CLOSE,
 };
 
 TokenType char_to_token(int32_t c) {
@@ -54,6 +63,12 @@ TokenType char_to_token(int32_t c) {
             return UNDERLINE_OPEN;
         case '-':
             return STRIKETHROUGH_OPEN;
+        case '!':
+            return SPOILER_OPEN;
+        case '^':
+            return SUPERSCRIPT_OPEN;
+        case ',':
+            return SUBSCRIPT_OPEN;
     }
 
     return WHITESPACE;
@@ -63,8 +78,11 @@ int32_t token_to_index(TokenType token) {
     switch (token) {
         case BOLD_OPEN: return 0;
         case ITALIC_OPEN: return 1;
-        case UNDERLINE_OPEN: return 1;
-        case STRIKETHROUGH_OPEN: return 1;
+        case UNDERLINE_OPEN: return 2;
+        case STRIKETHROUGH_OPEN: return 3;
+        case SPOILER_OPEN: return 4;
+        case SUPERSCRIPT_OPEN: return 5;
+        case SUBSCRIPT_OPEN: return 6;
         default: return -1;
     }
 }
@@ -126,7 +144,7 @@ struct Scanner {
             while (is_whitespace(lexer->lookahead))
                 advance();
 
-            if (lexer->lookahead == '*' || lexer->lookahead == '/' || lexer->lookahead == '_' || lexer->lookahead == '-') {
+            if (lexer->lookahead == '*' || lexer->lookahead == '/' || lexer->lookahead == '_' || lexer->lookahead == '-' || lexer->lookahead == '!' || lexer->lookahead == '^' || lexer->lookahead == ',') {
                 lexer->result_symbol = MAYBE_OPENING_MODIFIER;
                 return true;
             }
@@ -142,7 +160,9 @@ struct Scanner {
             advance();
 
             if (lexer->lookahead == character) {
-                advance();
+                while (lexer->lookahead == character)
+                    advance();
+
                 lexer->result_symbol = PUNCTUATION;
                 return true;
             }
@@ -152,21 +172,20 @@ struct Scanner {
             if (index != -1) {
                 if (attached_modifiers.test(index))
                     return false;
-
-                attached_modifiers.set(index, true);
             }
 
             if (valid_symbols[next_token + 1] && (iswspace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
+                attached_modifiers.set(index, false);
                 lexer->result_symbol = next_token + 1;
                 return true;
             }
             else if (valid_symbols[next_token] && !iswspace(lexer->lookahead)) {
+                attached_modifiers.set(index, true);
                 lexer->result_symbol = next_token;
                 return true;
             }
 
             lexer->result_symbol = PUNCTUATION;
-            attached_modifiers.set(index, false);
             return true;
         }
 
