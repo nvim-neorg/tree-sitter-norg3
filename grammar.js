@@ -32,14 +32,18 @@ module.exports = grammar({
 
         $.strikethrough_open,
         $.strikethrough_close,
+
+        $.spoiler_open,
+        $.spoiler_close,
+
+        $.superscript_open,
+        $.superscript_close,
+
+        $.subscript_open,
+        $.subscript_close,
     ],
 
-    conflicts: ($) => [
-        [$.open_conflict, $.bold],
-        [$.open_conflict, $.italic],
-        [$.open_conflict, $.underline],
-        [$.open_conflict, $.strikethrough],
-    ],
+    conflicts: ($) => [],
 
     precedences: ($) => [],
 
@@ -71,6 +75,9 @@ module.exports = grammar({
                                 $.italic,
                                 $.underline,
                                 $.strikethrough,
+                                $.spoiler,
+                                $.superscript,
+                                $.subscript,
                                 $.punctuation,
                                 $.open_conflict,
                             ),
@@ -89,6 +96,9 @@ module.exports = grammar({
                         $.italic_open,
                         $.underline_open,
                         $.strikethrough_open,
+                        $.spoiler_open,
+                        $.superscript_open,
+                        $.subscript_open,
                     ),
                     $.paragraph,
                 ),
@@ -101,5 +111,9 @@ module.exports = grammar({
         underline: ($) => seq($.underline_open, $.paragraph, $.underline_close),
         strikethrough: ($) =>
             seq($.strikethrough_open, $.paragraph, $.strikethrough_close),
+        spoiler: ($) => seq($.spoiler_open, $.paragraph, $.spoiler_close),
+        superscript: ($) =>
+            seq($.superscript_open, $.paragraph, $.superscript_close),
+        subscript: ($) => seq($.subscript_open, $.paragraph, $.subscript_close),
     },
 });

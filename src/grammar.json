@@ -110,6 +110,18 @@
                     },
                     {
                       "type": "SYMBOL",
+                      "name": "spoiler"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "superscript"
+                    },
+                    {
+                      "type": "SYMBOL",
+                      "name": "subscript"
+                    },
+                    {
+                      "type": "SYMBOL",
                       "name": "punctuation"
                     },
                     {
@@ -174,6 +186,18 @@
               {
                 "type": "SYMBOL",
                 "name": "strikethrough_open"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "spoiler_open"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "superscript_open"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "subscript_open"
               }
             ]
           },
@@ -301,6 +325,57 @@
           "name": "strikethrough_close"
         }
       ]
+    },
+    "spoiler": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "spoiler_open"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "paragraph"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "spoiler_close"
+        }
+      ]
+    },
+    "superscript": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "superscript_open"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "paragraph"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "superscript_close"
+        }
+      ]
+    },
+    "subscript": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "subscript_open"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "paragraph"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "subscript_close"
+        }
+      ]
     }
   },
   "extras": [
@@ -309,24 +384,7 @@
       "name": "_preceding_whitespace"
     }
   ],
-  "conflicts": [
-    [
-      "open_conflict",
-      "bold"
-    ],
-    [
-      "open_conflict",
-      "italic"
-    ],
-    [
-      "open_conflict",
-      "underline"
-    ],
-    [
-      "open_conflict",
-      "strikethrough"
-    ]
-  ],
+  "conflicts": [],
   "precedences": [],
   "externals": [
     {
@@ -372,6 +430,30 @@
     {
       "type": "SYMBOL",
       "name": "strikethrough_close"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "spoiler_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "spoiler_close"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "superscript_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "superscript_close"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "subscript_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "subscript_close"
     }
   ],
   "inline": [
