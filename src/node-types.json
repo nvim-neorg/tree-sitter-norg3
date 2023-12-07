@@ -24,6 +24,10 @@
           "named": true
         },
         {
+          "type": "maybe_opening_modifier",
+          "named": true
+        },
+        {
           "type": "open_conflict",
           "named": true
         },
@@ -64,6 +68,10 @@
         },
         {
           "type": "italic",
+          "named": true
+        },
+        {
+          "type": "maybe_opening_modifier",
           "named": true
         },
         {
@@ -122,6 +130,10 @@
           "named": true
         },
         {
+          "type": "maybe_opening_modifier",
+          "named": true
+        },
+        {
           "type": "open_conflict",
           "named": true
         },
@@ -153,11 +165,19 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": false,
+      "multiple": true,
       "required": true,
       "types": [
         {
+          "type": "bold",
+          "named": true
+        },
+        {
           "type": "bold_open",
+          "named": true
+        },
+        {
+          "type": "italic",
           "named": true
         },
         {
@@ -165,11 +185,39 @@
           "named": true
         },
         {
+          "type": "maybe_opening_modifier",
+          "named": true
+        },
+        {
+          "type": "open_conflict",
+          "named": true
+        },
+        {
+          "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "strikethrough",
+          "named": true
+        },
+        {
           "type": "strikethrough_open",
           "named": true
         },
         {
+          "type": "underline",
+          "named": true
+        },
+        {
           "type": "underline_open",
+          "named": true
+        },
+        {
+          "type": "whitespace",
+          "named": true
+        },
+        {
+          "type": "word",
           "named": true
         }
       ]
@@ -189,6 +237,10 @@
         },
         {
           "type": "italic",
+          "named": true
+        },
+        {
+          "type": "maybe_opening_modifier",
           "named": true
         },
         {
@@ -240,6 +292,10 @@
         },
         {
           "type": "italic",
+          "named": true
+        },
+        {
+          "type": "maybe_opening_modifier",
           "named": true
         },
         {
@@ -308,6 +364,10 @@
   },
   {
     "type": "italic_open",
+    "named": true
+  },
+  {
+    "type": "maybe_opening_modifier",
     "named": true
   },
   {
