@@ -41,13 +41,26 @@ module.exports = grammar({
 
         $.subscript_open,
         $.subscript_close,
+
+        $.verbatim_open,
+        $.verbatim_close,
     ],
 
-    conflicts: ($) => [],
+    conflicts: ($) => [
+        [$.open_conflict, $.bold, $.verbatim],
+        [$.open_conflict, $.italic, $.verbatim],
+        [$.open_conflict, $.underline, $.verbatim],
+        [$.open_conflict, $.strikethrough, $.verbatim],
+        [$.open_conflict, $.spoiler, $.verbatim],
+        [$.open_conflict, $.superscript, $.verbatim],
+        [$.open_conflict, $.subscript, $.verbatim],
+
+        [$.open_conflict, $.verbatim],
+    ],
 
     precedences: ($) => [],
 
-    inline: ($) => [$.paragraph],
+    inline: ($) => [$.paragraph, $.verbatim_paragraph],
 
     supertypes: ($) => [],
 
@@ -74,6 +87,7 @@ module.exports = grammar({
                         $.spoiler,
                         $.superscript,
                         $.subscript,
+                        $.verbatim,
                         $.punctuation,
                         $.open_conflict,
                     ),
@@ -92,6 +106,7 @@ module.exports = grammar({
                                     $.spoiler,
                                     $.superscript,
                                     $.subscript,
+                                    $.verbatim,
                                     $.punctuation,
                                     $.open_conflict,
                                 ),
@@ -102,18 +117,44 @@ module.exports = grammar({
                 ),
             ),
 
-        open_conflict: ($) =>
-            seq(
-                choice(
-                    $.bold_open,
-                    $.italic_open,
-                    $.underline_open,
-                    $.strikethrough_open,
-                    $.spoiler_open,
-                    $.superscript_open,
-                    $.subscript_open,
+        verbatim_paragraph: ($) =>
+            prec.right(
+                repeat1(
+                    choice(
+                        $.word,
+                        $.punctuation,
+                        $.whitespace,
+                        $.maybe_opening_modifier,
+
+                        $.bold_open,
+                        $.italic_open,
+                        $.underline_open,
+                        $.strikethrough_open,
+                        $.spoiler_open,
+                        $.superscript_open,
+                        $.subscript_open,
+
+                        seq(newline, $.verbatim_paragraph),
+                    ),
                 ),
-                $.paragraph,
+            ),
+
+        open_conflict: ($) =>
+            prec.dynamic(
+                -1,
+                seq(
+                    choice(
+                        $.bold_open,
+                        $.italic_open,
+                        $.underline_open,
+                        $.strikethrough_open,
+                        $.spoiler_open,
+                        $.superscript_open,
+                        $.subscript_open,
+                        $.verbatim_open,
+                    ),
+                    $.paragraph,
+                ),
             ),
 
         paragraph_break: (_) => token(prec(1, seq(newline, newline_or_eof))),
@@ -127,5 +168,8 @@ module.exports = grammar({
         superscript: ($) =>
             seq($.superscript_open, $.paragraph, $.superscript_close),
         subscript: ($) => seq($.subscript_open, $.paragraph, $.subscript_close),
+
+        verbatim: ($) =>
+            seq($.verbatim_open, $.verbatim_paragraph, $.verbatim_close),
     },
 });
