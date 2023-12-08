@@ -63,26 +63,41 @@ module.exports = grammar({
 
         paragraph: ($) =>
             prec.right(
-                repeat1(
+                seq(
                     choice(
                         $.word,
                         $.punctuation,
-                        $.whitespace,
-                        seq(
-                            choice($.maybe_opening_modifier, $.punctuation),
-                            choice(
-                                $.bold,
-                                $.italic,
-                                $.underline,
-                                $.strikethrough,
-                                $.spoiler,
-                                $.superscript,
-                                $.subscript,
-                                $.punctuation,
-                                $.open_conflict,
+                        $.bold,
+                        $.italic,
+                        $.underline,
+                        $.strikethrough,
+                        $.spoiler,
+                        $.superscript,
+                        $.subscript,
+                        $.punctuation,
+                        $.open_conflict,
+                    ),
+                    repeat(
+                        choice(
+                            $.word,
+                            $.punctuation,
+                            $.whitespace,
+                            seq(
+                                choice($.maybe_opening_modifier, $.punctuation),
+                                choice(
+                                    $.bold,
+                                    $.italic,
+                                    $.underline,
+                                    $.strikethrough,
+                                    $.spoiler,
+                                    $.superscript,
+                                    $.subscript,
+                                    $.punctuation,
+                                    $.open_conflict,
+                                ),
                             ),
+                            seq(newline, $.paragraph),
                         ),
-                        seq(newline, $.paragraph),
                     ),
                 ),
             ),

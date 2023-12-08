@@ -167,20 +167,13 @@ struct Scanner {
                 return true;
             }
 
-            const int32_t index = token_to_index(next_token);
+            // const int32_t index = token_to_index(next_token);
 
-            if (index != -1) {
-                if (attached_modifiers.test(index))
-                    return false;
-            }
-
-            if (valid_symbols[next_token + 1] && (iswspace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
-                attached_modifiers.set(index, false);
+            if (valid_symbols[next_token + 1] && (!lexer->lookahead || iswspace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
                 lexer->result_symbol = next_token + 1;
                 return true;
             }
-            else if (valid_symbols[next_token] && !iswspace(lexer->lookahead)) {
-                attached_modifiers.set(index, true);
+            else if (valid_symbols[next_token] && lexer->lookahead && !iswspace(lexer->lookahead)) {
                 lexer->result_symbol = next_token;
                 return true;
             }
