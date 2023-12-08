@@ -88,20 +88,17 @@ module.exports = grammar({
             ),
 
         open_conflict: ($) =>
-            prec.dynamic(
-                -1,
-                seq(
-                    choice(
-                        $.bold_open,
-                        $.italic_open,
-                        $.underline_open,
-                        $.strikethrough_open,
-                        $.spoiler_open,
-                        $.superscript_open,
-                        $.subscript_open,
-                    ),
-                    $.paragraph,
+            seq(
+                choice(
+                    $.bold_open,
+                    $.italic_open,
+                    $.underline_open,
+                    $.strikethrough_open,
+                    $.spoiler_open,
+                    $.superscript_open,
+                    $.subscript_open,
                 ),
+                $.paragraph,
             ),
 
         paragraph_break: (_) => token(prec(1, seq(newline, newline_or_eof))),
