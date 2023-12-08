@@ -108,6 +108,10 @@
               },
               {
                 "type": "SYMBOL",
+                "name": "math"
+              },
+              {
+                "type": "SYMBOL",
                 "name": "open_conflict"
               }
             ]
@@ -179,6 +183,10 @@
                         {
                           "type": "SYMBOL",
                           "name": "verbatim"
+                        },
+                        {
+                          "type": "SYMBOL",
+                          "name": "math"
                         },
                         {
                           "type": "SYMBOL",
@@ -346,6 +354,10 @@
               {
                 "type": "SYMBOL",
                 "name": "verbatim_open"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "math_open"
               }
             ]
           },
@@ -541,6 +553,23 @@
           "name": "verbatim_close"
         }
       ]
+    },
+    "math": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "math_open"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "verbatim_paragraph"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "math_close"
+        }
+      ]
     }
   },
   "extras": [
@@ -587,7 +616,46 @@
     ],
     [
       "open_conflict",
+      "bold",
+      "math"
+    ],
+    [
+      "open_conflict",
+      "italic",
+      "math"
+    ],
+    [
+      "open_conflict",
+      "underline",
+      "math"
+    ],
+    [
+      "open_conflict",
+      "strikethrough",
+      "math"
+    ],
+    [
+      "open_conflict",
+      "spoiler",
+      "math"
+    ],
+    [
+      "open_conflict",
+      "superscript",
+      "math"
+    ],
+    [
+      "open_conflict",
+      "subscript",
+      "math"
+    ],
+    [
+      "open_conflict",
       "verbatim"
+    ],
+    [
+      "open_conflict",
+      "math"
     ]
   ],
   "precedences": [],
@@ -667,6 +735,14 @@
     {
       "type": "SYMBOL",
       "name": "verbatim_close"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "math_open"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "math_close"
     }
   ],
   "inline": [
