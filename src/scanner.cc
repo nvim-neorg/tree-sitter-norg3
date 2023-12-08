@@ -51,6 +51,9 @@ enum TokenType : char {
 
     SUBSCRIPT_OPEN,
     SUBSCRIPT_CLOSE,
+
+    VERBATIM_OPEN,
+    VERBATIM_CLOSE,
 };
 
 TokenType char_to_token(int32_t c) {
@@ -69,6 +72,8 @@ TokenType char_to_token(int32_t c) {
             return SUPERSCRIPT_OPEN;
         case ',':
             return SUBSCRIPT_OPEN;
+        case '`':
+            return VERBATIM_OPEN;
     }
 
     return WHITESPACE;
@@ -83,6 +88,7 @@ int32_t token_to_index(TokenType token) {
         case SPOILER_OPEN: return 4;
         case SUPERSCRIPT_OPEN: return 5;
         case SUBSCRIPT_OPEN: return 6;
+        case VERBATIM_OPEN: return 7;
         default: return -1;
     }
 }
@@ -144,7 +150,7 @@ struct Scanner {
             while (is_whitespace(lexer->lookahead))
                 advance();
 
-            if (lexer->lookahead == '*' || lexer->lookahead == '/' || lexer->lookahead == '_' || lexer->lookahead == '-' || lexer->lookahead == '!' || lexer->lookahead == '^' || lexer->lookahead == ',') {
+            if (lexer->lookahead == '*' || lexer->lookahead == '/' || lexer->lookahead == '_' || lexer->lookahead == '-' || lexer->lookahead == '!' || lexer->lookahead == '^' || lexer->lookahead == ',' || lexer->lookahead == '`') {
                 lexer->result_symbol = MAYBE_OPENING_MODIFIER;
                 return true;
             }
