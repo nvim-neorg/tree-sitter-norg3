@@ -44,6 +44,9 @@ module.exports = grammar({
 
         $.verbatim_open,
         $.verbatim_close,
+
+        $.math_open,
+        $.math_close,
     ],
 
     conflicts: ($) => [
@@ -55,7 +58,16 @@ module.exports = grammar({
         [$.open_conflict, $.superscript, $.verbatim],
         [$.open_conflict, $.subscript, $.verbatim],
 
+        [$.open_conflict, $.bold, $.math],
+        [$.open_conflict, $.italic, $.math],
+        [$.open_conflict, $.underline, $.math],
+        [$.open_conflict, $.strikethrough, $.math],
+        [$.open_conflict, $.spoiler, $.math],
+        [$.open_conflict, $.superscript, $.math],
+        [$.open_conflict, $.subscript, $.math],
+
         [$.open_conflict, $.verbatim],
+        [$.open_conflict, $.math],
     ],
 
     precedences: ($) => [],
@@ -89,6 +101,7 @@ module.exports = grammar({
                         $.subscript,
                         $.verbatim,
                         $.punctuation,
+                        $.math,
                         $.open_conflict,
                     ),
                     repeat(
@@ -107,6 +120,7 @@ module.exports = grammar({
                                     $.superscript,
                                     $.subscript,
                                     $.verbatim,
+                                    $.math,
                                     $.punctuation,
                                     $.open_conflict,
                                 ),
@@ -152,6 +166,7 @@ module.exports = grammar({
                         $.superscript_open,
                         $.subscript_open,
                         $.verbatim_open,
+                        $.math_open,
                     ),
                     $.paragraph,
                 ),
@@ -171,5 +186,8 @@ module.exports = grammar({
 
         verbatim: ($) =>
             seq($.verbatim_open, $.verbatim_paragraph, $.verbatim_close),
+
+        math: ($) =>
+            seq($.math_open, $.verbatim_paragraph, $.math_close),
     },
 });

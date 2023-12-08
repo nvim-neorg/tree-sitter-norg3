@@ -54,6 +54,9 @@ enum TokenType : char {
 
     VERBATIM_OPEN,
     VERBATIM_CLOSE,
+
+    INLINE_MATH_OPEN,
+    INLINE_MATH_CLOSE,
 };
 
 TokenType char_to_token(int32_t c) {
@@ -74,6 +77,8 @@ TokenType char_to_token(int32_t c) {
             return SUBSCRIPT_OPEN;
         case '`':
             return VERBATIM_OPEN;
+        case '$':
+            return INLINE_MATH_OPEN;
     }
 
     return WHITESPACE;
@@ -89,13 +94,14 @@ int32_t token_to_index(TokenType token) {
         case SUPERSCRIPT_OPEN: return 5;
         case SUBSCRIPT_OPEN: return 6;
         case VERBATIM_OPEN: return 7;
+        case INLINE_MATH_OPEN: return 8;
         default: return -1;
     }
 }
 
 struct Scanner {
     TSLexer* lexer;
-    std::bitset<8> attached_modifiers;
+    std::bitset<9> attached_modifiers;
 
     Scanner() {
         attached_modifiers.reset();
@@ -150,7 +156,7 @@ struct Scanner {
             while (is_whitespace(lexer->lookahead))
                 advance();
 
-            if (lexer->lookahead == '*' || lexer->lookahead == '/' || lexer->lookahead == '_' || lexer->lookahead == '-' || lexer->lookahead == '!' || lexer->lookahead == '^' || lexer->lookahead == ',' || lexer->lookahead == '`') {
+            if (char_to_token(lexer->lookahead) != 0) {
                 lexer->result_symbol = MAYBE_OPENING_MODIFIER;
                 return true;
             }
