@@ -20,6 +20,10 @@
           "named": true
         },
         {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
           "type": "italic",
           "named": true
         },
@@ -87,6 +91,10 @@
           "named": true
         },
         {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
           "type": "italic",
           "named": true
         },
@@ -146,6 +154,41 @@
     }
   },
   {
+    "type": "inline_macro",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "inline_macro_close",
+          "named": true
+        },
+        {
+          "type": "inline_macro_open",
+          "named": true
+        },
+        {
+          "type": "maybe_opening_modifier",
+          "named": true
+        },
+        {
+          "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "whitespace",
+          "named": true
+        },
+        {
+          "type": "word",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "italic",
     "named": true,
     "fields": {},
@@ -155,6 +198,10 @@
       "types": [
         {
           "type": "bold",
+          "named": true
+        },
+        {
+          "type": "inline_macro",
           "named": true
         },
         {
@@ -229,14 +276,6 @@
       "required": true,
       "types": [
         {
-          "type": "bold_open",
-          "named": true
-        },
-        {
-          "type": "italic_open",
-          "named": true
-        },
-        {
           "type": "math_close",
           "named": true
         },
@@ -250,26 +289,6 @@
         },
         {
           "type": "punctuation",
-          "named": true
-        },
-        {
-          "type": "spoiler_open",
-          "named": true
-        },
-        {
-          "type": "strikethrough_open",
-          "named": true
-        },
-        {
-          "type": "subscript_open",
-          "named": true
-        },
-        {
-          "type": "superscript_open",
-          "named": true
-        },
-        {
-          "type": "underline_open",
           "named": true
         },
         {
@@ -297,6 +316,14 @@
         },
         {
           "type": "bold_open",
+          "named": true
+        },
+        {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
+          "type": "inline_macro_open",
           "named": true
         },
         {
@@ -399,6 +426,10 @@
           "named": true
         },
         {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
           "type": "italic",
           "named": true
         },
@@ -471,6 +502,10 @@
       "types": [
         {
           "type": "bold",
+          "named": true
+        },
+        {
+          "type": "inline_macro",
           "named": true
         },
         {
@@ -549,6 +584,10 @@
           "named": true
         },
         {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
           "type": "italic",
           "named": true
         },
@@ -621,6 +660,10 @@
       "types": [
         {
           "type": "bold",
+          "named": true
+        },
+        {
+          "type": "inline_macro",
           "named": true
         },
         {
@@ -699,6 +742,10 @@
           "named": true
         },
         {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
           "type": "italic",
           "named": true
         },
@@ -770,39 +817,11 @@
       "required": true,
       "types": [
         {
-          "type": "bold_open",
-          "named": true
-        },
-        {
-          "type": "italic_open",
-          "named": true
-        },
-        {
           "type": "maybe_opening_modifier",
           "named": true
         },
         {
           "type": "punctuation",
-          "named": true
-        },
-        {
-          "type": "spoiler_open",
-          "named": true
-        },
-        {
-          "type": "strikethrough_open",
-          "named": true
-        },
-        {
-          "type": "subscript_open",
-          "named": true
-        },
-        {
-          "type": "superscript_open",
-          "named": true
-        },
-        {
-          "type": "underline_open",
           "named": true
         },
         {
@@ -847,6 +866,14 @@
   },
   {
     "type": "bold_open",
+    "named": true
+  },
+  {
+    "type": "inline_macro_close",
+    "named": true
+  },
+  {
+    "type": "inline_macro_open",
     "named": true
   },
   {

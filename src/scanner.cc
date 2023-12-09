@@ -57,6 +57,9 @@ enum TokenType : char {
 
     INLINE_MATH_OPEN,
     INLINE_MATH_CLOSE,
+
+    INLINE_MACRO_OPEN,
+    INLINE_MACRO_CLOSE,
 };
 
 TokenType char_to_token(int32_t c) {
@@ -79,6 +82,8 @@ TokenType char_to_token(int32_t c) {
             return VERBATIM_OPEN;
         case '$':
             return INLINE_MATH_OPEN;
+        case '&':
+            return INLINE_MACRO_OPEN;
     }
 
     return WHITESPACE;
@@ -95,13 +100,14 @@ int32_t token_to_index(TokenType token) {
         case SUBSCRIPT_OPEN: return 6;
         case VERBATIM_OPEN: return 7;
         case INLINE_MATH_OPEN: return 8;
+        case INLINE_MACRO_OPEN: return 9;
         default: return -1;
     }
 }
 
 struct Scanner {
     TSLexer* lexer;
-    std::bitset<9> attached_modifiers;
+    std::bitset<10> attached_modifiers;
 
     Scanner() {
         attached_modifiers.reset();

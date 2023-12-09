@@ -47,6 +47,9 @@ module.exports = grammar({
 
         $.math_open,
         $.math_close,
+
+        $.inline_macro_open,
+        $.inline_macro_close,
     ],
 
     conflicts: ($) => [
@@ -66,8 +69,17 @@ module.exports = grammar({
         [$.open_conflict, $.superscript, $.math],
         [$.open_conflict, $.subscript, $.math],
 
+        [$.open_conflict, $.bold, $.inline_macro],
+        [$.open_conflict, $.italic, $.inline_macro],
+        [$.open_conflict, $.underline, $.inline_macro],
+        [$.open_conflict, $.strikethrough, $.inline_macro],
+        [$.open_conflict, $.spoiler, $.inline_macro],
+        [$.open_conflict, $.superscript, $.inline_macro],
+        [$.open_conflict, $.subscript, $.inline_macro],
+
         [$.open_conflict, $.verbatim],
         [$.open_conflict, $.math],
+        [$.open_conflict, $.inline_macro],
     ],
 
     precedences: ($) => [],
@@ -100,7 +112,7 @@ module.exports = grammar({
                         $.superscript,
                         $.subscript,
                         $.verbatim,
-                        $.punctuation,
+                        $.inline_macro,
                         $.math,
                         $.open_conflict,
                     ),
@@ -120,6 +132,7 @@ module.exports = grammar({
                                     $.superscript,
                                     $.subscript,
                                     $.verbatim,
+                                    $.inline_macro,
                                     $.math,
                                     $.punctuation,
                                     $.open_conflict,
@@ -139,15 +152,6 @@ module.exports = grammar({
                         $.punctuation,
                         $.whitespace,
                         $.maybe_opening_modifier,
-
-                        $.bold_open,
-                        $.italic_open,
-                        $.underline_open,
-                        $.strikethrough_open,
-                        $.spoiler_open,
-                        $.superscript_open,
-                        $.subscript_open,
-
                         seq(newline, $.verbatim_paragraph),
                     ),
                 ),
@@ -167,6 +171,7 @@ module.exports = grammar({
                         $.subscript_open,
                         $.verbatim_open,
                         $.math_open,
+                        $.inline_macro_open,
                     ),
                     $.paragraph,
                 ),
@@ -187,7 +192,13 @@ module.exports = grammar({
         verbatim: ($) =>
             seq($.verbatim_open, $.verbatim_paragraph, $.verbatim_close),
 
-        math: ($) =>
-            seq($.math_open, $.verbatim_paragraph, $.math_close),
+        math: ($) => seq($.math_open, $.verbatim_paragraph, $.math_close),
+
+        inline_macro: ($) =>
+            seq(
+                $.inline_macro_open,
+                $.verbatim_paragraph,
+                $.inline_macro_close,
+            ),
     },
 });
