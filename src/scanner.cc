@@ -27,6 +27,8 @@ using namespace std;
 enum TokenType : char {
     WHITESPACE,
 
+    PARAGRAPH_BREAK,
+
     PUNCTUATION,
 
     MAYBE_OPENING_MODIFIER,
@@ -89,28 +91,21 @@ TokenType char_to_token(int32_t c) {
     return WHITESPACE;
 }
 
-int32_t token_to_index(TokenType token) {
-    switch (token) {
-        case BOLD_OPEN: return 0;
-        case ITALIC_OPEN: return 1;
-        case UNDERLINE_OPEN: return 2;
-        case STRIKETHROUGH_OPEN: return 3;
-        case SPOILER_OPEN: return 4;
-        case SUPERSCRIPT_OPEN: return 5;
-        case SUBSCRIPT_OPEN: return 6;
-        case VERBATIM_OPEN: return 7;
-        case INLINE_MATH_OPEN: return 8;
-        case INLINE_MACRO_OPEN: return 9;
-        default: return -1;
-    }
-}
-
 struct Scanner {
     TSLexer* lexer;
-    std::bitset<10> attached_modifiers;
+    std::unordered_map<TokenType, size_t> attached_modifiers;
 
     Scanner() {
-        attached_modifiers.reset();
+        attached_modifiers[BOLD_OPEN] = 0;
+        attached_modifiers[ITALIC_OPEN] = 0;
+        attached_modifiers[UNDERLINE_OPEN] = 0;
+        attached_modifiers[STRIKETHROUGH_OPEN] = 0;
+        attached_modifiers[SPOILER_OPEN] = 0;
+        attached_modifiers[SUPERSCRIPT_OPEN] = 0;
+        attached_modifiers[SUBSCRIPT_OPEN] = 0;
+        attached_modifiers[VERBATIM_OPEN] = 0;
+        attached_modifiers[INLINE_MATH_OPEN] = 0;
+        attached_modifiers[INLINE_MACRO_OPEN] = 0;
     }
 
     /**
@@ -158,6 +153,19 @@ struct Scanner {
             }
         }
 
+        if (valid_symbols[PARAGRAPH_BREAK] && (lexer->lookahead == '\n' || lexer->lookahead == '\r')) {
+            advance();
+
+            if (lexer->lookahead == '\n' || lexer->lookahead == '\r') {
+                advance();
+                lexer->result_symbol = PARAGRAPH_BREAK;
+                attached_modifiers.clear();
+                return true;
+            }
+
+            return false;
+        }
+
         if (valid_symbols[MAYBE_OPENING_MODIFIER] && is_whitespace(lexer->lookahead)) {
             while (is_whitespace(lexer->lookahead))
                 advance();
@@ -185,13 +193,13 @@ struct Scanner {
                 return true;
             }
 
-            // const int32_t index = token_to_index(next_token);
-
-            if (valid_symbols[next_token + 1] && (!lexer->lookahead || iswspace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
+            if (attached_modifiers[next_token] > 0 && valid_symbols[next_token + 1] && (!lexer->lookahead || iswspace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
+                attached_modifiers[next_token] -= 1;
                 lexer->result_symbol = next_token + 1;
                 return true;
             }
             else if (valid_symbols[next_token] && lexer->lookahead && !iswspace(lexer->lookahead)) {
+                attached_modifiers[next_token] += 1;
                 lexer->result_symbol = next_token;
                 return true;
             }
@@ -225,18 +233,12 @@ extern "C" {
     unsigned tree_sitter_norg_external_scanner_serialize(void *payload,
             char *buffer) {
         Scanner* scanner = static_cast<Scanner* >(payload);
-
-        memcpy(&buffer, &scanner->attached_modifiers, sizeof(scanner->attached_modifiers));
-
-        return sizeof(unsigned long);
+        return 0;
     }
 
     void tree_sitter_norg_external_scanner_deserialize(void *payload,
             const char *buffer,
             unsigned length) {
 
-        Scanner* scanner = static_cast<Scanner* >(payload);
-
-        memcpy(&scanner->attached_modifiers, &buffer, sizeof(scanner->attached_modifiers));
     }
 }

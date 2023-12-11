@@ -17,6 +17,8 @@ module.exports = grammar({
     externals: ($) => [
         $._preceding_whitespace,
 
+        $.paragraph_break,
+
         $.punctuation,
 
         $.maybe_opening_modifier,
@@ -156,7 +158,7 @@ module.exports = grammar({
                 ),
             ),
 
-        paragraph_break: (_) => token(prec(1, seq(newline, newline_or_eof))),
+        // paragraph_break: (_) => token(prec(1, seq(newline, newline_or_eof))),
 
         bold: ($) => seq($.bold_open, $.paragraph, $.bold_close),
         italic: ($) => seq($.italic_open, $.paragraph, $.italic_close),
