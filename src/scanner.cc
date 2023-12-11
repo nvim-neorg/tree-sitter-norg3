@@ -199,6 +199,13 @@ struct Scanner {
                 return true;
             }
             else if (valid_symbols[next_token] && lexer->lookahead && !iswspace(lexer->lookahead)) {
+                const TokenType token = char_to_token(lexer->lookahead);
+
+                if (token != 0 && attached_modifiers[token] > 0) {
+                    lexer->result_symbol = PUNCTUATION;
+                    return true;
+                }
+
                 attached_modifiers[next_token] += 1;
                 lexer->result_symbol = next_token;
                 return true;
