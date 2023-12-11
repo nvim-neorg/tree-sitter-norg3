@@ -170,11 +170,19 @@
           "named": true
         },
         {
+          "type": "math_open",
+          "named": true
+        },
+        {
           "type": "maybe_opening_modifier",
           "named": true
         },
         {
           "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "verbatim_open",
           "named": true
         },
         {
@@ -276,6 +284,10 @@
       "required": true,
       "types": [
         {
+          "type": "inline_macro_open",
+          "named": true
+        },
+        {
           "type": "math_close",
           "named": true
         },
@@ -289,6 +301,10 @@
         },
         {
           "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "verbatim_open",
           "named": true
         },
         {
@@ -816,6 +832,14 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "inline_macro_open",
+          "named": true
+        },
+        {
+          "type": "math_open",
+          "named": true
+        },
         {
           "type": "maybe_opening_modifier",
           "named": true
