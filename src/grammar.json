@@ -360,56 +360,6 @@
         ]
       }
     },
-    "paragraph_break": {
-      "type": "TOKEN",
-      "content": {
-        "type": "PREC",
-        "value": 1,
-        "content": {
-          "type": "SEQ",
-          "members": [
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": "\n"
-                },
-                {
-                  "type": "STRING",
-                  "value": "\r"
-                },
-                {
-                  "type": "STRING",
-                  "value": "\r\n"
-                }
-              ]
-            },
-            {
-              "type": "CHOICE",
-              "members": [
-                {
-                  "type": "STRING",
-                  "value": "\n"
-                },
-                {
-                  "type": "STRING",
-                  "value": "\r"
-                },
-                {
-                  "type": "STRING",
-                  "value": "\r\n"
-                },
-                {
-                  "type": "STRING",
-                  "value": "\u0000"
-                }
-              ]
-            }
-          ]
-        }
-      }
-    },
     "bold": {
       "type": "SEQ",
       "members": [
@@ -618,6 +568,10 @@
     {
       "type": "SYMBOL",
       "name": "_preceding_whitespace"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "paragraph_break"
     },
     {
       "type": "SYMBOL",
