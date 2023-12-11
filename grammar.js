@@ -53,30 +53,6 @@ module.exports = grammar({
     ],
 
     conflicts: ($) => [
-        [$.open_conflict, $.bold, $.verbatim],
-        [$.open_conflict, $.italic, $.verbatim],
-        [$.open_conflict, $.underline, $.verbatim],
-        [$.open_conflict, $.strikethrough, $.verbatim],
-        [$.open_conflict, $.spoiler, $.verbatim],
-        [$.open_conflict, $.superscript, $.verbatim],
-        [$.open_conflict, $.subscript, $.verbatim],
-
-        [$.open_conflict, $.bold, $.math],
-        [$.open_conflict, $.italic, $.math],
-        [$.open_conflict, $.underline, $.math],
-        [$.open_conflict, $.strikethrough, $.math],
-        [$.open_conflict, $.spoiler, $.math],
-        [$.open_conflict, $.superscript, $.math],
-        [$.open_conflict, $.subscript, $.math],
-
-        [$.open_conflict, $.bold, $.inline_macro],
-        [$.open_conflict, $.italic, $.inline_macro],
-        [$.open_conflict, $.underline, $.inline_macro],
-        [$.open_conflict, $.strikethrough, $.inline_macro],
-        [$.open_conflict, $.spoiler, $.inline_macro],
-        [$.open_conflict, $.superscript, $.inline_macro],
-        [$.open_conflict, $.subscript, $.inline_macro],
-
         [$.open_conflict, $.verbatim],
         [$.open_conflict, $.math],
         [$.open_conflict, $.inline_macro],
@@ -152,6 +128,9 @@ module.exports = grammar({
                         $.punctuation,
                         $.whitespace,
                         $.maybe_opening_modifier,
+                        $.verbatim_open,
+                        $.math_open,
+                        $.inline_macro_open,
                         seq(newline, $.verbatim_paragraph),
                     ),
                 ),
@@ -190,15 +169,25 @@ module.exports = grammar({
         subscript: ($) => seq($.subscript_open, $.paragraph, $.subscript_close),
 
         verbatim: ($) =>
-            seq($.verbatim_open, $.verbatim_paragraph, $.verbatim_close),
+            prec.right(
+                -1,
+                seq($.verbatim_open, $.verbatim_paragraph, $.verbatim_close),
+            ),
 
-        math: ($) => seq($.math_open, $.verbatim_paragraph, $.math_close),
+        math: ($) =>
+            prec.right(
+                -1,
+                seq($.math_open, $.verbatim_paragraph, $.math_close),
+            ),
 
         inline_macro: ($) =>
-            seq(
-                $.inline_macro_open,
-                $.verbatim_paragraph,
-                $.inline_macro_close,
+            prec.right(
+                -1,
+                seq(
+                    $.inline_macro_open,
+                    $.verbatim_paragraph,
+                    $.inline_macro_close,
+                ),
             ),
     },
 });
