@@ -21,7 +21,8 @@ module.exports = grammar({
 
         $.punctuation,
 
-        $.maybe_opening_modifier,
+        $.non_open,
+        $.non_close,
 
         $.bold_open,
         $.bold_close,
@@ -75,12 +76,14 @@ module.exports = grammar({
 
         word: ($) => prec.right(repeat1($._character)),
         whitespace: (_) => token(prec(1, /\p{Zs}+/u)),
+        soft_break: (_) => newline,
 
         paragraph: ($) =>
             prec.right(
-                seq(
+                repeat1(
                     choice(
-                        $.word,
+                        seq($.whitespace, optional(alias($.non_close, $.punctuation))),
+                        seq($.word, optional(alias($.non_open, $.punctuation))),
                         $.punctuation,
                         $.bold,
                         $.italic,
@@ -93,31 +96,7 @@ module.exports = grammar({
                         $.inline_macro,
                         $.math,
                         $.open_conflict,
-                    ),
-                    repeat(
-                        choice(
-                            $.word,
-                            $.punctuation,
-                            $.whitespace,
-                            seq(
-                                choice($.maybe_opening_modifier, $.punctuation),
-                                choice(
-                                    $.bold,
-                                    $.italic,
-                                    $.underline,
-                                    $.strikethrough,
-                                    $.spoiler,
-                                    $.superscript,
-                                    $.subscript,
-                                    $.verbatim,
-                                    $.inline_macro,
-                                    $.math,
-                                    $.punctuation,
-                                    $.open_conflict,
-                                ),
-                            ),
-                            seq(newline, $.paragraph),
-                        ),
+                        seq($.soft_break, $.paragraph),
                     ),
                 ),
             ),
@@ -126,18 +105,18 @@ module.exports = grammar({
             prec.right(
                 repeat1(
                     choice(
-                        $.word,
+                        seq($.word, optional(alias($.non_open, $.punctuation))),
                         $.punctuation,
-                        $.whitespace,
-                        $.maybe_opening_modifier,
+                        seq($.whitespace, optional(alias($.non_close, $.punctuation))),
                         $.verbatim_open,
                         $.math_open,
                         $.inline_macro_open,
-                        seq(newline, $.verbatim_paragraph),
+                        seq($.soft_break, $.verbatim_paragraph),
                     ),
                 ),
             ),
 
+        // TODO: failing test case att-11
         open_conflict: ($) =>
             prec.dynamic(
                 -1,
