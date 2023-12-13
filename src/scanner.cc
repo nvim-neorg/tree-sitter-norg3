@@ -31,7 +31,8 @@ enum TokenType : char {
 
     PUNCTUATION,
 
-    MAYBE_OPENING_MODIFIER,
+    NON_OPEN,
+    NON_CLOSE,
 
     BOLD_OPEN,
     BOLD_CLOSE,
@@ -156,6 +157,11 @@ struct Scanner {
         if (valid_symbols[PARAGRAPH_BREAK] && (lexer->lookahead == '\n' || lexer->lookahead == '\r')) {
             advance();
 
+            if (lexer->eof(lexer)) {
+                lexer->result_symbol = PARAGRAPH_BREAK;
+                attached_modifiers.clear();
+                return true;
+            }
             if (lexer->lookahead == '\n' || lexer->lookahead == '\r') {
                 advance();
                 lexer->result_symbol = PARAGRAPH_BREAK;
@@ -166,16 +172,16 @@ struct Scanner {
             return false;
         }
 
-        if (valid_symbols[MAYBE_OPENING_MODIFIER] && is_whitespace(lexer->lookahead)) {
-            while (is_whitespace(lexer->lookahead))
-                advance();
-
-            if (char_to_token(lexer->lookahead) != 0) {
-                lexer->result_symbol = MAYBE_OPENING_MODIFIER;
-                return true;
-            }
-
-            return false;
+        // FIXME: test att-11 is failing becuase even if bold_close is valid,
+        // *word*word*
+        //      ^ this should be NON_OPEN
+        //           ^ but this should be bold_close
+        if (valid_symbols[NON_OPEN] && (char_to_token(lexer->lookahead) != 0) && !valid_symbols[char_to_token(lexer->lookahead) + 1]) {
+            const int32_t character = lexer->lookahead;
+            advance();
+            if (lexer->lookahead == character) return false;
+            lexer->result_symbol = NON_OPEN;
+            return true;
         }
 
         const TokenType next_token = char_to_token(lexer->lookahead);
@@ -184,6 +190,12 @@ struct Scanner {
             const int32_t character = lexer->lookahead;
 
             advance();
+            if (valid_symbols[NON_CLOSE] && valid_symbols[next_token + 1]) {
+                while(lexer->lookahead == character)
+                    advance();
+                lexer->result_symbol = NON_CLOSE;
+                return true;
+            }
 
             if (lexer->lookahead == character) {
                 while (lexer->lookahead == character)

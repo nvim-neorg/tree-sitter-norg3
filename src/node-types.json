@@ -32,15 +32,15 @@
           "named": true
         },
         {
-          "type": "maybe_opening_modifier",
-          "named": true
-        },
-        {
           "type": "open_conflict",
           "named": true
         },
         {
           "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "soft_break",
           "named": true
         },
         {
@@ -103,10 +103,6 @@
           "named": true
         },
         {
-          "type": "maybe_opening_modifier",
-          "named": true
-        },
-        {
           "type": "open_conflict",
           "named": true
         },
@@ -116,6 +112,10 @@
         },
         {
           "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "soft_break",
           "named": true
         },
         {
@@ -174,11 +174,11 @@
           "named": true
         },
         {
-          "type": "maybe_opening_modifier",
+          "type": "punctuation",
           "named": true
         },
         {
-          "type": "punctuation",
+          "type": "soft_break",
           "named": true
         },
         {
@@ -229,15 +229,15 @@
           "named": true
         },
         {
-          "type": "maybe_opening_modifier",
-          "named": true
-        },
-        {
           "type": "open_conflict",
           "named": true
         },
         {
           "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "soft_break",
           "named": true
         },
         {
@@ -296,11 +296,11 @@
           "named": true
         },
         {
-          "type": "maybe_opening_modifier",
+          "type": "punctuation",
           "named": true
         },
         {
-          "type": "punctuation",
+          "type": "soft_break",
           "named": true
         },
         {
@@ -359,15 +359,15 @@
           "named": true
         },
         {
-          "type": "maybe_opening_modifier",
-          "named": true
-        },
-        {
           "type": "open_conflict",
           "named": true
         },
         {
           "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "soft_break",
           "named": true
         },
         {
@@ -430,6 +430,11 @@
     }
   },
   {
+    "type": "soft_break",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "spoiler",
     "named": true,
     "fields": {},
@@ -454,15 +459,15 @@
           "named": true
         },
         {
-          "type": "maybe_opening_modifier",
-          "named": true
-        },
-        {
           "type": "open_conflict",
           "named": true
         },
         {
           "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "soft_break",
           "named": true
         },
         {
@@ -533,15 +538,15 @@
           "named": true
         },
         {
-          "type": "maybe_opening_modifier",
-          "named": true
-        },
-        {
           "type": "open_conflict",
           "named": true
         },
         {
           "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "soft_break",
           "named": true
         },
         {
@@ -612,15 +617,15 @@
           "named": true
         },
         {
-          "type": "maybe_opening_modifier",
-          "named": true
-        },
-        {
           "type": "open_conflict",
           "named": true
         },
         {
           "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "soft_break",
           "named": true
         },
         {
@@ -691,15 +696,15 @@
           "named": true
         },
         {
-          "type": "maybe_opening_modifier",
-          "named": true
-        },
-        {
           "type": "open_conflict",
           "named": true
         },
         {
           "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "soft_break",
           "named": true
         },
         {
@@ -770,15 +775,15 @@
           "named": true
         },
         {
-          "type": "maybe_opening_modifier",
-          "named": true
-        },
-        {
           "type": "open_conflict",
           "named": true
         },
         {
           "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "soft_break",
           "named": true
         },
         {
@@ -841,11 +846,11 @@
           "named": true
         },
         {
-          "type": "maybe_opening_modifier",
+          "type": "punctuation",
           "named": true
         },
         {
-          "type": "punctuation",
+          "type": "soft_break",
           "named": true
         },
         {
@@ -914,10 +919,6 @@
   },
   {
     "type": "math_open",
-    "named": true
-  },
-  {
-    "type": "maybe_opening_modifier",
     "named": true
   },
   {
