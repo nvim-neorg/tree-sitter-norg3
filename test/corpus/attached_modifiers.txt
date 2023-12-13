@@ -1,184 +1,247 @@
 ================================================================================
-Standalone markup
+att-00: Standalone markup
 ================================================================================
-*bold*
+*word*
 --------------------------------------------------------------------------------
 (document
-  (paragraph
-    (bold
-      (open)
-      (close))))
+  (bold
+    (bold_open)
+    (word)
+    (bold_close)))
 
 ================================================================================
-Invalid attached modifiers
+att-01: valid cases before open
 ================================================================================
-* Bold text *
+word *word*
 
-*Bold text *
+word.*word*
 
-other text*Bold text*
+*word*/word/
+--------------------------------------------------------------------------------
+(document
+  (word)
+  (whitespace)
+  (bold
+    (bold_open)
+    (word)
+    (bold_close))
+  (paragraph_break)
+  (word)
+  (punctuation)
+  (bold
+    (bold_open)
+    (word)
+    (bold_close))
+  (paragraph_break)
+  (bold
+    (bold_open)
+    (word)
+    (bold_close))
+  (italic
+    (italic_open)
+    (word)
+    (italic_close)))
 
-*Bold text*other text
+================================================================================
+att-02: valid cases after open
+================================================================================
+*.word*
+
+*/word/*
+--------------------------------------------------------------------------------
+(document
+  (bold
+    (bold_open)
+    (punctuation)
+    (word)
+    (bold_close))
+  (paragraph_break)
+  (bold
+    (bold_open)
+    (italic
+      (italic_open)
+      (word)
+      (italic_close))
+    (bold_close)))
+
+================================================================================
+att-03: valid cases before close
+================================================================================
+*word.*
+--------------------------------------------------------------------------------
+(document
+  (bold
+    (bold_open)
+    (word)
+    (punctuation)
+    (bold_close)))
+
+================================================================================
+att-04: valid cases after close
+================================================================================
+*word* word
+
+*word*.word
+
+*word*
+word
+--------------------------------------------------------------------------------
+(document
+  (bold
+    (bold_open)
+    (word)
+    (bold_close))
+  (whitespace)
+  (word)
+  (paragraph_break)
+  (bold
+    (bold_open)
+    (word)
+    (bold_close))
+  (punctuation)
+  (word)
+  (paragraph_break)
+  (bold
+    (bold_open)
+    (word)
+    (bold_close))
+  (soft_break)
+  (word))
+
+================================================================================
+att-05: invalid cases before open
+================================================================================
+word*word*
+
+**word*
+--------------------------------------------------------------------------------
+(document
+  (word)
+  (punctuation)
+  (word)
+  (punctuation)
+  (paragraph_break)
+  (punctuation)
+  (word)
+  (punctuation))
+
+================================================================================
+att-06: invalid cases after open
+================================================================================
+.* word*
 
 *
-Bold text*
+word*
+--------------------------------------------------------------------------------
+(document
+  ; punctuation at beginning of the line to ignore heading
+  (punctuation)
+  (punctuation)
+  (whitespace)
+  (word)
+  (punctuation)
+  (paragraph_break)
+  (punctuation)
+  (soft_break)
+  (word)
+  (punctuation))
 
-*Bold
-text
+================================================================================
+att-07: invalid cases before close 1
+================================================================================
+*word *
+--------------------------------------------------------------------------------
+(document
+  (open_conflict
+    (bold_open)
+    (word)
+    (whitespace)
+    (punctuation)))
+
+================================================================================
+att-08: invalid cases before close 2
+================================================================================
+*word
 *
-
-*Bold
-
-text*
 --------------------------------------------------------------------------------
-
 (document
-  (heading
-    (heading_stars)
-    (title)
-    (paragraph)
-    (paragraph)
-    (paragraph)
-    (paragraph)
-    (paragraph)
-    (paragraph)
-    (paragraph)))
+  (open_conflict
+    (bold_open)
+    (word)
+    (soft_break)
+    (punctuation)))
 
 ================================================================================
-Conflicts vs Closed Markup - Left-flanking, internal
+att-09: invalid case after close 1
 ================================================================================
-*/hello*
+*word*word
 --------------------------------------------------------------------------------
-
 (document
-  (paragraph
-    (bold
-      (open)
-      (close))))
+  (open_conflict
+    (bold_open)
+    (word)
+    (open_conflict
+      (bold_open)
+      (word))))
 
 ================================================================================
-Conflicts vs Closed Markup - Left-flanking, external
+att-10: invalid case after close 2
 ================================================================================
-/*hello*
+*word**
 --------------------------------------------------------------------------------
-
 (document
-  (paragraph
-    (bold
-      (open)
-      (close))))
+  (open_conflict
+    (bold_open)
+    (word)
+    (punctuation)))
 
 ================================================================================
-Conflicts vs Closed Markup - Right-flanking, internal
+att-11: valid case
 ================================================================================
-*hello/*
+*word*word*
+
+*word**word*
 --------------------------------------------------------------------------------
-
 (document
-  (paragraph
-    (bold
-      (open)
-      (close))))
+  (bold
+    (bold_open)
+    (word)
+    (punctuation)
+    (word)
+    (bold_close))
+  (paragraph_break)
+  (bold
+    (bold_open)
+    (word)
+    (punctuation)
+    (word)
+    (bold_close)))
 
 ================================================================================
-Conflicts vs Closed Markup - Right-flanking, external
+att-12: don't allow same markup nested
 ================================================================================
-*hello*/ word
+*word *word*
+
+*word *word* word*
 --------------------------------------------------------------------------------
-
 (document
-  (paragraph
-    (bold
-      (open)
-      (close))))
+  (bold
+    (bold_open)
+    (word)
+    (whitespace)
+    (punctuation)
+    (word)
+    (bold_close))
+  (paragraph_break)
+  (bold
+    (bold_open)
+    (word)
+    (whitespace)
+    (punctuation)
+    (word)
+    (bold_close))
+  (whitespace)
+  (word)
+  (punctuation))
 
-================================================================================
-Conflicts vs Closed Markup - Left-flanking, internal
-================================================================================
-*hello*
---------------------------------------------------------------------------------
-
-(document
-  (paragraph
-    (bold
-      (open)
-      (close))))
-
-================================================================================
-Consecutive - Duplex, dissimilar
-================================================================================
-*hello*/world/
---------------------------------------------------------------------------------
-
-(document
-  (paragraph
-    (bold
-      (open)
-      (close))
-    (italic
-      (open)
-      (close))))
-
-================================================================================
-Consecutive - Duplex, similar
-================================================================================
-*hello**world*
---------------------------------------------------------------------------------
-
-(document
-  (paragraph
-    (bold
-      (open)
-      (close))))
-
-================================================================================
-Nested - Multiplex
-================================================================================
-*/hello/*/world/
---------------------------------------------------------------------------------
-
-(document
-  (paragraph
-    (bold
-      (open)
-      (italic
-        (open)
-        (close))
-      (close))
-    (italic
-      (open)
-      (close))))
-
-================================================================================
-Break attached modifiers before detached modifier
-================================================================================
-- _:
-- _x_
---------------------------------------------------------------------------------
-
-(document
-  (unordered_list
-    (unordered_list_item
-      (unordered_list_prefix)
-      (paragraph))
-    (unordered_list_item
-      (unordered_list_prefix)
-      (paragraph
-        (underline
-          (open)
-          (close))))))
-
-================================================================================
-Repeated attached modifiers should be treated as raw text
-================================================================================
-^^, text, ^^
-%%text%%
-%%%text%%%
-*///example//*
---------------------------------------------------------------------------------
-
-(document
-  (paragraph
-    (bold
-      (open)
-      (close))))
+; vim:ts=2:sw=2:
