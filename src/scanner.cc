@@ -172,21 +172,9 @@ struct Scanner {
             return false;
         }
 
-        // FIXME: test att-11 is failing becuase even if bold_close is valid,
-        // *word*word*
-        //      ^ this should be NON_OPEN
-        //           ^ but this should be bold_close
-        if (valid_symbols[NON_OPEN] && (char_to_token(lexer->lookahead) != 0) && !valid_symbols[char_to_token(lexer->lookahead) + 1]) {
-            const int32_t character = lexer->lookahead;
-            advance();
-            if (lexer->lookahead == character) return false;
-            lexer->result_symbol = NON_OPEN;
-            return true;
-        }
-
         const TokenType next_token = char_to_token(lexer->lookahead);
 
-        if (next_token != 0 && (valid_symbols[next_token] || valid_symbols[next_token + 1])) {
+        if (next_token != 0 && (valid_symbols[next_token] || valid_symbols[next_token + 1] || valid_symbols[NON_OPEN])) {
             const int32_t character = lexer->lookahead;
 
             advance();
@@ -205,12 +193,21 @@ struct Scanner {
                 return true;
             }
 
+            if (valid_symbols[NON_OPEN] && !valid_symbols[next_token + 1]) {
+                lexer->result_symbol = NON_OPEN;
+                return true;
+            }
+
             if (attached_modifiers[next_token] > 0 && valid_symbols[next_token + 1] && (!lexer->lookahead || iswspace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
                 attached_modifiers[next_token] -= 1;
                 lexer->result_symbol = next_token + 1;
                 return true;
-            }
-            else if (valid_symbols[next_token] && lexer->lookahead && !iswspace(lexer->lookahead)) {
+            } else if (valid_symbols[NON_OPEN]) {
+                // there can be NON_OPEN even when BOLD_CLOSE is valid.
+                // see att-11 for example
+                lexer->result_symbol = NON_OPEN;
+                return true;
+            } else if (valid_symbols[next_token] && lexer->lookahead && !iswspace(lexer->lookahead)) {
                 const TokenType token = char_to_token(lexer->lookahead);
 
                 if (token != 0 && attached_modifiers[token] > 0) {

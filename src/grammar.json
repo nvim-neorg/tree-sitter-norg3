@@ -650,14 +650,6 @@
     {
       "type": "SYMBOL",
       "name": "inline_macro_close"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "eof"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_recover"
     }
   ],
   "inline": [

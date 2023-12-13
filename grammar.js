@@ -116,7 +116,6 @@ module.exports = grammar({
                 ),
             ),
 
-        // TODO: failing test case att-11
         open_conflict: ($) =>
             prec.dynamic(
                 -1,
