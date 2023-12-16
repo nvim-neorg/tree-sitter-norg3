@@ -179,6 +179,7 @@ module.exports = grammar({
         heading: $ => seq(
             $.heading_prefix,
             $.whitespace,
+            // TODO: This should be a sequence of chars terminated by a `soft_break`.
             $.paragraph,
         ),
     },
