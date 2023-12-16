@@ -114,13 +114,13 @@ module.exports = grammar({
                     choice(
                         seq($.whitespace, alias($.non_close, $.punctuation)),
                         seq($.word, alias($.non_open, $.punctuation)),
+                        $.escape_sequence,
                         $.whitespace,
                         $.word,
                         $.punctuation,
                         $.verbatim_open,
                         $.math_open,
                         $.inline_macro_open,
-                        alias($.escape_sequence, $.word),
                         seq($.soft_break, $.verbatim_paragraph),
                     ),
                 ),
@@ -148,15 +148,145 @@ module.exports = grammar({
 
         // paragraph_break: (_) => token(prec(1, seq(newline, newline_or_eof))),
 
-        bold: ($) => seq($.bold_open, $.paragraph, $.bold_close),
-        italic: ($) => seq($.italic_open, $.paragraph, $.italic_close),
-        underline: ($) => seq($.underline_open, $.paragraph, $.underline_close),
+        bold: ($) =>
+            seq(
+                $.bold_open,
+                choice(
+                    seq(
+                        alias("|", $.free_form_open),
+                        repeat1(
+                            choice(
+                                $.paragraph,
+                                alias(token(prec(1, "\\")), $.punctuation),
+                                alias("|", $.punctuation),
+                            ),
+                        ),
+                        alias("|", $.free_form_close),
+                    ),
+                    $.paragraph,
+                ),
+                $.bold_close,
+            ),
+
+        italic: ($) =>
+            seq(
+                $.italic_open,
+                choice(
+                    seq(
+                        alias("|", $.free_form_open),
+                        repeat1(
+                            choice(
+                                $.paragraph,
+                                alias(token(prec(1, "\\")), $.punctuation),
+                                alias("|", $.punctuation),
+                            ),
+                        ),
+                        alias("|", $.free_form_close),
+                    ),
+                    $.paragraph,
+                ),
+                $.italic_close,
+            ),
+
+        underline: ($) =>
+            seq(
+                $.underline_open,
+                choice(
+                    seq(
+                        alias("|", $.free_form_open),
+                        repeat1(
+                            choice(
+                                $.paragraph,
+                                alias(token(prec(1, "\\")), $.punctuation),
+                                alias("|", $.punctuation),
+                            ),
+                        ),
+                        alias("|", $.free_form_close),
+                    ),
+                    $.paragraph,
+                ),
+                $.underline_close,
+            ),
+
         strikethrough: ($) =>
-            seq($.strikethrough_open, $.paragraph, $.strikethrough_close),
-        spoiler: ($) => seq($.spoiler_open, $.paragraph, $.spoiler_close),
+            seq(
+                $.strikethrough_open,
+                choice(
+                    seq(
+                        alias("|", $.free_form_open),
+                        repeat1(
+                            choice(
+                                $.paragraph,
+                                alias(token(prec(1, "\\")), $.punctuation),
+                                alias("|", $.punctuation),
+                            ),
+                        ),
+                        alias("|", $.free_form_close),
+                    ),
+                    $.paragraph,
+                ),
+                $.strikethrough_close,
+            ),
+
+        spoiler: ($) =>
+            seq(
+                $.spoiler_open,
+                choice(
+                    seq(
+                        alias("|", $.free_form_open),
+                        repeat1(
+                            choice(
+                                $.paragraph,
+                                alias(token(prec(1, "\\")), $.punctuation),
+                                alias("|", $.punctuation),
+                            ),
+                        ),
+                        alias("|", $.free_form_close),
+                    ),
+                    $.paragraph,
+                ),
+                $.spoiler_close,
+            ),
+
         superscript: ($) =>
-            seq($.superscript_open, $.paragraph, $.superscript_close),
-        subscript: ($) => seq($.subscript_open, $.paragraph, $.subscript_close),
+            seq(
+                $.superscript_open,
+                choice(
+                    seq(
+                        alias("|", $.free_form_open),
+                        repeat1(
+                            choice(
+                                $.paragraph,
+                                alias(token(prec(1, "\\")), $.punctuation),
+                                alias("|", $.punctuation),
+                            ),
+                        ),
+                        alias("|", $.free_form_close),
+                    ),
+                    $.paragraph,
+                ),
+                $.superscript_close,
+            ),
+
+        subscript: ($) =>
+            seq(
+                $.subscript_open,
+                choice(
+                    seq(
+                        alias("|", $.free_form_open),
+                        repeat1(
+                            choice(
+                                $.paragraph,
+                                alias(token(prec(1, "\\")), $.punctuation),
+                                alias("|", $.punctuation),
+                            ),
+                        ),
+                        alias("|", $.free_form_close),
+                    ),
+                    $.paragraph,
+                ),
+                $.subscript_close,
+            ),
 
         verbatim: ($) =>
             prec.right(
