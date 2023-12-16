@@ -80,6 +80,8 @@ module.exports = grammar({
         whitespace: (_) => token(prec(1, /\p{Zs}+/u)),
         soft_break: (_) => newline,
 
+        escape_sequence: ($) => token(seq("\\", choice(/./, newline))),
+
         paragraph: ($) =>
             prec.right(
                 repeat1(
@@ -100,6 +102,7 @@ module.exports = grammar({
                         $.inline_macro,
                         $.math,
                         $.open_conflict,
+                        $.escape_sequence,
                         seq($.soft_break, $.paragraph),
                     ),
                 ),
@@ -117,6 +120,7 @@ module.exports = grammar({
                         $.verbatim_open,
                         $.math_open,
                         $.inline_macro_open,
+                        alias($.escape_sequence, $.word),
                         seq($.soft_break, $.verbatim_paragraph),
                     ),
                 ),
@@ -176,11 +180,12 @@ module.exports = grammar({
                 ),
             ),
 
-        heading: $ => seq(
-            $.heading_prefix,
-            $.whitespace,
-            // TODO: This should be a sequence of chars terminated by a `soft_break`.
-            $.paragraph,
-        ),
+        heading: ($) =>
+            seq(
+                $.heading_prefix,
+                $.whitespace,
+                // TODO: This should be a sequence of chars terminated by a `soft_break`.
+                $.paragraph,
+            ),
     },
 });

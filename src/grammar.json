@@ -13,19 +13,6 @@
           {
             "type": "SYMBOL",
             "name": "paragraph_break"
-          },
-          {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "soft_break"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "heading"
-              }
-            ]
           }
         ]
       }
@@ -82,6 +69,44 @@
           "value": "\r\n"
         }
       ]
+    },
+    "escape_sequence": {
+      "type": "TOKEN",
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "STRING",
+            "value": "\\"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "PATTERN",
+                "value": "."
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "STRING",
+                    "value": "\n"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "\r"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "\r\n"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
     },
     "paragraph": {
       "type": "PREC_RIGHT",
@@ -184,6 +209,10 @@
               "name": "open_conflict"
             },
             {
+              "type": "SYMBOL",
+              "name": "escape_sequence"
+            },
+            {
               "type": "SEQ",
               "members": [
                 {
@@ -267,6 +296,15 @@
             {
               "type": "SYMBOL",
               "name": "inline_macro_open"
+            },
+            {
+              "type": "ALIAS",
+              "content": {
+                "type": "SYMBOL",
+                "name": "escape_sequence"
+              },
+              "named": true,
+              "value": "word"
             },
             {
               "type": "SEQ",
