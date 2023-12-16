@@ -53,6 +53,8 @@ module.exports = grammar({
 
         $.inline_macro_open,
         $.inline_macro_close,
+
+        $.heading_prefix,
     ],
 
     conflicts: ($) => [
@@ -173,5 +175,11 @@ module.exports = grammar({
                     $.inline_macro_close,
                 ),
             ),
+
+        heading: $ => seq(
+            $.heading_prefix,
+            $.whitespace,
+            $.paragraph,
+        ),
     },
 });

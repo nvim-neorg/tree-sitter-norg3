@@ -63,6 +63,8 @@ enum TokenType : char {
 
     INLINE_MACRO_OPEN,
     INLINE_MACRO_CLOSE,
+
+    HEADING,
 };
 
 TokenType char_to_token(int32_t c) {
@@ -178,6 +180,7 @@ struct Scanner {
             const int32_t character = lexer->lookahead;
 
             advance();
+
             if (valid_symbols[NON_CLOSE] && valid_symbols[next_token + 1]) {
                 while(lexer->lookahead == character)
                     advance();
@@ -185,11 +188,20 @@ struct Scanner {
                 return true;
             }
 
+            if (valid_symbols[HEADING] && is_whitespace(lexer->lookahead)) {
+                lexer->result_symbol = HEADING;
+                return true;
+            }
+
             if (lexer->lookahead == character) {
                 while (lexer->lookahead == character)
                     advance();
 
-                lexer->result_symbol = PUNCTUATION;
+                if (valid_symbols[HEADING])
+                    lexer->result_symbol = HEADING;
+                else
+                    lexer->result_symbol = PUNCTUATION;
+
                 return true;
             }
 
