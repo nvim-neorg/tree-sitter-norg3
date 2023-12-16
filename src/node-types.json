@@ -24,6 +24,14 @@
           "named": true
         },
         {
+          "type": "free_form_close",
+          "named": true
+        },
+        {
+          "type": "free_form_open",
+          "named": true
+        },
+        {
           "type": "inline_macro",
           "named": true
         },
@@ -170,6 +178,10 @@
       "required": true,
       "types": [
         {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
           "type": "inline_macro_close",
           "named": true
         },
@@ -218,6 +230,14 @@
         },
         {
           "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "free_form_close",
+          "named": true
+        },
+        {
+          "type": "free_form_open",
           "named": true
         },
         {
@@ -295,6 +315,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "escape_sequence",
+          "named": true
+        },
         {
           "type": "inline_macro_open",
           "named": true
@@ -467,6 +491,14 @@
           "named": true
         },
         {
+          "type": "free_form_close",
+          "named": true
+        },
+        {
+          "type": "free_form_open",
+          "named": true
+        },
+        {
           "type": "inline_macro",
           "named": true
         },
@@ -547,6 +579,14 @@
         },
         {
           "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "free_form_close",
+          "named": true
+        },
+        {
+          "type": "free_form_open",
           "named": true
         },
         {
@@ -633,6 +673,14 @@
           "named": true
         },
         {
+          "type": "free_form_close",
+          "named": true
+        },
+        {
+          "type": "free_form_open",
+          "named": true
+        },
+        {
           "type": "inline_macro",
           "named": true
         },
@@ -713,6 +761,14 @@
         },
         {
           "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "free_form_close",
+          "named": true
+        },
+        {
+          "type": "free_form_open",
           "named": true
         },
         {
@@ -799,6 +855,14 @@
           "named": true
         },
         {
+          "type": "free_form_close",
+          "named": true
+        },
+        {
+          "type": "free_form_open",
+          "named": true
+        },
+        {
           "type": "inline_macro",
           "named": true
         },
@@ -874,6 +938,10 @@
       "required": true,
       "types": [
         {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
           "type": "inline_macro_open",
           "named": true
         },
@@ -935,6 +1003,14 @@
   },
   {
     "type": "escape_sequence",
+    "named": true
+  },
+  {
+    "type": "free_form_close",
+    "named": true
+  },
+  {
+    "type": "free_form_open",
     "named": true
   },
   {
