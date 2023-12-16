@@ -13,6 +13,19 @@
           {
             "type": "SYMBOL",
             "name": "paragraph_break"
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "soft_break"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "heading"
+              }
+            ]
           }
         ]
       }
@@ -511,6 +524,23 @@
           }
         ]
       }
+    },
+    "heading": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "heading_prefix"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "whitespace"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "paragraph"
+        }
+      ]
     }
   },
   "extras": [
@@ -634,6 +664,10 @@
     {
       "type": "SYMBOL",
       "name": "inline_macro_close"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "heading_prefix"
     }
   ],
   "inline": [
