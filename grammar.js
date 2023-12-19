@@ -20,6 +20,8 @@ module.exports = grammar({
         $.paragraph_break,
 
         $.punctuation,
+        
+        $.maybe_detached_modifier,
 
         $.non_open,
         $.non_close,
@@ -70,7 +72,7 @@ module.exports = grammar({
     supertypes: ($) => [],
 
     rules: {
-        document: ($) => repeat(choice($.paragraph, $.paragraph_break)),
+        document: ($) => repeat(choice($.paragraph, $.paragraph_break, seq($.maybe_detached_modifier, choice($.heading, $.paragraph)))),
 
         _character: (_) => token(/[\p{L}\p{N}]/u),
 
@@ -103,7 +105,6 @@ module.exports = grammar({
                         $.math,
                         $.open_conflict,
                         $.escape_sequence,
-                        seq($.soft_break, $.paragraph),
                     ),
                 ),
             ),

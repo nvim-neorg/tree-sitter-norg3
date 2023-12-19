@@ -31,6 +31,8 @@ enum TokenType : char {
 
     PUNCTUATION,
 
+    MAYBE_DETACHED_MODIFIER,
+
     NON_OPEN,
     NON_CLOSE,
 
@@ -151,7 +153,14 @@ struct Scanner {
                 while (is_whitespace(lexer->lookahead))
                     advance();
 
-                lexer->result_symbol = WHITESPACE;
+                if (valid_symbols[MAYBE_DETACHED_MODIFIER] && lexer->lookahead == '*')
+                    lexer->result_symbol = MAYBE_DETACHED_MODIFIER;
+                else
+                    lexer->result_symbol = WHITESPACE;
+
+                return true;
+            } else if (valid_symbols[MAYBE_DETACHED_MODIFIER] && lexer->lookahead == '*') {
+                lexer->result_symbol = MAYBE_DETACHED_MODIFIER;
                 return true;
             }
         }
@@ -172,6 +181,18 @@ struct Scanner {
             }
 
             return false;
+        }
+
+        if (valid_symbols[HEADING] && lexer->lookahead == '*') {
+            while (lexer->lookahead == '*')
+                skip();
+
+            if (!is_whitespace(lexer->lookahead)) {
+                return false;
+            }
+
+            lexer->result_symbol = HEADING;
+            return true;
         }
 
         const TokenType next_token = char_to_token(lexer->lookahead);

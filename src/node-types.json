@@ -52,10 +52,6 @@
           "named": true
         },
         {
-          "type": "soft_break",
-          "named": true
-        },
-        {
           "type": "spoiler",
           "named": true
         },
@@ -107,6 +103,93 @@
           "named": true
         },
         {
+          "type": "heading",
+          "named": true
+        },
+        {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
+          "type": "italic",
+          "named": true
+        },
+        {
+          "type": "math",
+          "named": true
+        },
+        {
+          "type": "maybe_detached_modifier",
+          "named": true
+        },
+        {
+          "type": "open_conflict",
+          "named": true
+        },
+        {
+          "type": "paragraph_break",
+          "named": true
+        },
+        {
+          "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "spoiler",
+          "named": true
+        },
+        {
+          "type": "strikethrough",
+          "named": true
+        },
+        {
+          "type": "subscript",
+          "named": true
+        },
+        {
+          "type": "superscript",
+          "named": true
+        },
+        {
+          "type": "underline",
+          "named": true
+        },
+        {
+          "type": "verbatim",
+          "named": true
+        },
+        {
+          "type": "whitespace",
+          "named": true
+        },
+        {
+          "type": "word",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "heading",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "bold",
+          "named": true
+        },
+        {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "heading_prefix",
+          "named": true
+        },
+        {
           "type": "inline_macro",
           "named": true
         },
@@ -123,15 +206,7 @@
           "named": true
         },
         {
-          "type": "paragraph_break",
-          "named": true
-        },
-        {
           "type": "punctuation",
-          "named": true
-        },
-        {
-          "type": "soft_break",
           "named": true
         },
         {
@@ -277,10 +352,6 @@
           "named": true
         },
         {
-          "type": "soft_break",
-          "named": true
-        },
-        {
           "type": "spoiler",
           "named": true
         },
@@ -423,10 +494,6 @@
           "named": true
         },
         {
-          "type": "soft_break",
-          "named": true
-        },
-        {
           "type": "spoiler",
           "named": true
         },
@@ -535,10 +602,6 @@
           "named": true
         },
         {
-          "type": "soft_break",
-          "named": true
-        },
-        {
           "type": "spoiler",
           "named": true
         },
@@ -623,10 +686,6 @@
         },
         {
           "type": "punctuation",
-          "named": true
-        },
-        {
-          "type": "soft_break",
           "named": true
         },
         {
@@ -717,10 +776,6 @@
           "named": true
         },
         {
-          "type": "soft_break",
-          "named": true
-        },
-        {
           "type": "spoiler",
           "named": true
         },
@@ -808,10 +863,6 @@
           "named": true
         },
         {
-          "type": "soft_break",
-          "named": true
-        },
-        {
           "type": "spoiler",
           "named": true
         },
@@ -896,10 +947,6 @@
         },
         {
           "type": "punctuation",
-          "named": true
-        },
-        {
-          "type": "soft_break",
           "named": true
         },
         {
@@ -1063,6 +1110,10 @@
   },
   {
     "type": "math_open",
+    "named": true
+  },
+  {
+    "type": "maybe_detached_modifier",
     "named": true
   },
   {

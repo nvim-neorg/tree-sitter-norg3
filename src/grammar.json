@@ -13,6 +13,28 @@
           {
             "type": "SYMBOL",
             "name": "paragraph_break"
+          },
+          {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "maybe_detached_modifier"
+              },
+              {
+                "type": "CHOICE",
+                "members": [
+                  {
+                    "type": "SYMBOL",
+                    "name": "heading"
+                  },
+                  {
+                    "type": "SYMBOL",
+                    "name": "paragraph"
+                  }
+                ]
+              }
+            ]
           }
         ]
       }
@@ -211,19 +233,6 @@
             {
               "type": "SYMBOL",
               "name": "escape_sequence"
-            },
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "soft_break"
-                },
-                {
-                  "type": "SYMBOL",
-                  "name": "paragraph"
-                }
-              ]
             }
           ]
         }
@@ -1259,6 +1268,10 @@
     {
       "type": "SYMBOL",
       "name": "punctuation"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "maybe_detached_modifier"
     },
     {
       "type": "SYMBOL",
