@@ -233,6 +233,19 @@
             {
               "type": "SYMBOL",
               "name": "escape_sequence"
+            },
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "soft_break"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "paragraph"
+                }
+              ]
             }
           ]
         }

@@ -52,6 +52,10 @@
           "named": true
         },
         {
+          "type": "soft_break",
+          "named": true
+        },
+        {
           "type": "spoiler",
           "named": true
         },
@@ -135,6 +139,10 @@
           "named": true
         },
         {
+          "type": "soft_break",
+          "named": true
+        },
+        {
           "type": "spoiler",
           "named": true
         },
@@ -207,6 +215,10 @@
         },
         {
           "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "soft_break",
           "named": true
         },
         {
@@ -352,6 +364,10 @@
           "named": true
         },
         {
+          "type": "soft_break",
+          "named": true
+        },
+        {
           "type": "spoiler",
           "named": true
         },
@@ -494,6 +510,10 @@
           "named": true
         },
         {
+          "type": "soft_break",
+          "named": true
+        },
+        {
           "type": "spoiler",
           "named": true
         },
@@ -602,6 +622,10 @@
           "named": true
         },
         {
+          "type": "soft_break",
+          "named": true
+        },
+        {
           "type": "spoiler",
           "named": true
         },
@@ -686,6 +710,10 @@
         },
         {
           "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "soft_break",
           "named": true
         },
         {
@@ -776,6 +804,10 @@
           "named": true
         },
         {
+          "type": "soft_break",
+          "named": true
+        },
+        {
           "type": "spoiler",
           "named": true
         },
@@ -863,6 +895,10 @@
           "named": true
         },
         {
+          "type": "soft_break",
+          "named": true
+        },
+        {
           "type": "spoiler",
           "named": true
         },
@@ -947,6 +983,10 @@
         },
         {
           "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "soft_break",
           "named": true
         },
         {

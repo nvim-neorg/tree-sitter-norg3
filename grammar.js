@@ -105,6 +105,7 @@ module.exports = grammar({
                         $.math,
                         $.open_conflict,
                         $.escape_sequence,
+                        seq($.soft_break, $.paragraph),
                     ),
                 ),
             ),
