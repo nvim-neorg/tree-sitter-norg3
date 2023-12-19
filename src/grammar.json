@@ -13,28 +13,6 @@
           {
             "type": "SYMBOL",
             "name": "paragraph_break"
-          },
-          {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "SYMBOL",
-                "name": "maybe_detached_modifier"
-              },
-              {
-                "type": "CHOICE",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "heading"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "paragraph"
-                  }
-                ]
-              }
-            ]
           }
         ]
       }
@@ -131,6 +109,31 @@
       }
     },
     "paragraph": {
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "paragraph_inner"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "paragraph_break"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "paragraph_inner": {
       "type": "PREC_RIGHT",
       "value": 0,
       "content": {
@@ -243,7 +246,7 @@
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "paragraph"
+                  "name": "paragraph_inner"
                 }
               ]
             }
@@ -252,6 +255,31 @@
       }
     },
     "verbatim_paragraph": {
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "verbatim_paragraph_inner"
+          },
+          {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "paragraph_break"
+              },
+              {
+                "type": "BLANK"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "verbatim_paragraph_inner": {
       "type": "PREC_RIGHT",
       "value": 0,
       "content": {
@@ -332,7 +360,7 @@
                 },
                 {
                   "type": "SYMBOL",
-                  "name": "verbatim_paragraph"
+                  "name": "verbatim_paragraph_inner"
                 }
               ]
             }
@@ -393,7 +421,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "paragraph"
+            "name": "paragraph_inner"
           }
         ]
       }
@@ -427,7 +455,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "paragraph"
+                        "name": "paragraph_inner"
                       },
                       {
                         "type": "ALIAS",
@@ -470,7 +498,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "paragraph"
+              "name": "paragraph_inner"
             }
           ]
         },
@@ -509,7 +537,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "paragraph"
+                        "name": "paragraph_inner"
                       },
                       {
                         "type": "ALIAS",
@@ -552,7 +580,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "paragraph"
+              "name": "paragraph_inner"
             }
           ]
         },
@@ -591,7 +619,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "paragraph"
+                        "name": "paragraph_inner"
                       },
                       {
                         "type": "ALIAS",
@@ -634,7 +662,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "paragraph"
+              "name": "paragraph_inner"
             }
           ]
         },
@@ -673,7 +701,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "paragraph"
+                        "name": "paragraph_inner"
                       },
                       {
                         "type": "ALIAS",
@@ -716,7 +744,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "paragraph"
+              "name": "paragraph_inner"
             }
           ]
         },
@@ -755,7 +783,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "paragraph"
+                        "name": "paragraph_inner"
                       },
                       {
                         "type": "ALIAS",
@@ -798,7 +826,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "paragraph"
+              "name": "paragraph_inner"
             }
           ]
         },
@@ -837,7 +865,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "paragraph"
+                        "name": "paragraph_inner"
                       },
                       {
                         "type": "ALIAS",
@@ -880,7 +908,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "paragraph"
+              "name": "paragraph_inner"
             }
           ]
         },
@@ -919,7 +947,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "paragraph"
+                        "name": "paragraph_inner"
                       },
                       {
                         "type": "ALIAS",
@@ -962,7 +990,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "paragraph"
+              "name": "paragraph_inner"
             }
           ]
         },
@@ -1004,7 +1032,7 @@
                       "members": [
                         {
                           "type": "SYMBOL",
-                          "name": "verbatim_paragraph"
+                          "name": "verbatim_paragraph_inner"
                         },
                         {
                           "type": "ALIAS",
@@ -1047,7 +1075,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "verbatim_paragraph"
+                "name": "verbatim_paragraph_inner"
               }
             ]
           },
@@ -1090,7 +1118,7 @@
                       "members": [
                         {
                           "type": "SYMBOL",
-                          "name": "verbatim_paragraph"
+                          "name": "verbatim_paragraph_inner"
                         },
                         {
                           "type": "ALIAS",
@@ -1133,7 +1161,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "verbatim_paragraph"
+                "name": "verbatim_paragraph_inner"
               }
             ]
           },
@@ -1176,7 +1204,7 @@
                       "members": [
                         {
                           "type": "SYMBOL",
-                          "name": "verbatim_paragraph"
+                          "name": "verbatim_paragraph_inner"
                         },
                         {
                           "type": "ALIAS",
@@ -1219,7 +1247,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "verbatim_paragraph"
+                "name": "verbatim_paragraph_inner"
               }
             ]
           },
@@ -1229,23 +1257,6 @@
           }
         ]
       }
-    },
-    "heading": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "heading_prefix"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "whitespace"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "paragraph"
-        }
-      ]
     }
   },
   "extras": [
@@ -1281,10 +1292,6 @@
     {
       "type": "SYMBOL",
       "name": "punctuation"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "maybe_detached_modifier"
     },
     {
       "type": "SYMBOL",
@@ -1373,15 +1380,11 @@
     {
       "type": "SYMBOL",
       "name": "inline_macro_close"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "heading_prefix"
     }
   ],
   "inline": [
-    "paragraph",
-    "verbatim_paragraph"
+    "paragraph_inner",
+    "verbatim_paragraph_inner"
   ],
   "supertypes": []
 }

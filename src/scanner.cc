@@ -31,8 +31,6 @@ enum TokenType : char {
 
     PUNCTUATION,
 
-    MAYBE_DETACHED_MODIFIER,
-
     NON_OPEN,
     NON_CLOSE,
 
@@ -65,8 +63,6 @@ enum TokenType : char {
 
     INLINE_MACRO_OPEN,
     INLINE_MACRO_CLOSE,
-
-    HEADING,
 };
 
 TokenType char_to_token(int32_t c) {
@@ -153,14 +149,8 @@ struct Scanner {
                 while (is_whitespace(lexer->lookahead))
                     advance();
 
-                if (valid_symbols[MAYBE_DETACHED_MODIFIER] && lexer->lookahead == '*')
-                    lexer->result_symbol = MAYBE_DETACHED_MODIFIER;
-                else
-                    lexer->result_symbol = WHITESPACE;
+                lexer->result_symbol = WHITESPACE;
 
-                return true;
-            } else if (valid_symbols[MAYBE_DETACHED_MODIFIER] && lexer->lookahead == '*') {
-                lexer->result_symbol = MAYBE_DETACHED_MODIFIER;
                 return true;
             }
         }
@@ -183,18 +173,6 @@ struct Scanner {
             return false;
         }
 
-        if (valid_symbols[HEADING] && lexer->lookahead == '*') {
-            while (lexer->lookahead == '*')
-                skip();
-
-            if (!is_whitespace(lexer->lookahead)) {
-                return false;
-            }
-
-            lexer->result_symbol = HEADING;
-            return true;
-        }
-
         const TokenType next_token = char_to_token(lexer->lookahead);
 
         if (next_token != 0 && (valid_symbols[next_token] || valid_symbols[next_token + 1] || valid_symbols[NON_OPEN])) {
@@ -209,19 +187,11 @@ struct Scanner {
                 return true;
             }
 
-            if (valid_symbols[HEADING] && is_whitespace(lexer->lookahead)) {
-                lexer->result_symbol = HEADING;
-                return true;
-            }
-
             if (lexer->lookahead == character) {
                 while (lexer->lookahead == character)
                     advance();
 
-                if (valid_symbols[HEADING])
-                    lexer->result_symbol = HEADING;
-                else
-                    lexer->result_symbol = PUNCTUATION;
+                lexer->result_symbol = PUNCTUATION;
 
                 return true;
             }

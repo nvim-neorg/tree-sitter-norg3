@@ -4,10 +4,11 @@ att-00: Standalone markup
 *word*
 --------------------------------------------------------------------------------
 (document
-  (bold
-    (bold_open)
-    (word)
-    (bold_close)))
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (bold_close))))
 
 ================================================================================
 att-01: valid cases before open
@@ -19,28 +20,31 @@ word.*word*
 *word*/word/
 --------------------------------------------------------------------------------
 (document
-  (word)
-  (whitespace)
-  (bold
-    (bold_open)
+  (paragraph
     (word)
-    (bold_close))
-  (paragraph_break)
-  (word)
-  (punctuation)
-  (bold
-    (bold_open)
+    (whitespace)
+    (bold
+      (bold_open)
+      (word)
+      (bold_close))
+    (paragraph_break))
+  (paragraph
     (word)
-    (bold_close))
-  (paragraph_break)
-  (bold
-    (bold_open)
-    (word)
-    (bold_close))
-  (italic
-    (italic_open)
-    (word)
-    (italic_close)))
+    (punctuation)
+    (bold
+      (bold_open)
+      (word)
+      (bold_close))
+    (paragraph_break))
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (bold_close))
+    (italic
+      (italic_open)
+      (word)
+      (italic_close))))
 
 ================================================================================
 att-02: valid cases after open
@@ -50,19 +54,21 @@ att-02: valid cases after open
 */word/*
 --------------------------------------------------------------------------------
 (document
-  (bold
-    (bold_open)
-    (punctuation)
-    (word)
-    (bold_close))
-  (paragraph_break)
-  (bold
-    (bold_open)
-    (italic
-      (italic_open)
+  (paragraph
+    (bold
+      (bold_open)
+      (punctuation)
       (word)
-      (italic_close))
-    (bold_close)))
+      (bold_close))
+    (paragraph_break))
+  (paragraph
+    (bold
+      (bold_open)
+      (italic
+        (italic_open)
+        (word)
+        (italic_close))
+      (bold_close))))
 
 ================================================================================
 att-03: valid cases before close
@@ -70,11 +76,12 @@ att-03: valid cases before close
 *word.*
 --------------------------------------------------------------------------------
 (document
-  (bold
-    (bold_open)
-    (word)
-    (punctuation)
-    (bold_close)))
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (punctuation)
+      (bold_close))))
 
 ================================================================================
 att-04: valid cases after close
@@ -87,26 +94,29 @@ att-04: valid cases after close
 word
 --------------------------------------------------------------------------------
 (document
-  (bold
-    (bold_open)
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (bold_close))
+    (whitespace)
     (word)
-    (bold_close))
-  (whitespace)
-  (word)
-  (paragraph_break)
-  (bold
-    (bold_open)
+    (paragraph_break))
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (bold_close))
+    (punctuation)
     (word)
-    (bold_close))
-  (punctuation)
-  (word)
-  (paragraph_break)
-  (bold
-    (bold_open)
-    (word)
-    (bold_close))
-  (soft_break)
-  (word))
+    (paragraph_break))
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (bold_close))
+    (soft_break)
+    (word)))
 
 ================================================================================
 att-05: invalid cases before open
@@ -116,14 +126,16 @@ word*word*
 **word*
 --------------------------------------------------------------------------------
 (document
-  (word)
-  (punctuation)
-  (word)
-  (punctuation)
-  (paragraph_break)
-  (punctuation)
-  (word)
-  (punctuation))
+  (paragraph
+    (word)
+    (punctuation)
+    (word)
+    (punctuation)
+    (paragraph_break))
+  (paragraph
+    (punctuation)
+    (word)
+    (punctuation)))
 
 ================================================================================
 att-06: invalid cases after open
@@ -134,17 +146,19 @@ att-06: invalid cases after open
 word*
 --------------------------------------------------------------------------------
 (document
-  ; punctuation at beginning of the line to ignore heading
-  (punctuation)
-  (punctuation)
-  (whitespace)
-  (word)
-  (punctuation)
-  (paragraph_break)
-  (punctuation)
-  (soft_break)
-  (word)
-  (punctuation))
+  (paragraph
+    ; punctuation at beginning of the line to ignore heading
+    (punctuation)
+    (punctuation)
+    (whitespace)
+    (word)
+    (punctuation)
+    (paragraph_break))
+  (paragraph
+    (punctuation)
+    (soft_break)
+    (word)
+    (punctuation)))
 
 ================================================================================
 att-07: invalid cases before close 1
@@ -152,11 +166,12 @@ att-07: invalid cases before close 1
 *word *
 --------------------------------------------------------------------------------
 (document
-  (open_conflict
-    (bold_open)
-    (word)
-    (whitespace)
-    (punctuation)))
+  (paragraph
+    (open_conflict
+      (bold_open)
+      (word)
+      (whitespace)
+      (punctuation))))
 
 ================================================================================
 att-08: invalid cases before close 2
@@ -165,11 +180,12 @@ att-08: invalid cases before close 2
 *
 --------------------------------------------------------------------------------
 (document
-  (open_conflict
-    (bold_open)
-    (word)
-    (soft_break)
-    (punctuation)))
+  (paragraph
+    (open_conflict
+      (bold_open)
+      (word)
+      (soft_break)
+      (punctuation))))
 
 ================================================================================
 att-09: invalid case after close 1
@@ -177,11 +193,12 @@ att-09: invalid case after close 1
 *word*word
 --------------------------------------------------------------------------------
 (document
-  (open_conflict
-    (bold_open)
-    (word)
-    (punctuation)
-    (word)))
+  (paragraph
+    (open_conflict
+      (bold_open)
+      (word)
+      (punctuation)
+      (word))))
 
 ================================================================================
 att-10: invalid case after close 2
@@ -189,10 +206,11 @@ att-10: invalid case after close 2
 *word**
 --------------------------------------------------------------------------------
 (document
-  (open_conflict
-    (bold_open)
-    (word)
-    (punctuation)))
+  (paragraph
+    (open_conflict
+      (bold_open)
+      (word)
+      (punctuation))))
 
 ================================================================================
 att-11: valid case
@@ -202,19 +220,21 @@ att-11: valid case
 *word**word*
 --------------------------------------------------------------------------------
 (document
-  (bold
-    (bold_open)
-    (word)
-    (punctuation)
-    (word)
-    (bold_close))
-  (paragraph_break)
-  (bold
-    (bold_open)
-    (word)
-    (punctuation)
-    (word)
-    (bold_close)))
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (punctuation)
+      (word)
+      (bold_close))
+    (paragraph_break))
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (punctuation)
+      (word)
+      (bold_close))))
 
 ================================================================================
 att-12: don't allow same markup nested
@@ -224,23 +244,25 @@ att-12: don't allow same markup nested
 *word *word* word*
 --------------------------------------------------------------------------------
 (document
-  (bold
-    (bold_open)
-    (word)
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (whitespace)
+      (punctuation)
+      (word)
+      (bold_close))
+    (paragraph_break))
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (whitespace)
+      (punctuation)
+      (word)
+      (bold_close))
     (whitespace)
-    (punctuation)
     (word)
-    (bold_close))
-  (paragraph_break)
-  (bold
-    (bold_open)
-    (word)
-    (whitespace)
-    (punctuation)
-    (word)
-    (bold_close))
-  (whitespace)
-  (word)
-  (punctuation))
+    (punctuation)))
 
 ; vim:ts=2:sw=2:
