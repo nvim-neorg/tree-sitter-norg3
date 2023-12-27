@@ -18,6 +18,7 @@ module.exports = grammar({
         $._preceding_whitespace,
 
         $.paragraph_break,
+        $._newline,
 
         $.punctuation,
 
@@ -70,15 +71,25 @@ module.exports = grammar({
     supertypes: ($) => [],
 
     rules: {
-        document: ($) => repeat(choice($.paragraph, $.paragraph_break)),
+        document: ($) => repeat(
+            choice(
+                alias($.para, $.paragraph),
+                $.heading,
+                $._newline,
+            )
+        ),
+        para: ($) => seq($.paragraph, $.paragraph_break),
 
         _character: (_) => token(/[\p{L}\p{N}]/u),
 
-        punctuation: ($) => token(/[^\n\r\p{Z}\p{L}\p{N}]/u),
+        punctuation: (_) => token(choice(
+            repeat1('*'),
+            /[^\n\r\p{Z}\p{L}\p{N}]/u
+        )),
 
         word: ($) => prec.right(repeat1($._character)),
         whitespace: (_) => token(prec(1, /\p{Zs}+/u)),
-        soft_break: (_) => newline,
+        soft_break: (_) => token(prec(1, seq(optional(/\p{Zs}+/u), newline))),
 
         escape_sequence: ($) => token(seq("\\", choice(/./, newline))),
 
@@ -161,6 +172,8 @@ module.exports = grammar({
                                 alias("|", $.punctuation),
                             ),
                         ),
+                        // TODO: parse free_form_close from scanner.cc
+                        // case: *|/|*
                         alias("|", $.free_form_close),
                     ),
                     $.paragraph,
@@ -311,11 +324,20 @@ module.exports = grammar({
             ),
 
         heading: ($) =>
-            seq(
-                $.heading_prefix,
-                $.whitespace,
-                // TODO: This should be a sequence of chars terminated by a `soft_break`.
-                $.paragraph,
-            ),
+            prec.right(
+                seq(
+                    $.heading_prefix,
+                    $.whitespace,
+                    // TODO: This should be a sequence of chars terminated by a `soft_break`.
+                    alias($.para, $.inline),
+                    repeat(
+                        choice(
+                            $.heading,
+                            alias($.para, $.paragraph),
+                            $._newline,
+                        )
+                    )
+                ),
+            )
     },
 });

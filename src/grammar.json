@@ -7,15 +7,37 @@
         "type": "CHOICE",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "paragraph"
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "para"
+            },
+            "named": true,
+            "value": "paragraph"
           },
           {
             "type": "SYMBOL",
-            "name": "paragraph_break"
+            "name": "heading"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "_newline"
           }
         ]
       }
+    },
+    "para": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "SYMBOL",
+          "name": "paragraph"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "paragraph_break"
+        }
+      ]
     },
     "_character": {
       "type": "TOKEN",
@@ -27,8 +49,20 @@
     "punctuation": {
       "type": "TOKEN",
       "content": {
-        "type": "PATTERN",
-        "value": "[^\\n\\r\\p{Z}\\p{L}\\p{N}]"
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "REPEAT1",
+            "content": {
+              "type": "STRING",
+              "value": "*"
+            }
+          },
+          {
+            "type": "PATTERN",
+            "value": "[^\\n\\r\\p{Z}\\p{L}\\p{N}]"
+          }
+        ]
       }
     },
     "word": {
@@ -54,21 +88,45 @@
       }
     },
     "soft_break": {
-      "type": "CHOICE",
-      "members": [
-        {
-          "type": "STRING",
-          "value": "\n"
-        },
-        {
-          "type": "STRING",
-          "value": "\r"
-        },
-        {
-          "type": "STRING",
-          "value": "\r\n"
+      "type": "TOKEN",
+      "content": {
+        "type": "PREC",
+        "value": 1,
+        "content": {
+          "type": "SEQ",
+          "members": [
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "PATTERN",
+                  "value": "\\p{Zs}+"
+                },
+                {
+                  "type": "BLANK"
+                }
+              ]
+            },
+            {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "\n"
+                },
+                {
+                  "type": "STRING",
+                  "value": "\r"
+                },
+                {
+                  "type": "STRING",
+                  "value": "\r\n"
+                }
+              ]
+            }
+          ]
         }
-      ]
+      }
     },
     "escape_sequence": {
       "type": "TOKEN",
@@ -1014,21 +1072,55 @@
       }
     },
     "heading": {
-      "type": "SEQ",
-      "members": [
-        {
-          "type": "SYMBOL",
-          "name": "heading_prefix"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "whitespace"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "paragraph"
-        }
-      ]
+      "type": "PREC_RIGHT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "heading_prefix"
+          },
+          {
+            "type": "SYMBOL",
+            "name": "whitespace"
+          },
+          {
+            "type": "ALIAS",
+            "content": {
+              "type": "SYMBOL",
+              "name": "para"
+            },
+            "named": true,
+            "value": "inline"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "CHOICE",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "heading"
+                },
+                {
+                  "type": "ALIAS",
+                  "content": {
+                    "type": "SYMBOL",
+                    "name": "para"
+                  },
+                  "named": true,
+                  "value": "paragraph"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_newline"
+                }
+              ]
+            }
+          }
+        ]
+      }
     }
   },
   "extras": [
@@ -1060,6 +1152,10 @@
     {
       "type": "SYMBOL",
       "name": "paragraph_break"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_newline"
     },
     {
       "type": "SYMBOL",

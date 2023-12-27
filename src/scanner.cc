@@ -28,6 +28,7 @@ enum TokenType : char {
     WHITESPACE,
 
     PARAGRAPH_BREAK,
+    NEWLINE,
 
     PUNCTUATION,
 
@@ -98,6 +99,8 @@ struct Scanner {
     TSLexer* lexer;
     std::unordered_map<TokenType, size_t> attached_modifiers;
 
+    bool single_line_mode;
+
     Scanner() {
         attached_modifiers[BOLD_OPEN] = 0;
         attached_modifiers[ITALIC_OPEN] = 0;
@@ -137,8 +140,13 @@ struct Scanner {
     bool scan(const bool *valid_symbols) {
         // We return false here to allow the lexer to fall back
         // to the grammar, which allows the existence of `\0`.
-        if (lexer->eof(lexer))
+        if (lexer->eof(lexer)) {
+            if (valid_symbols[PARAGRAPH_BREAK]) {
+                lexer->result_symbol = PARAGRAPH_BREAK;
+                return true;
+            }
             return false;
+        }
 
         // If we are at the beginning of a line, parse any whitespace that we encounter.
         // This is then returned as `$._preceding_whitespace`, which is part of the `extras`
@@ -156,30 +164,86 @@ struct Scanner {
             }
         }
 
-        if (lexer->lookahead == '\n' || lexer->lookahead == '\r') {
-            advance();
-
-            if (lexer->eof(lexer)) {
-                lexer->result_symbol = PARAGRAPH_BREAK;
-                attached_modifiers.clear();
-                return true;
-            }
+        if (iswspace(lexer->lookahead)) {
+            while (is_whitespace(lexer->lookahead))
+                skip();
             if (lexer->lookahead == '\n' || lexer->lookahead == '\r') {
                 advance();
-                lexer->result_symbol = PARAGRAPH_BREAK;
-                attached_modifiers.clear();
-                return true;
-            }
 
+                if (valid_symbols[NEWLINE]) {
+                    lexer->result_symbol = NEWLINE;
+                    lexer->mark_end(lexer);
+                    // cancel single-line, this occurs when heading has slide/indent_segment prefixs
+                    if (single_line_mode) single_line_mode = false;
+                    return true;
+                }
+                // when parsing single-line paragraph (aka. title,) return paragraph break immediately
+                if (single_line_mode) {
+                    single_line_mode = false;
+                    lexer->result_symbol = PARAGRAPH_BREAK;
+                    return true;
+                }
+
+                lexer->mark_end(lexer);
+                while (is_whitespace(lexer->lookahead))
+                    skip();
+                if (lexer->eof(lexer) || lexer->lookahead == '\n' || lexer->lookahead == '\r') {
+                    lexer->result_symbol = PARAGRAPH_BREAK;
+                    attached_modifiers.clear();
+                    return true;
+                }
+                if (lexer->lookahead == '*') {
+                    int32_t character = lexer->lookahead;
+                    skip();
+                    size_t count = 1;
+                    while (lexer->lookahead == character) {
+                        count++;
+                        skip();
+                    }
+                    if (is_whitespace(lexer->lookahead)) {
+                        lexer->result_symbol = PARAGRAPH_BREAK;
+                        attached_modifiers.clear();
+                        return true;
+                    }
+                }
+            }
             return false;
         }
 
-        const TokenType next_token = char_to_token(lexer->lookahead);
+        // take two lookahead as we need at least two to distinguish heading_prefix and bold_open
+        const int32_t first = lexer->lookahead;
+        advance();
+        const int32_t second = lexer->lookahead;
 
+        if (valid_symbols[HEADING] && first == '*' && (second == '*' || iswblank(second))) {
+            const int32_t character = first;
+            size_t count = 1;
+            while (lexer->lookahead == character) {
+                count++;
+                advance();
+            }
+
+            if (!iswblank(lexer->lookahead)) {
+                return false;
+            }
+
+            lexer->mark_end(lexer);
+            switch (character) {
+            case '*':
+                lexer->result_symbol = HEADING;
+                single_line_mode = true;
+                break;
+            }
+            return true;
+        }
+
+        const TokenType next_token = char_to_token(first);
+
+        // TODO: att-05 fails
         if (next_token != 0 && (valid_symbols[next_token] || valid_symbols[next_token + 1] || valid_symbols[NON_OPEN])) {
-            const int32_t character = lexer->lookahead;
+            const int32_t character = first;
 
-            advance();
+            // advance();
 
             if (valid_symbols[NON_CLOSE] && valid_symbols[next_token + 1]) {
                 while(lexer->lookahead == character)
@@ -188,10 +252,10 @@ struct Scanner {
                 return true;
             }
 
-            if (valid_symbols[HEADING] && is_whitespace(lexer->lookahead)) {
-                lexer->result_symbol = HEADING;
-                return true;
-            }
+            // if (valid_symbols[HEADING] && is_whitespace(lexer->lookahead)) {
+            //     lexer->result_symbol = HEADING;
+            //     return true;
+            // }
 
             if (lexer->lookahead == character) {
                 while (lexer->lookahead == character)
@@ -261,12 +325,18 @@ extern "C" {
     unsigned tree_sitter_norg_external_scanner_serialize(void *payload,
             char *buffer) {
         Scanner* scanner = static_cast<Scanner* >(payload);
-        return 0;
+        size_t total_size = 0;
+        buffer[total_size++] = scanner->single_line_mode;
+        return total_size;
     }
 
     void tree_sitter_norg_external_scanner_deserialize(void *payload,
             const char *buffer,
             unsigned length) {
-
+        if (length == 0)
+            return;
+        Scanner* scanner = static_cast<Scanner*>(payload);
+        size_t head = 0;
+        scanner->single_line_mode = buffer[head++];
     }
 }
