@@ -1,2 +1,8 @@
 node_modules/
-yarn.lock
+test*.*
+log*.html
+
+# ignore these temporarily
+src/grammar.json
+src/node-types.json
+src/parser.c

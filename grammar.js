@@ -1,3 +1,5 @@
+/// <reference types="tree-sitter-cli/dsl" />
+// @ts-check
 let newline = choice("\n", "\r", "\r\n");
 let newline_or_eof = choice("\n", "\r", "\r\n", "\0");
 
