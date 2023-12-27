@@ -210,22 +210,19 @@ struct Scanner {
             return false;
         }
 
-        // take two lookahead as we need at least two to distinguish heading_prefix and bold_open
-        const int32_t first = lexer->lookahead;
+        // take one lookahead first as we need at least two lookahead to distinguish heading_prefix and bold_open
+        const int32_t character = lexer->lookahead;
         advance();
-        const int32_t second = lexer->lookahead;
 
-        if (valid_symbols[HEADING] && first == '*' && (second == '*' || iswblank(second))) {
-            const int32_t character = first;
+        if (valid_symbols[HEADING] && character == '*' && (lexer->lookahead == '*' || is_whitespace(lexer->lookahead))) {
             size_t count = 1;
             while (lexer->lookahead == character) {
                 count++;
                 advance();
             }
 
-            if (!iswblank(lexer->lookahead)) {
+            if (!is_whitespace(lexer->lookahead))
                 return false;
-            }
 
             lexer->mark_end(lexer);
             switch (character) {
@@ -237,14 +234,9 @@ struct Scanner {
             return true;
         }
 
-        const TokenType next_token = char_to_token(first);
+        const TokenType next_token = char_to_token(character);
 
-        // TODO: att-05 fails
         if (next_token != 0 && (valid_symbols[next_token] || valid_symbols[next_token + 1] || valid_symbols[NON_OPEN])) {
-            const int32_t character = first;
-
-            // advance();
-
             if (valid_symbols[NON_CLOSE] && valid_symbols[next_token + 1]) {
                 while(lexer->lookahead == character)
                     advance();
@@ -252,22 +244,9 @@ struct Scanner {
                 return true;
             }
 
-            // if (valid_symbols[HEADING] && is_whitespace(lexer->lookahead)) {
-            //     lexer->result_symbol = HEADING;
-            //     return true;
-            // }
-
-            if (lexer->lookahead == character) {
-                while (lexer->lookahead == character)
-                    advance();
-
-                if (valid_symbols[HEADING])
-                    lexer->result_symbol = HEADING;
-                else
-                    lexer->result_symbol = PUNCTUATION;
-
-                return true;
-            }
+            // repeated modifiers are handled by grammar.js
+            if (lexer->lookahead == character)
+                return false;
 
             if (valid_symbols[NON_OPEN] && !valid_symbols[next_token + 1]) {
                 lexer->result_symbol = NON_OPEN;
