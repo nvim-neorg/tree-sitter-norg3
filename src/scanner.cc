@@ -97,11 +97,13 @@ TokenType char_to_token(int32_t c) {
 
 struct Scanner {
     TSLexer* lexer;
-    std::unordered_map<TokenType, size_t> attached_modifiers;
+    // TODO(boltless): use bitset instead
+    std::unordered_map<TokenType, bool> attached_modifiers;
 
     bool single_line_mode;
 
     Scanner() {
+        attached_modifiers.clear();
         attached_modifiers[BOLD_OPEN] = 0;
         attached_modifiers[ITALIC_OPEN] = 0;
         attached_modifiers[UNDERLINE_OPEN] = 0;
@@ -112,6 +114,7 @@ struct Scanner {
         attached_modifiers[VERBATIM_OPEN] = 0;
         attached_modifiers[INLINE_MATH_OPEN] = 0;
         attached_modifiers[INLINE_MACRO_OPEN] = 0;
+        single_line_mode = false;
     }
 
     /**
@@ -254,7 +257,7 @@ struct Scanner {
             }
 
             if (attached_modifiers[next_token] > 0 && valid_symbols[next_token + 1] && (!lexer->lookahead || iswspace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
-                attached_modifiers[next_token] -= 1;
+                attached_modifiers[next_token] = false;
                 lexer->result_symbol = next_token + 1;
                 return true;
             } else if (valid_symbols[NON_OPEN]) {
@@ -262,21 +265,13 @@ struct Scanner {
                 // see att-11 for example
                 lexer->result_symbol = NON_OPEN;
                 return true;
-            } else if (valid_symbols[next_token] && lexer->lookahead && !iswspace(lexer->lookahead)) {
-                const TokenType token = char_to_token(lexer->lookahead);
-
-                if (token != 0 && attached_modifiers[token] > 0) {
-                    lexer->result_symbol = PUNCTUATION;
-                    return true;
-                }
-
-                attached_modifiers[next_token] += 1;
+            } else if (valid_symbols[next_token] && lexer->lookahead && !iswspace(lexer->lookahead) && attached_modifiers[next_token] == 0) {
+                attached_modifiers[next_token] = true;
                 lexer->result_symbol = next_token;
                 return true;
             }
 
-            lexer->result_symbol = PUNCTUATION;
-            return true;
+            return false;
         }
 
 
@@ -312,9 +307,11 @@ extern "C" {
     void tree_sitter_norg_external_scanner_deserialize(void *payload,
             const char *buffer,
             unsigned length) {
-        if (length == 0)
-            return;
         Scanner* scanner = static_cast<Scanner*>(payload);
+        if (length == 0) {
+            scanner->attached_modifiers.clear();
+            return;
+        }
         size_t head = 0;
         scanner->single_line_mode = buffer[head++];
     }

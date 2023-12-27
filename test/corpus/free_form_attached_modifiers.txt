@@ -1,5 +1,5 @@
 ================================================================================
-free-att-00: Standalone markup
+free-00: Standalone markup
 ================================================================================
 *|word|*
 --------------------------------------------------------------------------------
@@ -14,9 +14,11 @@ free-att-00: Standalone markup
     (paragraph_break)))
 
 ================================================================================
-free-att-01: Disallow escape sequence inside
+free-01: Disallow escape sequence inside
 ================================================================================
 *|\|*
+
+*|word\|*
 --------------------------------------------------------------------------------
 (document
   (paragraph
@@ -26,20 +28,58 @@ free-att-01: Disallow escape sequence inside
       (punctuation)
       (free_form_close)
       (bold_close))
+    (paragraph_break))
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (word)
+      (punctuation)
+      (free_form_close)
+      (bold_close))
     (paragraph_break)))
 
-; TODO: fix this
-; ================================================================================
-; free-att-02: Prevent nested same type markup
-; ================================================================================
-; *|*|*
-; --------------------------------------------------------------------------------
-; (document
-;   (paragraph
-;     (bold
-;       (bold_open)
-;       (free_form_open)
-;       (punctuation)
-;       (free_form_close)
-;       (bold_close))
-;     (paragraph_break)))
+================================================================================
+free-02: Prevent non-free-form inside free-form
+================================================================================
+*|*|*
+
+*|*word*|*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (punctuation)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break))
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (punctuation)
+      (word)
+      (punctuation)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+free-03: Prevent free-form inside non-free-form
+================================================================================
+*word *|word|*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (whitespace)
+      (punctuation)
+      (punctuation)
+      (word)
+      (punctuation)
+      (bold_close))
+    (paragraph_break)))

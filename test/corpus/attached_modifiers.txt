@@ -278,4 +278,44 @@ att-12: don't allow same markup nested
     (punctuation)
     (paragraph_break)))
 
+================================================================================
+att-13: haard test
+================================================================================
+word *word /word _word -word/ !spoiler ^something ,what^
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (word)
+    (whitespace)
+    (open_conflict
+      (bold_open)
+      (word)
+      (whitespace)
+      (italic
+        (italic_open)
+        (word)
+        (whitespace)
+        (open_conflict
+          (underline_open)
+          (word)
+          (whitespace)
+          (open_conflict
+            (strikethrough_open)
+            (word)))
+        (italic_close))
+      (whitespace)
+      (open_conflict
+        (spoiler_open)
+        (word)
+        (whitespace)
+        (superscript
+          (superscript_open)
+          (word)
+          (whitespace)
+          (open_conflict
+            (subscript_open)
+            (word))
+          (superscript_close))))
+    (paragraph_break)))
+
 ; vim:ts=2:sw=2:
