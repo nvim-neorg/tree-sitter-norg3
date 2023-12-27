@@ -1,0 +1,182 @@
+================================================================================
+para-00: Basic paragraph including soft break
+================================================================================
+word word
+word
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (word)
+    (whitespace)
+    (word)
+    (soft_break)
+    (word)
+    (paragraph_break)))
+
+================================================================================
+para-01: Paragraph including preceding whitespaces
+================================================================================
+  word word
+     word
+    word
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (word)
+    (whitespace)
+    (word)
+    (soft_break)
+    (word)
+    (soft_break)
+    (word)
+    (paragraph_break)))
+
+================================================================================
+para-02: Soft break with whitespaces
+================================================================================
+word word   
+word
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (word)
+    (whitespace)
+    (word)
+    (soft_break)
+    (word)
+    (paragraph_break)))
+
+================================================================================
+para-03: Paragraph break by multiple newlines
+================================================================================
+word word
+word
+
+word
+
+
+word
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (word)
+    (whitespace)
+    (word)
+    (soft_break)
+    (word)
+    (paragraph_break))
+  (paragraph
+    (word)
+    (paragraph_break))
+  (paragraph
+    (word)
+    (paragraph_break)))
+
+================================================================================
+para-04: Paragraph break by multiple newlines with whitespaces
+================================================================================
+word word
+word   
+
+word
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (word)
+    (whitespace)
+    (word)
+    (soft_break)
+    (word)
+    (paragraph_break))
+  (paragraph
+    (word)
+    (paragraph_break)))
+
+================================================================================
+para-05: Paragraph break by multiple newlines in standard Attached modifier
+================================================================================
+word *word
+
+word*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (word)
+    (whitespace)
+    (open_conflict
+      (bold_open)
+      (word))
+    (paragraph_break))
+  (paragraph
+    (word)
+    (punctuation)
+    (paragraph_break)))
+
+================================================================================
+para-06: Paragraph break by Detached modifier
+================================================================================
+word word
+* heading
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (word)
+    (whitespace)
+    (word)
+    (paragraph_break))
+  (heading
+    (heading_prefix)
+    (whitespace)
+    (inline
+      (word)
+      (paragraph_break))))
+
+================================================================================
+para-07: Paragraph break by Detached modifier in standard Attached modifier
+================================================================================
+*not
+* heading
+bold*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (open_conflict
+      (bold_open)
+      (word))
+    (paragraph_break))
+  (heading
+    (heading_prefix)
+    (whitespace)
+    (inline
+      (word)
+      (paragraph_break))
+    (paragraph
+      (word)
+      (punctuation)
+      (paragraph_break))))
+
+================================================================================
+para-08: Paragraph break by Detached modifier in verbatim Attached modifier
+================================================================================
+`not
+* heading
+verbatim`
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (open_conflict
+      (verbatim_open)
+      (word))
+    (paragraph_break))
+  (heading
+    (heading_prefix)
+    (whitespace)
+    (inline
+      (word)
+      (paragraph_break))
+    (paragraph
+      (word)
+      (punctuation)
+      (paragraph_break))))
+
+; vim:ts=2:sw=2:
