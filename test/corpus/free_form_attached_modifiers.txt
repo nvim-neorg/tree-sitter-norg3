@@ -83,3 +83,104 @@ free-03: Prevent free-form inside non-free-form
       (punctuation)
       (bold_close))
     (paragraph_break)))
+
+================================================================================
+free-04: Only whitespace
+================================================================================
+*| |*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (whitespace)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+free-05: Whitespace on start
+================================================================================
+*| word|*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (whitespace)
+      (word)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+free-06: Whitespace on end
+================================================================================
+*|word |*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (word)
+      (whitespace)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+free-07: Whitespace on start and end
+================================================================================
+*| word |*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (whitespace)
+      (word)
+      (whitespace)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+free-08: Soft break at start
+================================================================================
+*|
+word|*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (soft_break)
+      (word)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+; TODO: this fails
+; ================================================================================
+; free-09: Soft break at end
+; ================================================================================
+; *|word
+; |*
+; --------------------------------------------------------------------------------
+; (document
+;   (paragraph
+;     (bold
+;       (bold_open)
+;       (free_form_open)
+;       (soft_break)
+;       (word)
+;       (free_form_close)
+;       (bold_close))
+;     (paragraph_break)))
+
+; vim:ts=2:sw=2:
