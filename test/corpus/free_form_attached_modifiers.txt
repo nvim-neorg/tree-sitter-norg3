@@ -183,4 +183,23 @@ word|*
 ;       (bold_close))
 ;     (paragraph_break)))
 
+================================================================================
+free-10: Verbatim free-form attached modifier
+================================================================================
+`| \ word |`
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (free_form_open)
+      (whitespace)
+      (punctuation)
+      (whitespace)
+      (word)
+      (whitespace)
+      (free_form_close)
+      (verbatim_close))
+    (paragraph_break)))
+
 ; vim:ts=2:sw=2:
