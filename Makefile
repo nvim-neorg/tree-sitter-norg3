@@ -8,9 +8,9 @@ $(OUTPUT_FILES): grammar.js src/scanner.cc submodules/tree-sitter
 	git submodule update --init --recursive
 	@echo "Building dev-script with Cargo in release mode..."
 	cd submodules/tree-sitter && cargo build --release
-	@echo "Running dev-script binary with given arguments..."
+	@echo "Running tree-sitter binary with given arguments..."
 	./submodules/tree-sitter/target/release/tree-sitter generate
 
 .PHONY: test
-test: $(OUTPUT_FILES)
+test:
 	tree-sitter test
