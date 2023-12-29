@@ -237,30 +237,42 @@ struct Scanner {
             return true;
         }
 
-        const TokenType next_token = char_to_token(character);
+        // TODO: cleanup here
+        int32_t mod_char = character;
+        bool advanced = false;
+        if (mod_char == ':' && valid_symbols[NON_OPEN]) {
+            mod_char = lexer->lookahead;
+            advance();
+            advanced = true;
+        }
+
+        TokenType next_token = char_to_token(mod_char);
+
+        // 5th case in link-mod-00
+        if (advanced && next_token != 0 && valid_symbols[next_token + 1])
+            return false;
 
         if (next_token != 0 && (valid_symbols[next_token] || valid_symbols[next_token + 1] || valid_symbols[NON_OPEN])) {
-            if (valid_symbols[NON_CLOSE] && valid_symbols[next_token + 1]) {
-                while(lexer->lookahead == character)
-                    advance();
-                lexer->result_symbol = NON_CLOSE;
-                return true;
-            }
-
-            // repeated modifiers are handled by grammar.js
-            if (lexer->lookahead == character)
+            if (lexer->lookahead == mod_char)
                 return false;
 
-            if (valid_symbols[NON_OPEN] && !valid_symbols[next_token + 1]) {
-                lexer->result_symbol = NON_OPEN;
+            if (valid_symbols[NON_CLOSE] && valid_symbols[next_token + 1]) {
+                lexer->result_symbol = NON_CLOSE;
                 return true;
             }
 
             if (attached_modifiers[next_token] > 0 && valid_symbols[next_token + 1] && (!lexer->lookahead || iswspace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
                 attached_modifiers[next_token] = false;
                 lexer->result_symbol = next_token + 1;
+                lexer->mark_end(lexer);
+                if (lexer->lookahead == ':') {
+                    advance();
+                    if (!iswspace(lexer->lookahead) && !iswpunct(lexer->lookahead)) {
+                        lexer->mark_end(lexer);
+                    }
+                }
                 return true;
-            } else if (valid_symbols[NON_OPEN]) {
+            } else if (!advanced && valid_symbols[NON_OPEN]) {
                 // there can be NON_OPEN even when BOLD_CLOSE is valid.
                 // see att-11 for example
                 lexer->result_symbol = NON_OPEN;

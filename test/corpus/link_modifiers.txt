@@ -1,0 +1,175 @@
+================================================================================
+link-mod-00: TESTS (19 unorganized tests)
+================================================================================
+word:word
+
+:word
+
+word:
+
+*:word*
+
+*word:*
+
+:*word*
+
+*word*:
+
+word:*
+
+*:word
+
+*:word:*
+
+word*:word
+
+word:*word
+
+word*:word:*word
+
+*word*:word
+
+word:*word*
+
+*word*:word:*word*
+
+word:*word*:word
+
+word :*word*
+
+*word*: word
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (word)
+    (punctuation)
+    (word)
+    (paragraph_break))
+  (paragraph
+    (punctuation)
+    (word)
+    (paragraph_break))
+  (paragraph
+    (word)
+    (punctuation)
+    (paragraph_break))
+  (paragraph
+    (bold
+      (bold_open)
+      (punctuation)
+      (word)
+      (bold_close))
+    (paragraph_break))
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (punctuation)
+      (bold_close))
+    (paragraph_break))
+  (paragraph
+    (punctuation)
+    (bold
+      (bold_open)
+      (word)
+      (bold_close))
+    (paragraph_break))
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (bold_close))
+    (punctuation)
+    (paragraph_break))
+  (paragraph
+    (word)
+    (punctuation)
+    (punctuation)
+    (paragraph_break))
+  (paragraph
+    (open_conflict
+      (bold_open)
+      (punctuation)
+      (word))
+    (paragraph_break))
+  (paragraph
+    (bold
+      (bold_open)
+      (punctuation)
+      (word)
+      (punctuation)
+      (bold_close))
+    (paragraph_break))
+  (paragraph
+    (word)
+    (punctuation)
+    (punctuation)
+    (word)
+    (paragraph_break))
+  (paragraph
+    (word)
+    (open_conflict
+      (bold_open)
+      (word))
+    (paragraph_break))
+  (paragraph
+    (word)
+    (punctuation)
+    (punctuation)
+    (word)
+    (open_conflict
+      (bold_open)
+      (word))
+    (paragraph_break))
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (bold_close))
+    (word)
+    (paragraph_break))
+  (paragraph
+    (word)
+    (bold
+      (bold_open)
+      (word)
+      (bold_close))
+    (paragraph_break))
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (bold_close))
+    (word)
+    ; TODO: fix here
+    (bold
+      (bold_open)
+      (word)
+      (bold_close))
+    (paragraph_break))
+  (paragraph
+    (word)
+    (bold
+      (bold_open)
+      (word)
+      (bold_close))
+    (word)
+    (paragraph_break))
+  (paragraph
+    (word)
+    (whitespace)
+    (punctuation)
+    (bold
+      (bold_open)
+      (word)
+      (bold_close))
+    (paragraph_break))
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (bold_close))
+    (punctuation)
+    (whitespace)
+    (word)
+    (paragraph_break)))

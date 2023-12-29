@@ -43,7 +43,8 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[\\p{L}\\p{N}]"
+        "value": "[\\p{L}\\p{N}]",
+        "flags": "u"
       }
     },
     "punctuation": {
@@ -60,7 +61,8 @@
           },
           {
             "type": "PATTERN",
-            "value": "[^\\n\\r\\p{Z}\\p{L}\\p{N}]"
+            "value": "[^\\n\\r\\p{Z}\\p{L}\\p{N}]",
+            "flags": "u"
           }
         ]
       }
@@ -83,7 +85,8 @@
         "value": 1,
         "content": {
           "type": "PATTERN",
-          "value": "\\p{Zs}+"
+          "value": "\\p{Zs}+",
+          "flags": "u"
         }
       }
     },
@@ -100,7 +103,8 @@
               "members": [
                 {
                   "type": "PATTERN",
-                  "value": "\\p{Zs}+"
+                  "value": "\\p{Zs}+",
+                  "flags": "u"
                 },
                 {
                   "type": "BLANK"
