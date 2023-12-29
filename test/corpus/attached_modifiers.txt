@@ -318,4 +318,56 @@ word *word /word _word -word/ !spoiler ^something ,what^
           (superscript_close))))
     (paragraph_break)))
 
+================================================================================
+att-14: various verbatim attached modifiers
+================================================================================
+`word`
+
+$word$
+
+&word&
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (word)
+      (verbatim_close))
+    (paragraph_break))
+  (paragraph
+    (math
+      (math_open)
+      (word)
+      (math_close))
+    (paragraph_break))
+  (paragraph
+    (inline_macro
+      (inline_macro_open)
+      (word)
+      (inline_macro_close))
+    (paragraph_break)))
+
+================================================================================
+att-15: haard test verbatims
+================================================================================
+&$word `word $word` word&
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (inline_macro
+      (inline_macro_open)
+      (math_open)
+      (word)
+      (whitespace)
+      (verbatim_open)
+      (word)
+      (whitespace)
+      (punctuation)
+      (word)
+      (punctuation)
+      (whitespace)
+      (word)
+      (inline_macro_close))
+    (paragraph_break)))
+
 ; vim:ts=2:sw=2:

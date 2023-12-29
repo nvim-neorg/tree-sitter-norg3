@@ -331,7 +331,24 @@ module.exports = grammar({
         math: ($) =>
             prec.right(
                 -1,
-                seq($.math_open, $.verbatim_paragraph, $.math_close),
+                seq(
+                    $.math_open,
+                    choice(
+                        seq(
+                            alias("|", $.free_form_open),
+                            repeat1(
+                                choice(
+                                    $.verbatim_paragraph,
+                                    alias(token(prec(1, "\\")), $.punctuation),
+                                    alias("|", $.punctuation),
+                                ),
+                            ),
+                            alias("|", $.free_form_close),
+                        ),
+                        $.verbatim_paragraph,
+                    ),
+                    $.math_close
+                ),
             ),
 
         inline_macro: ($) =>
