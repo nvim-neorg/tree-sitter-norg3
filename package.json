@@ -4,9 +4,9 @@
     "description": "tree-sitter parser for Norg format",
     "main": "bindings/node",
     "scripts": {
-        "generate": "tree-sitter generate",
-        "test": "tree-sitter generate && tree-sitter test",
-        "parse": "tree-sitter generate && tree-sitter parse",
+        "generate": "make generate",
+        "test": "tree-sitter test",
+        "parse": "tree-sitter parse",
         "size": "du -h ~/.cache/tree-sitter/lib/norg*.so"
     },
     "keywords": [

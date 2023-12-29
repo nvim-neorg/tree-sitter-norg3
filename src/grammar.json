@@ -43,8 +43,7 @@
       "type": "TOKEN",
       "content": {
         "type": "PATTERN",
-        "value": "[\\p{L}\\p{N}]",
-        "flags": "u"
+        "value": "[\\p{L}\\p{N}]"
       }
     },
     "punctuation": {
@@ -61,8 +60,7 @@
           },
           {
             "type": "PATTERN",
-            "value": "[^\\n\\r\\p{Z}\\p{L}\\p{N}]",
-            "flags": "u"
+            "value": "[^\\n\\r\\p{Z}\\p{L}\\p{N}]"
           }
         ]
       }
@@ -85,8 +83,7 @@
         "value": 1,
         "content": {
           "type": "PATTERN",
-          "value": "\\p{Zs}+",
-          "flags": "u"
+          "value": "\\p{Zs}+"
         }
       }
     },
@@ -103,8 +100,7 @@
               "members": [
                 {
                   "type": "PATTERN",
-                  "value": "\\p{Zs}+",
-                  "flags": "u"
+                  "value": "\\p{Zs}+"
                 },
                 {
                   "type": "BLANK"
@@ -1127,8 +1123,73 @@
             "name": "math_open"
           },
           {
-            "type": "SYMBOL",
-            "name": "verbatim_paragraph"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "STRING",
+                      "value": "|"
+                    },
+                    "named": true,
+                    "value": "free_form_open"
+                  },
+                  {
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "verbatim_paragraph"
+                        },
+                        {
+                          "type": "ALIAS",
+                          "content": {
+                            "type": "TOKEN",
+                            "content": {
+                              "type": "PREC",
+                              "value": 1,
+                              "content": {
+                                "type": "STRING",
+                                "value": "\\"
+                              }
+                            }
+                          },
+                          "named": true,
+                          "value": "punctuation"
+                        },
+                        {
+                          "type": "ALIAS",
+                          "content": {
+                            "type": "STRING",
+                            "value": "|"
+                          },
+                          "named": true,
+                          "value": "punctuation"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "STRING",
+                      "value": "|"
+                    },
+                    "named": true,
+                    "value": "free_form_close"
+                  }
+                ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "verbatim_paragraph"
+              }
+            ]
           },
           {
             "type": "SYMBOL",

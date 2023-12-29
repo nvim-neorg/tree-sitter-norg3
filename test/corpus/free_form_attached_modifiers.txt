@@ -182,10 +182,11 @@ free-09: Soft break at end
       (bold_close))
     (paragraph_break)))
 
+; TODO: move verbatim free-form attached modifier test cases to separate file
 ================================================================================
 free-10: Verbatim free-form attached modifier
 ================================================================================
-`| \ word |`
+`| \`word |`
 --------------------------------------------------------------------------------
 (document
   (paragraph
@@ -194,9 +195,36 @@ free-10: Verbatim free-form attached modifier
       (free_form_open)
       (whitespace)
       (punctuation)
-      (whitespace)
+      (punctuation)
       (word)
       (whitespace)
+      (free_form_close)
+      (verbatim_close))
+    (paragraph_break)))
+
+================================================================================
+free-11: Prevent non-free-form inside free-form (verbatim)
+================================================================================
+`|`|`
+
+`|`word`|`
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (free_form_open)
+      (punctuation)
+      (free_form_close)
+      (verbatim_close))
+    (paragraph_break))
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (free_form_open)
+      (punctuation)
+      (word)
+      (punctuation)
       (free_form_close)
       (verbatim_close))
     (paragraph_break)))
