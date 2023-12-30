@@ -1,0 +1,57 @@
+================================================================================
+att-ext-00: Standalone extension
+================================================================================
+*word*(word:word)
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (bold_close)
+      (attached_modifier_extension
+        (kv_pair
+          (param)
+          (value))))
+    (paragraph_break)))
+
+================================================================================
+att-ext-01: extension with multiple value
+================================================================================
+*word*(word:word,word:word)
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (bold_close)
+      (attached_modifier_extension
+        (kv_pair
+          (param)
+          (value))
+        (kv_pair
+          (param)
+          (value))))
+    (paragraph_break)))
+
+================================================================================
+att-ext-02: failed extension by verbatim close
+================================================================================
+`*word*(word`
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (punctuation)
+      (word)
+      (punctuation)
+      (punctuation)
+      (word)
+      ; (punctuation)
+      ; (word)
+      (verbatim_close))
+    (paragraph_break)))
+
+; vim:ts=2:sw=2:

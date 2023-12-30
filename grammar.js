@@ -110,7 +110,7 @@ module.exports = grammar({
                         $.underline,
                         $.strikethrough,
                         $.spoiler,
-                        $.superscript,
+                        // $.superscript,
                         // $.subscript,
                         $.verbatim,
                         $.inline_macro,
@@ -167,6 +167,22 @@ module.exports = grammar({
 
         // paragraph_break: (_) => token(prec(1, seq(newline, newline_or_eof))),
 
+        identifier: (_) => /[A-Za-z][A-Za-z\-]+/,
+        attached_modifier_extension: ($) =>
+            seq(
+                "(",
+                $.kv_pair,
+                repeat(
+                    seq(",", $.kv_pair),
+                ),
+                ")",
+            ),
+        kv_pair: ($) =>
+            seq(
+                alias($.identifier, $.param),
+                ":",
+                alias($.identifier, $.value),
+            ),
         bold: ($) =>
             seq(
                 $.bold_open,
@@ -187,6 +203,7 @@ module.exports = grammar({
                     $.paragraph,
                 ),
                 $.bold_close,
+                optional($.attached_modifier_extension),
             ),
 
         italic: ($) =>
@@ -207,6 +224,7 @@ module.exports = grammar({
                     $.paragraph,
                 ),
                 $.italic_close,
+                optional($.attached_modifier_extension),
             ),
 
         underline: ($) =>
@@ -227,6 +245,7 @@ module.exports = grammar({
                     $.paragraph,
                 ),
                 $.underline_close,
+                optional($.attached_modifier_extension),
             ),
 
         strikethrough: ($) =>
@@ -247,6 +266,7 @@ module.exports = grammar({
                     $.paragraph,
                 ),
                 $.strikethrough_close,
+                optional($.attached_modifier_extension),
             ),
 
         spoiler: ($) =>
@@ -267,6 +287,7 @@ module.exports = grammar({
                     $.paragraph,
                 ),
                 $.spoiler_close,
+                optional($.attached_modifier_extension),
             ),
 
         superscript: ($) =>
@@ -287,6 +308,7 @@ module.exports = grammar({
                     $.paragraph,
                 ),
                 $.superscript_close,
+                optional($.attached_modifier_extension),
             ),
 
         subscript: ($) =>
@@ -307,6 +329,7 @@ module.exports = grammar({
                     $.paragraph,
                 ),
                 $.subscript_close,
+                optional($.attached_modifier_extension),
             ),
 
         verbatim: ($) =>
@@ -328,7 +351,8 @@ module.exports = grammar({
                         ),
                         $.verbatim_paragraph,
                     ),
-                    $.verbatim_close
+                    $.verbatim_close,
+                    optional($.attached_modifier_extension),
                 ),
             ),
 
@@ -351,7 +375,8 @@ module.exports = grammar({
                         ),
                         $.verbatim_paragraph,
                     ),
-                    $.math_close
+                    $.math_close,
+                    optional($.attached_modifier_extension),
                 ),
             ),
 
@@ -375,6 +400,7 @@ module.exports = grammar({
                         $.verbatim_paragraph,
                     ),
                     $.inline_macro_close,
+                    optional($.attached_modifier_extension),
                 ),
             ),
 
