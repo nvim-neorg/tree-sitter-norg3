@@ -1,0 +1,96 @@
+================================================================================
+anchor-00: Standalone anchor
+================================================================================
+[word]
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (anchor
+      description: (description
+        (word)))
+    (paragraph_break)))
+
+================================================================================
+anchor-01: Markup inside anchor description
+================================================================================
+[*word /word/*]
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (anchor
+      description: (description
+        (bold
+          (bold_open)
+          (word)
+          (whitespace)
+          (italic
+            (italic_open)
+            (word)
+            (italic_close))
+          (bold_close))))
+    (paragraph_break)))
+
+================================================================================
+anchor-02: Verbatim > anchor
+================================================================================
+`[word]`
+
+[`word]`]
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (punctuation)
+      (word)
+      (punctuation)
+      (verbatim_close))
+    (paragraph_break))
+  (paragraph
+    (anchor
+      description: (description
+        (verbatim
+          (verbatim_open)
+          (word)
+          (punctuation)
+          (verbatim_close))))
+    (paragraph_break)))
+
+================================================================================
+anchor-03: free-form verbatim > anchor
+================================================================================
+[`|word]|`]
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (anchor
+      description: (description
+        (verbatim
+          (verbatim_open)
+          (free_form_open)
+          (word)
+          (punctuation)
+          (free_form_close)
+          (verbatim_close))))
+    (paragraph_break)))
+
+================================================================================
+anchor-04: reset attached modifier after destination
+================================================================================
+[*word] *word*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (anchor
+      description: (description
+        (open_conflict
+          (bold_open)
+          (word))))
+    (whitespace)
+    (bold
+      (bold_open)
+      (word)
+      (bold_close))
+    (paragraph_break)))
+
+; vim:ts=2:sw=2:

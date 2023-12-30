@@ -1,7 +1,7 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
 let newline = choice("\n", "\r", "\r\n");
-let newline_or_eof = choice("\n", "\r", "\r\n", "\0");
+const whitespace = token(prec(1, /\p{Zs}+/u));
 
 /// General TODOS:
 //  - Abstract repeating patterns (e.g. nestable detached modifiers) into Javascript functions.
@@ -57,6 +57,8 @@ module.exports = grammar({
 
         $.inline_macro_open,
         $.inline_macro_close,
+
+        $._link_end_flag,
 
         $.heading_prefix,
 
@@ -172,6 +174,7 @@ module.exports = grammar({
                             ),
                             $.punctuation,
                         ),
+                        alias("{", $.punctuation),
                         $.soft_break,
                         seq($.soft_break, alias($.non_close, $.punctuation)),
                     ),
@@ -437,22 +440,88 @@ module.exports = grammar({
                 ),
             ),
 
-        anchor: ($) =>
+        _description: ($) =>
             seq(
                 "[",
-                $.desc,
+                field("description", $.description),
                 "]",
+                optional($._link_end_flag),
             ),
-        desc: ($) => $.paragraph,
-        inline: ($) => $.paragraph,
+        description: ($) => $.paragraph,
 
-        link: ($) =>
+        _location: ($) =>
             seq(
                 "{",
-                "*",
-                $.whitespace,
-                $.inline,
-                "}"
+                field("target", choice(
+                    $.scope,
+                    $.norg_file,
+                    $.uri,
+                )),
+                "}",
+                optional($._link_end_flag),
+            ),
+        uri: (_) => token(prec(-1, /[^\}]+/)),
+        norg_file: ($) =>
+            seq(
+                ":",
+                optional(
+                    choice(
+                        seq(
+                            "$",
+                            choice(
+                                field("root", alias("/", $.current_workspace)),
+                                seq(field("root", alias(/[^\$\/\:\}]+/, $.workspace)), "/"),
+                            )
+                        ),
+                        field("root", alias(token(prec(1, "/")), $.file_root))
+                    )
+                ),
+                field("path", alias(/[^\$\:\}]+/, $.norg_file_path)),
+                ":",
+                optional(field("scope", $.scope)),
+            ),
+        scope: ($) =>
+            seq(
+                $._scope_item,
+                repeat(seq(token(prec(9, " : ")), $._scope_item)),
+            ),
+        _scope_item: ($) =>
+            choice(
+                $.link_scope_heading,
+                $.link_scope_footnote,
+                $.link_scope_definition,
+            ),
+        link_scope_heading: ($) =>
+            seq(
+                alias(token(repeat1("*")), $.heading_prefix),
+                whitespace,
+                alias($.description, $.title)
+            ),
+        link_scope_footnote: ($) =>
+            seq(
+                alias(token(seq("^", optional("^"))), $.footnote_prefix),
+                whitespace,
+                alias($.description, $.title)
+            ),
+        link_scope_definition: ($) =>
+            seq(
+                alias(token(seq("$", optional("$"))), $.definition_prefix),
+                whitespace,
+                alias($.description, $.title)
+            ),
+        anchor: ($) =>
+            prec.right(
+                seq(
+                    $._description,
+                    optional($._location),
+                )
+            ),
+        link: ($) =>
+            prec.right(
+                seq(
+                    $._location,
+                    optional($._description),
+                )
             ),
 
         heading: ($) =>
