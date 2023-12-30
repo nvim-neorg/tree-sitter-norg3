@@ -278,6 +278,13 @@ struct Scanner {
                 lexer->result_symbol = NON_OPEN;
                 return true;
             } else if (valid_symbols[next_token] && lexer->lookahead && !iswspace(lexer->lookahead) && attached_modifiers[next_token] == 0) {
+                // solves att-16:
+                const TokenType n_token = char_to_token(lexer->lookahead);
+                if (n_token != 0 && attached_modifiers[n_token]) {
+                    lexer->result_symbol = PUNCTUATION;
+                    return true;
+                }
+
                 attached_modifiers[next_token] = true;
                 lexer->result_symbol = next_token;
                 return true;
