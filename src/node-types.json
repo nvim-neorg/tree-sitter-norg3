@@ -2,16 +2,35 @@
   {
     "type": "anchor",
     "named": true,
-    "fields": {},
-    "children": {
-      "multiple": false,
-      "required": true,
-      "types": [
-        {
-          "type": "desc",
-          "named": true
-        }
-      ]
+    "fields": {
+      "description": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "description",
+            "named": true
+          }
+        ]
+      },
+      "target": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "norg_file",
+            "named": true
+          },
+          {
+            "type": "scope",
+            "named": true
+          },
+          {
+            "type": "uri",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -125,7 +144,7 @@
     }
   },
   {
-    "type": "desc",
+    "type": "description",
     "named": true,
     "fields": {},
     "children": {
@@ -255,7 +274,7 @@
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "anchor",
@@ -508,17 +527,89 @@
   {
     "type": "link",
     "named": true,
+    "fields": {
+      "description": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "description",
+            "named": true
+          }
+        ]
+      },
+      "target": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "norg_file",
+            "named": true
+          },
+          {
+            "type": "scope",
+            "named": true
+          },
+          {
+            "type": "uri",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "link_scope_definition",
+    "named": true,
     "fields": {},
     "children": {
       "multiple": true,
       "required": true,
       "types": [
         {
-          "type": "inline",
+          "type": "definition_prefix",
           "named": true
         },
         {
-          "type": "whitespace",
+          "type": "title",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "link_scope_footnote",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "footnote_prefix",
+          "named": true
+        },
+        {
+          "type": "title",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "link_scope_heading",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "heading_prefix",
+          "named": true
+        },
+        {
+          "type": "title",
           "named": true
         }
       ]
@@ -585,6 +676,50 @@
           "named": true
         }
       ]
+    }
+  },
+  {
+    "type": "norg_file",
+    "named": true,
+    "fields": {
+      "path": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "norg_file_path",
+            "named": true
+          }
+        ]
+      },
+      "root": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "current_workspace",
+            "named": true
+          },
+          {
+            "type": "file_root",
+            "named": true
+          },
+          {
+            "type": "workspace",
+            "named": true
+          }
+        ]
+      },
+      "scope": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "scope",
+            "named": true
+          }
+        ]
+      }
     }
   },
   {
@@ -782,6 +917,29 @@
     }
   },
   {
+    "type": "scope",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "link_scope_definition",
+          "named": true
+        },
+        {
+          "type": "link_scope_footnote",
+          "named": true
+        },
+        {
+          "type": "link_scope_heading",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "spoiler",
     "named": true,
     "fields": {},
@@ -972,6 +1130,81 @@
     }
   },
   {
+    "type": "title",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "anchor",
+          "named": true
+        },
+        {
+          "type": "bold",
+          "named": true
+        },
+        {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "inline_macro",
+          "named": true
+        },
+        {
+          "type": "italic",
+          "named": true
+        },
+        {
+          "type": "link",
+          "named": true
+        },
+        {
+          "type": "math",
+          "named": true
+        },
+        {
+          "type": "open_conflict",
+          "named": true
+        },
+        {
+          "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "soft_break",
+          "named": true
+        },
+        {
+          "type": "spoiler",
+          "named": true
+        },
+        {
+          "type": "strikethrough",
+          "named": true
+        },
+        {
+          "type": "underline",
+          "named": true
+        },
+        {
+          "type": "verbatim",
+          "named": true
+        },
+        {
+          "type": "whitespace",
+          "named": true
+        },
+        {
+          "type": "word",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "underline",
     "named": true,
     "fields": {},
@@ -1130,6 +1363,19 @@
     }
   },
   {
+    "type": "whitespace",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": " : ",
+    "named": false
+  },
+  {
+    "type": "$",
+    "named": false
+  },
+  {
     "type": "(",
     "named": false
   },
@@ -1138,11 +1384,11 @@
     "named": false
   },
   {
-    "type": "*",
+    "type": ",",
     "named": false
   },
   {
-    "type": ",",
+    "type": "/",
     "named": false
   },
   {
@@ -1166,7 +1412,23 @@
     "named": true
   },
   {
+    "type": "current_workspace",
+    "named": true
+  },
+  {
+    "type": "definition_prefix",
+    "named": true
+  },
+  {
     "type": "escape_sequence",
+    "named": true
+  },
+  {
+    "type": "file_root",
+    "named": true
+  },
+  {
+    "type": "footnote_prefix",
     "named": true
   },
   {
@@ -1207,6 +1469,10 @@
   },
   {
     "type": "non_linkable",
+    "named": true
+  },
+  {
+    "type": "norg_file_path",
     "named": true
   },
   {
@@ -1266,6 +1532,10 @@
     "named": true
   },
   {
+    "type": "uri",
+    "named": true
+  },
+  {
     "type": "value",
     "named": true
   },
@@ -1278,11 +1548,11 @@
     "named": true
   },
   {
-    "type": "whitespace",
+    "type": "word",
     "named": true
   },
   {
-    "type": "word",
+    "type": "workspace",
     "named": true
   },
   {

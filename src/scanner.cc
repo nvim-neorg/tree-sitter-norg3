@@ -66,6 +66,8 @@ enum TokenType : char {
     INLINE_MACRO_OPEN,
     INLINE_MACRO_CLOSE,
 
+    LINK_END_FLAG,
+
     HEADING,
 
     ERROR_SENTINEL,
@@ -148,6 +150,11 @@ struct Scanner {
         if (valid_symbols[ERROR_SENTINEL]) {
             return false;
         }
+
+        if (valid_symbols[LINK_END_FLAG]) {
+            attached_modifiers.clear();
+        }
+
         // We return false here to allow the lexer to fall back
         // to the grammar, which allows the existence of `\0`.
         if (lexer->eof(lexer)) {
