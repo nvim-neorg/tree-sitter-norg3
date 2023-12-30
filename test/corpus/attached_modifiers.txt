@@ -370,4 +370,17 @@ att-15: haard test verbatims
       (inline_macro_close))
     (paragraph_break)))
 
+================================================================================
+att-16: single unclosed opener inside markup as punctuation
+================================================================================
+*/*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (punctuation)
+      (bold_close))
+    (paragraph_break)))
+
 ; vim:ts=2:sw=2:
