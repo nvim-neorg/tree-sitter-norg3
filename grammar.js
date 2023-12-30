@@ -82,14 +82,12 @@ module.exports = grammar({
         ),
         para: ($) => seq($.paragraph, $.paragraph_break),
 
-        _character: (_) => token(/[\p{L}\p{N}]/u),
-
         punctuation: (_) => token(choice(
             repeat1('*'),
             /[^\n\r\p{Z}\p{L}\p{N}]/u
         )),
 
-        word: ($) => prec.right(repeat1($._character)),
+        word: (_) => /[\p{L}\p{N}]+/,
         whitespace: (_) => token(prec(1, /\p{Zs}+/u)),
         soft_break: (_) => token(prec(1, seq(optional(/\p{Zs}+/u), newline))),
 
@@ -356,7 +354,20 @@ module.exports = grammar({
                 -1,
                 seq(
                     $.inline_macro_open,
-                    $.verbatim_paragraph,
+                    choice(
+                        seq(
+                            alias("|", $.free_form_open),
+                            repeat1(
+                                choice(
+                                    $.verbatim_paragraph,
+                                    alias(token(prec(1, "\\")), $.punctuation),
+                                    alias("|", $.punctuation),
+                                ),
+                            ),
+                            alias("|", $.free_form_close),
+                        ),
+                        $.verbatim_paragraph,
+                    ),
                     $.inline_macro_close,
                 ),
             ),

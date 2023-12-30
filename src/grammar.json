@@ -39,14 +39,6 @@
         }
       ]
     },
-    "_character": {
-      "type": "TOKEN",
-      "content": {
-        "type": "PATTERN",
-        "value": "[\\p{L}\\p{N}]",
-        "flags": "u"
-      }
-    },
     "punctuation": {
       "type": "TOKEN",
       "content": {
@@ -68,15 +60,8 @@
       }
     },
     "word": {
-      "type": "PREC_RIGHT",
-      "value": 0,
-      "content": {
-        "type": "REPEAT1",
-        "content": {
-          "type": "SYMBOL",
-          "name": "_character"
-        }
-      }
+      "type": "PATTERN",
+      "value": "[\\p{L}\\p{N}]+"
     },
     "whitespace": {
       "type": "TOKEN",
@@ -1213,8 +1198,73 @@
             "name": "inline_macro_open"
           },
           {
-            "type": "SYMBOL",
-            "name": "verbatim_paragraph"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SEQ",
+                "members": [
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "STRING",
+                      "value": "|"
+                    },
+                    "named": true,
+                    "value": "free_form_open"
+                  },
+                  {
+                    "type": "REPEAT1",
+                    "content": {
+                      "type": "CHOICE",
+                      "members": [
+                        {
+                          "type": "SYMBOL",
+                          "name": "verbatim_paragraph"
+                        },
+                        {
+                          "type": "ALIAS",
+                          "content": {
+                            "type": "TOKEN",
+                            "content": {
+                              "type": "PREC",
+                              "value": 1,
+                              "content": {
+                                "type": "STRING",
+                                "value": "\\"
+                              }
+                            }
+                          },
+                          "named": true,
+                          "value": "punctuation"
+                        },
+                        {
+                          "type": "ALIAS",
+                          "content": {
+                            "type": "STRING",
+                            "value": "|"
+                          },
+                          "named": true,
+                          "value": "punctuation"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "type": "ALIAS",
+                    "content": {
+                      "type": "STRING",
+                      "value": "|"
+                    },
+                    "named": true,
+                    "value": "free_form_close"
+                  }
+                ]
+              },
+              {
+                "type": "SYMBOL",
+                "name": "verbatim_paragraph"
+              }
+            ]
           },
           {
             "type": "SYMBOL",

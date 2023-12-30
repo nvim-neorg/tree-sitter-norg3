@@ -232,6 +232,14 @@
           "named": true
         },
         {
+          "type": "free_form_close",
+          "named": true
+        },
+        {
+          "type": "free_form_open",
+          "named": true
+        },
+        {
           "type": "inline_macro_close",
           "named": true
         },
@@ -1117,11 +1125,6 @@
     }
   },
   {
-    "type": "word",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "bold_close",
     "named": true
   },
@@ -1231,6 +1234,10 @@
   },
   {
     "type": "whitespace",
+    "named": true
+  },
+  {
+    "type": "word",
     "named": true
   }
 ]
