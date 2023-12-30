@@ -26,6 +26,7 @@ module.exports = grammar({
 
         $.non_open,
         $.non_close,
+        $.non_linkable,
 
         $.bold_open,
         $.bold_close,
@@ -108,11 +109,13 @@ module.exports = grammar({
                         $.strikethrough,
                         $.spoiler,
                         $.superscript,
-                        $.subscript,
+                        // $.subscript,
                         $.verbatim,
                         $.inline_macro,
                         $.math,
                         $.open_conflict,
+                        $.anchor,
+                        $.link,
                         $.escape_sequence,
                         $.soft_break,
                         seq($.soft_break, alias($.non_close, $.punctuation)),
@@ -126,6 +129,7 @@ module.exports = grammar({
                     choice(
                         seq($.whitespace, alias($.non_close, $.punctuation)),
                         seq($.word, alias($.non_open, $.punctuation)),
+                        $.non_linkable,
                         $.escape_sequence,
                         $.whitespace,
                         $.word,
@@ -370,6 +374,24 @@ module.exports = grammar({
                     ),
                     $.inline_macro_close,
                 ),
+            ),
+
+        anchor: ($) =>
+            seq(
+                "[",
+                $.desc,
+                "]",
+            ),
+        desc: ($) => $.paragraph,
+        inline: ($) => $.paragraph,
+
+        link: ($) =>
+            seq(
+                "{",
+                "*",
+                $.whitespace,
+                $.inline,
+                "}"
             ),
 
         heading: ($) =>

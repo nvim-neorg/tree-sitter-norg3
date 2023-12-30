@@ -237,10 +237,6 @@
             },
             {
               "type": "SYMBOL",
-              "name": "subscript"
-            },
-            {
-              "type": "SYMBOL",
               "name": "verbatim"
             },
             {
@@ -254,6 +250,14 @@
             {
               "type": "SYMBOL",
               "name": "open_conflict"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "anchor"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "link"
             },
             {
               "type": "SYMBOL",
@@ -328,6 +332,10 @@
                   "value": "punctuation"
                 }
               ]
+            },
+            {
+              "type": "SYMBOL",
+              "name": "non_linkable"
             },
             {
               "type": "SYMBOL",
@@ -1273,6 +1281,56 @@
         ]
       }
     },
+    "anchor": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "["
+        },
+        {
+          "type": "SYMBOL",
+          "name": "desc"
+        },
+        {
+          "type": "STRING",
+          "value": "]"
+        }
+      ]
+    },
+    "desc": {
+      "type": "SYMBOL",
+      "name": "paragraph"
+    },
+    "inline": {
+      "type": "SYMBOL",
+      "name": "paragraph"
+    },
+    "link": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "{"
+        },
+        {
+          "type": "STRING",
+          "value": "*"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "whitespace"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "inline"
+        },
+        {
+          "type": "STRING",
+          "value": "}"
+        }
+      ]
+    },
     "heading": {
       "type": "PREC_RIGHT",
       "value": 0,
@@ -1370,6 +1428,10 @@
     {
       "type": "SYMBOL",
       "name": "non_close"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "non_linkable"
     },
     {
       "type": "SYMBOL",

@@ -281,7 +281,7 @@ att-12: don't allow same markup nested
 ================================================================================
 att-13: haard test
 ================================================================================
-word *word /word _word -word/ !spoiler ^something ,what^
+word *word /word _word -word/ !word ^word ,word!
 --------------------------------------------------------------------------------
 (document
   (paragraph
@@ -304,18 +304,18 @@ word *word /word _word -word/ !spoiler ^something ,what^
             (word)))
         (italic_close))
       (whitespace)
-      (open_conflict
+      (spoiler
         (spoiler_open)
         (word)
         (whitespace)
-        (superscript
+        (open_conflict
           (superscript_open)
           (word)
           (whitespace)
           (open_conflict
             (subscript_open)
-            (word))
-          (superscript_close))))
+            (word)))
+        (spoiler_close)))
     (paragraph_break)))
 
 ================================================================================
