@@ -59,6 +59,8 @@ module.exports = grammar({
         $.inline_macro_close,
 
         $.heading_prefix,
+
+        $._error_sentinel,
     ],
 
     conflicts: ($) => [
