@@ -383,4 +383,46 @@ att-16: single unclosed opener inside markup as punctuation
       (bold_close))
     (paragraph_break)))
 
+================================================================================
+att-17: prevent close modifier inside verbatim
+================================================================================
+`*word*`
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (punctuation)
+      (word)
+      (punctuation)
+      (verbatim_close))
+    (paragraph_break)))
+
+================================================================================
+att-18: hard test verbatim & non-verbatim
+================================================================================
+`*$/_-!&word&!-_/*$`
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (punctuation)
+      (punctuation)
+      (punctuation)
+      (punctuation)
+      (punctuation)
+      (punctuation)
+      (punctuation)
+      (word)
+      (punctuation)
+      (punctuation)
+      (punctuation)
+      (punctuation)
+      (punctuation)
+      (punctuation)
+      (punctuation)
+      (verbatim_close))
+    (paragraph_break)))
+
 ; vim:ts=2:sw=2:
