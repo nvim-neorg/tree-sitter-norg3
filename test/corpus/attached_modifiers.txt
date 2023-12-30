@@ -425,4 +425,102 @@ att-18: hard test verbatim & non-verbatim
       (verbatim_close))
     (paragraph_break)))
 
+================================================================================
+att-19: LTR rule 1
+================================================================================
+*/word*/
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (open_conflict
+        (italic_open)
+        (word))
+      (bold_close))
+    (punctuation)
+    (paragraph_break)))
+
+================================================================================
+att-20: LTR rule 2
+================================================================================
+*`word*`
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (open_conflict
+        (verbatim_open)
+        (word))
+      (bold_close))
+    (punctuation)
+    (paragraph_break)))
+
+================================================================================
+att-21: LTR rule 3
+================================================================================
+*/_-!`word!-_/*`
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (italic
+        (italic_open)
+        (underline
+          (underline_open)
+          (strikethrough
+            (strikethrough_open)
+            (spoiler
+              (spoiler_open)
+              (open_conflict
+                (verbatim_open)
+                (word))
+              (spoiler_close))
+            (strikethrough_close))
+          (underline_close))
+        (italic_close))
+      (bold_close))
+    (punctuation)
+    (paragraph_break)))
+
+================================================================================
+att-22: LTR rule 4
+================================================================================
+`*word`*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (punctuation)
+      (word)
+      (verbatim_close))
+    (punctuation)
+    (paragraph_break)))
+
+================================================================================
+att-23: LTR rule 5
+================================================================================
+`*/_-!word`!-_/*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (punctuation)
+      (punctuation)
+      (punctuation)
+      (punctuation)
+      (punctuation)
+      (word)
+      (verbatim_close))
+    (punctuation)
+    (punctuation)
+    (punctuation)
+    (punctuation)
+    (punctuation)
+    (paragraph_break)))
+
 ; vim:ts=2:sw=2:
