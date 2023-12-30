@@ -67,6 +67,8 @@ enum TokenType : char {
     INLINE_MACRO_CLOSE,
 
     HEADING,
+
+    ERROR_SENTINEL,
 };
 
 TokenType char_to_token(int32_t c) {
@@ -142,6 +144,10 @@ struct Scanner {
     }
 
     bool scan(const bool *valid_symbols) {
+        // the external scanner don't try any recovery
+        if (valid_symbols[ERROR_SENTINEL]) {
+            return false;
+        }
         // We return false here to allow the lexer to fall back
         // to the grammar, which allows the existence of `\0`.
         if (lexer->eof(lexer)) {

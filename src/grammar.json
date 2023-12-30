@@ -1516,6 +1516,10 @@
     {
       "type": "SYMBOL",
       "name": "heading_prefix"
+    },
+    {
+      "type": "SYMBOL",
+      "name": "_error_sentinel"
     }
   ],
   "inline": [
