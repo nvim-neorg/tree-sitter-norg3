@@ -331,10 +331,6 @@
             },
             {
               "type": "SYMBOL",
-              "name": "non_linkable"
-            },
-            {
-              "type": "SYMBOL",
               "name": "escape_sequence"
             },
             {
@@ -393,17 +389,44 @@
                   {
                     "type": "SYMBOL",
                     "name": "subscript_open"
+                  },
+                  {
+                    "type": "PREC",
+                    "value": 1,
+                    "content": {
+                      "type": "STRING",
+                      "value": "["
+                    }
+                  },
+                  {
+                    "type": "PREC",
+                    "value": 1,
+                    "content": {
+                      "type": "STRING",
+                      "value": "]"
+                    }
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "{"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "/"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "#"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "?"
+                  },
+                  {
+                    "type": "STRING",
+                    "value": "="
                   }
                 ]
-              },
-              "named": true,
-              "value": "punctuation"
-            },
-            {
-              "type": "ALIAS",
-              "content": {
-                "type": "STRING",
-                "value": "{"
               },
               "named": true,
               "value": "punctuation"
@@ -2190,6 +2213,18 @@
   ],
   "conflicts": [
     [
+      "_location",
+      "verbatim"
+    ],
+    [
+      "_location",
+      "math"
+    ],
+    [
+      "_location",
+      "inline_macro"
+    ],
+    [
       "open_conflict",
       "verbatim"
     ],
@@ -2332,10 +2367,6 @@
     {
       "type": "SYMBOL",
       "name": "non_close"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "non_linkable"
     },
     {
       "type": "SYMBOL",

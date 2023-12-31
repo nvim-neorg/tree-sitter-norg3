@@ -34,7 +34,6 @@ enum TokenType : char {
 
     NON_OPEN,
     NON_CLOSE,
-    NON_LINKABLE,
 
     BOLD_OPEN,
     BOLD_CLOSE,
@@ -241,14 +240,6 @@ struct Scanner {
                 single_line_mode = true;
                 break;
             }
-            return true;
-        }
-
-        // this can be easily done by grammar, but handled from external scanner
-        // because tree-sitter can't handle it with more than 6 non-verbatim attached modifiers
-        if (valid_symbols[NON_LINKABLE] && (character == '[' || character == ']')) {
-            lexer->mark_end(lexer);
-            lexer->result_symbol = PUNCTUATION;
             return true;
         }
 

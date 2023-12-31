@@ -167,4 +167,153 @@ link-10: don't break attached modifier
       (italic_close))
     (paragraph_break)))
 
+================================================================================
+link-11: Verbatim > link
+================================================================================
+`{* word}`
+
+{* `word}`}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (punctuation)
+      (punctuation)
+      (whitespace)
+      (word)
+      (punctuation)
+      (verbatim_close))
+    (paragraph_break))
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_heading
+          (heading_prefix)
+          (title
+            (open_conflict
+              (verbatim_open)
+              (word))))))
+    (open_conflict
+      (verbatim_open)
+      (punctuation))
+    (paragraph_break)))
+
+================================================================================
+link-12: free-form verbatim > link
+================================================================================
+{* `|word}|`}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_heading
+          (heading_prefix)
+          (title
+            (verbatim
+              (verbatim_open)
+              (free_form_open)
+              (word)
+              (punctuation)
+              (free_form_close)
+              (verbatim_close))))))
+    (paragraph_break)))
+
+================================================================================
+link-12: escape sequence > link
+================================================================================
+{* word\}}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_heading
+          (heading_prefix)
+          (title
+            (word)
+            (escape_sequence)))))
+    (paragraph_break)))
+
+================================================================================
+link-13: punctuation > link
+================================================================================
+{* word}}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_heading
+          (heading_prefix)
+          (title
+            (word)))))
+    (punctuation)
+    (paragraph_break)))
+
+================================================================================
+link-14: verbatim > link wiki target prefix
+================================================================================
+`{? word}`
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (punctuation)
+      (punctuation)
+      (whitespace)
+      (word)
+      (punctuation)
+      (verbatim_close))
+    (paragraph_break)))
+
+================================================================================
+link-15: link wiki target prefix > unclosed verbatim
+================================================================================
+`{? word}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (open_conflict
+      (verbatim_open)
+      (link
+        target: (link_target_wiki
+          (wiki_prefix)
+          value: (path))))
+    (paragraph_break)))
+
+================================================================================
+link-16: verbatim > link file target prefix
+================================================================================
+`{/ word}`
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (punctuation)
+      (punctuation)
+      (whitespace)
+      (word)
+      (punctuation)
+      (verbatim_close))
+    (paragraph_break)))
+
+================================================================================
+link-17: link file target prefix > unclosed verbatim
+================================================================================
+`{/ word}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (open_conflict
+      (verbatim_open)
+      (link
+        target: (link_target_file
+          (file_prefix)
+          value: (path))))
+    (paragraph_break)))
+
 ; vim:ts=2:sw=2:
