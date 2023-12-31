@@ -126,7 +126,6 @@ word word
     (paragraph_break))
   (heading
     (heading_prefix)
-    (whitespace)
     (inline
       (word)
       (paragraph_break))))
@@ -146,7 +145,6 @@ bold*
     (paragraph_break))
   (heading
     (heading_prefix)
-    (whitespace)
     (inline
       (word)
       (paragraph_break))
@@ -170,7 +168,6 @@ verbatim`
     (paragraph_break))
   (heading
     (heading_prefix)
-    (whitespace)
     (inline
       (word)
       (paragraph_break))

@@ -1987,8 +1987,16 @@
             "name": "heading_prefix"
           },
           {
-            "type": "SYMBOL",
-            "name": "whitespace"
+            "type": "TOKEN",
+            "content": {
+              "type": "PREC",
+              "value": 1,
+              "content": {
+                "type": "PATTERN",
+                "value": "\\p{Zs}+",
+                "flags": "u"
+              }
+            }
           },
           {
             "type": "ALIAS",

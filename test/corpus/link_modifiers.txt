@@ -141,7 +141,6 @@ word :*word*
       (word)
       (bold_close))
     (word)
-    ; TODO: fix here
     (bold
       (bold_open)
       (word)

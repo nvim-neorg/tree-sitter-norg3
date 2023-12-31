@@ -183,7 +183,6 @@ free-09: Soft break at end
       (bold_close))
     (paragraph_break)))
 
-; TODO: move verbatim free-form attached modifier test cases to separate file
 ================================================================================
 free-10: Verbatim free-form attached modifier
 ================================================================================

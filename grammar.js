@@ -1,15 +1,11 @@
 /// <reference types="tree-sitter-cli/dsl" />
 // @ts-check
-let newline = choice("\n", "\r", "\r\n");
+const newline = choice("\n", "\r", "\r\n");
 const whitespace = token(prec(1, /\p{Zs}+/u));
 
 /// General TODOS:
 //  - Abstract repeating patterns (e.g. nestable detached modifiers) into Javascript functions.
-//  - Add tests for link modifiers, then everything else.
 //  - Make every node have an alias($.node, $.node_prefix). Only some currently do.
-
-// KNOWN ISSUES:
-// - *./text/* fails (issue with $.paragraph grammar disallowing such an order)
 
 module.exports = grammar({
     name: "norg",
@@ -92,11 +88,11 @@ module.exports = grammar({
         [$.open_conflict, $.subscript, $.inline_macro],
     ],
 
-    precedences: ($) => [],
+    precedences: () => [],
 
     inline: ($) => [$.paragraph, $.verbatim_paragraph],
 
-    supertypes: ($) => [],
+    supertypes: (_) => [],
 
     rules: {
         document: ($) => repeat(
@@ -117,7 +113,7 @@ module.exports = grammar({
         whitespace: (_) => token(prec(1, /\p{Zs}+/u)),
         soft_break: (_) => token(prec(1, seq(optional(/\p{Zs}+/u), newline))),
 
-        escape_sequence: ($) => token(seq("\\", choice(/./, newline))),
+        escape_sequence: (_) => token(seq("\\", choice(/./, newline))),
 
         paragraph: ($) =>
             prec.right(
@@ -526,8 +522,7 @@ module.exports = grammar({
             prec.right(
                 seq(
                     $.heading_prefix,
-                    $.whitespace,
-                    // TODO: This should be a sequence of chars terminated by a `soft_break`.
+                    whitespace,
                     alias($.para, $.inline),
                     repeat(
                         choice(
