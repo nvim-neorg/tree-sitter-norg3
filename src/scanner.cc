@@ -102,8 +102,7 @@ TokenType char_to_token(int32_t c) {
 
 struct Scanner {
     TSLexer* lexer;
-    // TODO(boltless): use bitset instead
-    std::unordered_map<TokenType, bool> attached_modifiers;
+    std::unordered_map<TokenType, size_t> attached_modifiers;
 
     bool single_line_mode;
 
@@ -284,7 +283,7 @@ struct Scanner {
             }
 
             if (attached_modifiers[next_token] > 0 && valid_symbols[next_token + 1] && (!lexer->lookahead || iswspace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
-                attached_modifiers[next_token] = false;
+                attached_modifiers[next_token] -= 1;
                 lexer->result_symbol = next_token + 1;
                 lexer->mark_end(lexer);
                 if (lexer->lookahead == ':') {
@@ -299,15 +298,24 @@ struct Scanner {
                 // see att-11 for example
                 lexer->result_symbol = NON_OPEN;
                 return true;
-            } else if (valid_symbols[next_token] && lexer->lookahead && !iswspace(lexer->lookahead) && attached_modifiers[next_token] == 0) {
+                // check if attached modifier is open (free-02)
+            } else if (valid_symbols[next_token] && lexer->lookahead && !iswspace(lexer->lookahead)) {
+                lexer->mark_end(lexer);
+                // solves free-02:
+                if (lexer->lookahead == '|')
+                    advance();
                 // solves att-16:
-                const TokenType n_token = char_to_token(lexer->lookahead);
+                const int32_t next_mod = lexer->lookahead;
+                const TokenType n_token = char_to_token(next_mod);
                 if (n_token != 0 && attached_modifiers[n_token]) {
-                    lexer->result_symbol = PUNCTUATION;
-                    return true;
+                    advance();
+                    if (!lexer->lookahead || iswspace(lexer->lookahead) || iswpunct(lexer->lookahead) && lexer->lookahead != next_mod) {
+                        lexer->result_symbol = PUNCTUATION;
+                        return true;
+                    }
                 }
 
-                attached_modifiers[next_token] = true;
+                attached_modifiers[next_token] += 1;
                 lexer->result_symbol = next_token;
                 return true;
             }

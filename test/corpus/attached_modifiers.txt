@@ -362,7 +362,7 @@ att-15: haard test verbatims
       (verbatim_open)
       (word)
       (whitespace)
-      (punctuation)
+      (math_open)
       (word)
       (punctuation)
       (whitespace)
@@ -381,6 +381,33 @@ att-16: single unclosed opener inside markup as punctuation
       (bold_open)
       (punctuation)
       (bold_close))
+    (paragraph_break)))
+
+================================================================================
+att-16.1: valid markup after unclosed markup and invalid close modifier
+================================================================================
+*/*word/
+
+*/**/
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (open_conflict
+      (bold_open)
+      (italic
+        (italic_open)
+        (open_conflict
+          (bold_open)
+          (word))
+        (italic_close)))
+    (paragraph_break))
+  (paragraph
+    (open_conflict
+      (bold_open)
+      (italic
+        (italic_open)
+        (punctuation)
+        (italic_close)))
     (paragraph_break)))
 
 ================================================================================
@@ -408,12 +435,12 @@ att-18: hard test verbatim & non-verbatim
     (verbatim
       (verbatim_open)
       (punctuation)
+      (math_open)
       (punctuation)
       (punctuation)
       (punctuation)
       (punctuation)
-      (punctuation)
-      (punctuation)
+      (inline_macro_open)
       (word)
       (punctuation)
       (punctuation)
@@ -521,6 +548,26 @@ att-23: LTR rule 5
     (punctuation)
     (punctuation)
     (punctuation)
+    (paragraph_break)))
+
+================================================================================
+att-24: partially reset attached modifier after closing
+================================================================================
+*/word* /word/
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (open_conflict
+        (italic_open)
+        (word))
+      (bold_close))
+    (whitespace)
+    (italic
+      (italic_open)
+      (word)
+      (italic_close))
     (paragraph_break)))
 
 ; vim:ts=2:sw=2:

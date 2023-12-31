@@ -232,8 +232,6 @@ module.exports = grammar({
                                 alias("|", $.punctuation),
                             ),
                         ),
-                        // TODO: parse free_form_close from scanner.cc
-                        // case: *|/|*
                         alias("|", $.free_form_close),
                     ),
                     $.paragraph,
