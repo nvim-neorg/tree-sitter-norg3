@@ -106,6 +106,13 @@ module.exports = grammar({
 
         punctuation: (_) => token(choice(
             repeat1('*'),
+            repeat1('/'),
+            repeat1('_'),
+            repeat1('-'),
+            repeat1('!'),
+            repeat1('`'),
+            repeat1('&'),
+            repeat1('$'),
             /[^\n\r\p{Z}\p{L}\p{N}]/u
         )),
 
