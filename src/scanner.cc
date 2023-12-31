@@ -124,6 +124,12 @@ struct Scanner {
     bool is_whitespace(int32_t character) {
         return iswspace(character) && character != '\n' && character != '\r';
     }
+    /**
+     * Returns `true` if the character provided is neither whitespace nor punctuation
+     */
+    bool is_word(int32_t character) {
+        return character && !iswspace(character) && !iswpunct(character);
+    }
 
     /**
      * @brief Searches through a range of valid symbols.
@@ -139,6 +145,139 @@ struct Scanner {
         }
 
         return -1;
+    }
+
+    /**
+     * this function may advance more than one character
+     * put this at the bottom of `scan()`
+     */
+    bool scan_attached_modifier(const bool *valid_symbols, int32_t character) {
+        bool advanced = false;
+        if (character == ':' && valid_symbols[NON_OPEN]) {
+            character = lexer->lookahead;
+            advance();
+            advanced = true;
+        }
+        const TokenType kind_token = char_to_token(character);
+        const TokenType close_token = (TokenType)(kind_token + 1);
+        if ((kind_token == 0)
+            // 5th case in link-mod-00
+            || (advanced && valid_symbols[close_token])
+            // repeated modifier
+            || (lexer->lookahead == character))
+            return false;
+
+        // NON_CLOSE
+        if (valid_symbols[NON_CLOSE] && valid_symbols[close_token]) {
+            lexer->result_symbol = NON_CLOSE;
+            return true;
+        }
+
+        // _CLOSE
+        if (attached_modifiers[kind_token] > 0 && valid_symbols[close_token] && !is_word(lexer->lookahead)) {
+            attached_modifiers[kind_token] -= 1;
+            lexer->result_symbol = close_token;
+            lexer->mark_end(lexer);
+            if (lexer->lookahead == ':') {
+                advance();
+                if (is_word(lexer->lookahead)) {
+                    lexer->mark_end(lexer);
+                }
+            }
+            return true;
+        }
+        // NON_OPEN
+        if (!advanced && valid_symbols[NON_OPEN]) {
+            // there can be NON_OPEN even when BOLD_CLOSE is valid.
+            // see att-11 for example
+            lexer->result_symbol = NON_OPEN;
+            return true;
+        }
+        // _OPEN
+        if (valid_symbols[kind_token] && lexer->lookahead && !iswspace(lexer->lookahead)) {
+            lexer->mark_end(lexer);
+            // solves free-02 and att-16:
+            // check if valid [free-form-]close token follows
+            if (lexer->lookahead == '|')
+                advance();
+            const int32_t next_char = lexer->lookahead;
+            const TokenType next_token = char_to_token(next_char);
+            if (next_token != 0 && attached_modifiers[next_token]) {
+                advance();
+                if (!lexer->lookahead || !is_word(lexer->lookahead) && lexer->lookahead != next_char) {
+                    lexer->result_symbol = PUNCTUATION;
+                    return true;
+                }
+            }
+
+            attached_modifiers[kind_token] += 1;
+            lexer->result_symbol = kind_token;
+            return true;
+        }
+
+        return false;
+    }
+
+    bool scan_structural_detached_modifier(const bool *valid_symbols, int32_t character) {
+        size_t count = 1;
+        while (lexer->lookahead == character) {
+            count++;
+            advance();
+        }
+
+        if (!is_whitespace(lexer->lookahead))
+            return false;
+
+        lexer->mark_end(lexer);
+        lexer->result_symbol = HEADING;
+        single_line_mode = true;
+        return true;
+    }
+
+    bool scan_newline(const bool *valid_symbols) {
+        while (is_whitespace(lexer->lookahead))
+            skip();
+        if (lexer->lookahead == '\n' || lexer->lookahead == '\r') {
+            advance();
+
+            if (valid_symbols[NEWLINE]) {
+                lexer->result_symbol = NEWLINE;
+                lexer->mark_end(lexer);
+                // cancel single-line, this occurs when heading has slide/indent_segment prefixs
+                if (single_line_mode) single_line_mode = false;
+                return true;
+            }
+            // when parsing single-line paragraph (aka. title,) return paragraph break immediately
+            if (single_line_mode) {
+                single_line_mode = false;
+                lexer->result_symbol = PARAGRAPH_BREAK;
+                return true;
+            }
+
+            lexer->mark_end(lexer);
+            while (is_whitespace(lexer->lookahead))
+                skip();
+            if (lexer->eof(lexer) || lexer->lookahead == '\n' || lexer->lookahead == '\r') {
+                lexer->result_symbol = PARAGRAPH_BREAK;
+                attached_modifiers.clear();
+                return true;
+            }
+            if (lexer->lookahead == '*') {
+                int32_t character = lexer->lookahead;
+                skip();
+                size_t count = 1;
+                while (lexer->lookahead == character) {
+                    count++;
+                    skip();
+                }
+                if (is_whitespace(lexer->lookahead)) {
+                    lexer->result_symbol = PARAGRAPH_BREAK;
+                    attached_modifiers.clear();
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     bool scan(const bool *valid_symbols) {
@@ -173,143 +312,21 @@ struct Scanner {
             }
         }
 
-        if (iswspace(lexer->lookahead)) {
-            while (is_whitespace(lexer->lookahead))
-                skip();
-            if (lexer->lookahead == '\n' || lexer->lookahead == '\r') {
-                advance();
+        if (iswspace(lexer->lookahead))
+            return scan_newline(valid_symbols);
 
-                if (valid_symbols[NEWLINE]) {
-                    lexer->result_symbol = NEWLINE;
-                    lexer->mark_end(lexer);
-                    // cancel single-line, this occurs when heading has slide/indent_segment prefixs
-                    if (single_line_mode) single_line_mode = false;
-                    return true;
-                }
-                // when parsing single-line paragraph (aka. title,) return paragraph break immediately
-                if (single_line_mode) {
-                    single_line_mode = false;
-                    lexer->result_symbol = PARAGRAPH_BREAK;
-                    return true;
-                }
-
-                lexer->mark_end(lexer);
-                while (is_whitespace(lexer->lookahead))
-                    skip();
-                if (lexer->eof(lexer) || lexer->lookahead == '\n' || lexer->lookahead == '\r') {
-                    lexer->result_symbol = PARAGRAPH_BREAK;
-                    attached_modifiers.clear();
-                    return true;
-                }
-                if (lexer->lookahead == '*') {
-                    int32_t character = lexer->lookahead;
-                    skip();
-                    size_t count = 1;
-                    while (lexer->lookahead == character) {
-                        count++;
-                        skip();
-                    }
-                    if (is_whitespace(lexer->lookahead)) {
-                        lexer->result_symbol = PARAGRAPH_BREAK;
-                        attached_modifiers.clear();
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        // take one lookahead first as we need at least two lookahead to distinguish heading_prefix and bold_open
+        // take one lookahead first as we need at least two lookahead to distinguish
+        // detached modifiers from others (e.g. heading_prefix and bold_open)
         const int32_t character = lexer->lookahead;
         advance();
 
-        if (valid_symbols[HEADING] && character == '*' && (lexer->lookahead == '*' || is_whitespace(lexer->lookahead))) {
-            size_t count = 1;
-            while (lexer->lookahead == character) {
-                count++;
-                advance();
-            }
+        if (valid_symbols[HEADING] && character == '*' && (lexer->lookahead == '*' || is_whitespace(lexer->lookahead)))
+            return scan_structural_detached_modifier(valid_symbols, character);
 
-            if (!is_whitespace(lexer->lookahead))
-                return false;
+        // TODO: add other detached modifiers
 
-            lexer->mark_end(lexer);
-            switch (character) {
-            case '*':
-                lexer->result_symbol = HEADING;
-                single_line_mode = true;
-                break;
-            }
-            return true;
-        }
-
-        // TODO: cleanup here
-        int32_t mod_char = character;
-        bool advanced = false;
-        if (mod_char == ':' && valid_symbols[NON_OPEN]) {
-            mod_char = lexer->lookahead;
-            advance();
-            advanced = true;
-        }
-
-        TokenType next_token = char_to_token(mod_char);
-
-        // 5th case in link-mod-00
-        if (advanced && next_token != 0 && valid_symbols[next_token + 1])
-            return false;
-
-        if (next_token != 0 && (valid_symbols[next_token] || valid_symbols[next_token + 1] || valid_symbols[NON_OPEN])) {
-            if (lexer->lookahead == mod_char)
-                return false;
-
-            if (valid_symbols[NON_CLOSE] && valid_symbols[next_token + 1]) {
-                lexer->result_symbol = NON_CLOSE;
-                return true;
-            }
-
-            if (attached_modifiers[next_token] > 0 && valid_symbols[next_token + 1] && (!lexer->lookahead || iswspace(lexer->lookahead) || iswpunct(lexer->lookahead))) {
-                attached_modifiers[next_token] -= 1;
-                lexer->result_symbol = next_token + 1;
-                lexer->mark_end(lexer);
-                if (lexer->lookahead == ':') {
-                    advance();
-                    if (!iswspace(lexer->lookahead) && !iswpunct(lexer->lookahead)) {
-                        lexer->mark_end(lexer);
-                    }
-                }
-                return true;
-            } else if (!advanced && valid_symbols[NON_OPEN]) {
-                // there can be NON_OPEN even when BOLD_CLOSE is valid.
-                // see att-11 for example
-                lexer->result_symbol = NON_OPEN;
-                return true;
-                // check if attached modifier is open (free-02)
-            } else if (valid_symbols[next_token] && lexer->lookahead && !iswspace(lexer->lookahead)) {
-                lexer->mark_end(lexer);
-                // solves free-02:
-                if (lexer->lookahead == '|')
-                    advance();
-                // solves att-16:
-                const int32_t next_mod = lexer->lookahead;
-                const TokenType n_token = char_to_token(next_mod);
-                if (n_token != 0 && attached_modifiers[n_token]) {
-                    advance();
-                    if (!lexer->lookahead || iswspace(lexer->lookahead) || iswpunct(lexer->lookahead) && lexer->lookahead != next_mod) {
-                        lexer->result_symbol = PUNCTUATION;
-                        return true;
-                    }
-                }
-
-                attached_modifiers[next_token] += 1;
-                lexer->result_symbol = next_token;
-                return true;
-            }
-
-            return false;
-        }
-
-
-        return false;
+        // this should be end of scan because attached modifiers need more than two lookaheads
+        return scan_attached_modifier(valid_symbols, character);
     }
 
     void skip() { lexer->advance(lexer, true); }
