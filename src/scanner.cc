@@ -70,7 +70,7 @@ enum TokenType : char {
     ERROR_SENTINEL,
 };
 
-TokenType char_to_token(int32_t c) {
+TokenType char_to_attached_mod(int32_t c) {
     switch (c) {
         case '*':
             return BOLD_OPEN;
@@ -130,6 +130,12 @@ struct Scanner {
     bool is_word(int32_t character) {
         return character && !iswspace(character) && !iswpunct(character);
     }
+    /**
+     * Returns `true` if the character provided is either \n or \r
+     */
+    bool is_newline(int32_t character) {
+        return character == '\n' || character == '\r';
+    }
 
     /**
      * @brief Searches through a range of valid symbols.
@@ -152,17 +158,17 @@ struct Scanner {
      * put this at the bottom of `scan()`
      */
     bool scan_attached_modifier(const bool *valid_symbols, int32_t character) {
-        bool advanced = false;
+        bool link_mod_left = false;
         if (character == ':' && valid_symbols[NON_OPEN]) {
             character = lexer->lookahead;
             advance();
-            advanced = true;
+            link_mod_left = true;
         }
-        const TokenType kind_token = char_to_token(character);
+        const TokenType kind_token = char_to_attached_mod(character);
         const TokenType close_token = (TokenType)(kind_token + 1);
         if ((kind_token == 0)
             // 5th case in link-mod-00
-            || (advanced && valid_symbols[close_token])
+            || (link_mod_left && valid_symbols[close_token])
             // repeated modifier
             || (lexer->lookahead == character))
             return false;
@@ -187,7 +193,7 @@ struct Scanner {
             return true;
         }
         // NON_OPEN
-        if (!advanced && valid_symbols[NON_OPEN]) {
+        if (!link_mod_left && valid_symbols[NON_OPEN]) {
             // there can be NON_OPEN even when BOLD_CLOSE is valid.
             // see att-11 for example
             lexer->result_symbol = NON_OPEN;
@@ -201,7 +207,7 @@ struct Scanner {
             if (lexer->lookahead == '|')
                 advance();
             const int32_t next_char = lexer->lookahead;
-            const TokenType next_token = char_to_token(next_char);
+            const TokenType next_token = char_to_attached_mod(next_char);
             if (next_token != 0 && attached_modifiers[next_token]) {
                 advance();
                 if (!lexer->lookahead || !is_word(lexer->lookahead) && lexer->lookahead != next_char) {
@@ -218,7 +224,7 @@ struct Scanner {
         return false;
     }
 
-    bool scan_structural_detached_modifier(const bool *valid_symbols, int32_t character) {
+    bool scan_detached_modifier(const bool *valid_symbols, int32_t character, TokenType kind) {
         size_t count = 1;
         while (lexer->lookahead == character) {
             count++;
@@ -229,7 +235,7 @@ struct Scanner {
             return false;
 
         lexer->mark_end(lexer);
-        lexer->result_symbol = HEADING;
+        lexer->result_symbol = kind;
         single_line_mode = true;
         return true;
     }
@@ -237,14 +243,14 @@ struct Scanner {
     bool scan_newline(const bool *valid_symbols) {
         while (is_whitespace(lexer->lookahead))
             skip();
-        if (lexer->lookahead == '\n' || lexer->lookahead == '\r') {
+        if (is_newline(lexer->lookahead)) {
             advance();
+            lexer->mark_end(lexer);
 
             if (valid_symbols[NEWLINE]) {
-                lexer->result_symbol = NEWLINE;
-                lexer->mark_end(lexer);
                 // cancel single-line, this occurs when heading has slide/indent_segment prefixs
-                if (single_line_mode) single_line_mode = false;
+                single_line_mode = false;
+                lexer->result_symbol = NEWLINE;
                 return true;
             }
             // when parsing single-line paragraph (aka. title,) return paragraph break immediately
@@ -254,10 +260,9 @@ struct Scanner {
                 return true;
             }
 
-            lexer->mark_end(lexer);
             while (is_whitespace(lexer->lookahead))
                 skip();
-            if (lexer->eof(lexer) || lexer->lookahead == '\n' || lexer->lookahead == '\r') {
+            if (lexer->eof(lexer) || is_newline(lexer->lookahead)) {
                 lexer->result_symbol = PARAGRAPH_BREAK;
                 attached_modifiers.clear();
                 return true;
@@ -321,7 +326,7 @@ struct Scanner {
         advance();
 
         if (valid_symbols[HEADING] && character == '*' && (lexer->lookahead == '*' || is_whitespace(lexer->lookahead)))
-            return scan_structural_detached_modifier(valid_symbols, character);
+            return scan_detached_modifier(valid_symbols, character, HEADING);
 
         // TODO: add other detached modifiers
 
