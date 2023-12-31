@@ -20,8 +20,8 @@ module.exports = grammar({
 
         $.punctuation,
 
-        $.non_open,
-        $.non_close,
+        $.not_open,
+        $.not_close,
 
         $.bold_open,
         $.bold_close,
@@ -90,19 +90,19 @@ module.exports = grammar({
 
     precedences: () => [],
 
-    inline: ($) => [$.paragraph, $.verbatim_paragraph],
+    inline: ($) => [$.paragraph_inner, $.verbatim_paragraph_inner],
 
     supertypes: (_) => [],
 
     rules: {
         document: ($) => repeat(
             choice(
-                alias($.para, $.paragraph),
+                $.paragraph,
                 $.heading,
                 $._newline,
             )
         ),
-        para: ($) => seq($.paragraph, $.paragraph_break),
+        paragraph: ($) => seq($.paragraph_inner, $.paragraph_break),
 
         punctuation: (_) => token(choice(
             repeat1('*'),
@@ -122,12 +122,12 @@ module.exports = grammar({
 
         escape_sequence: (_) => token(seq("\\", choice(/./, newline))),
 
-        paragraph: ($) =>
+        paragraph_inner: ($) =>
             prec.right(
                 repeat1(
                     choice(
-                        seq($.whitespace, alias($.non_close, $.punctuation)),
-                        seq($.word, alias($.non_open, $.punctuation)),
+                        seq($.whitespace, alias($.not_close, $.punctuation)),
+                        seq($.word, alias($.not_open, $.punctuation)),
                         $.whitespace,
                         $.word,
                         $.punctuation,
@@ -146,18 +146,18 @@ module.exports = grammar({
                         $.link,
                         $.escape_sequence,
                         $.soft_break,
-                        seq($.soft_break, alias($.non_close, $.punctuation)),
+                        seq($.soft_break, alias($.not_close, $.punctuation)),
                     ),
                 ),
             ),
 
-        verbatim_paragraph: ($) =>
+        verbatim_paragraph_inner: ($) =>
             prec.right(
                 repeat1(
                     choice(
-                        seq($.whitespace, alias($.non_close, $.punctuation)),
-                        seq($.word, alias($.non_open, $.punctuation)),
-                        // $.non_linkable,
+                        seq($.whitespace, alias($.not_close, $.punctuation)),
+                        seq($.word, alias($.not_open, $.punctuation)),
+                        // $.not_linkable,
                         $.escape_sequence,
                         $.whitespace,
                         $.word,
@@ -187,7 +187,7 @@ module.exports = grammar({
                             $.punctuation,
                         ),
                         $.soft_break,
-                        seq($.soft_break, alias($.non_close, $.punctuation)),
+                        seq($.soft_break, alias($.not_close, $.punctuation)),
                     ),
                 ),
             ),
@@ -208,11 +208,9 @@ module.exports = grammar({
                         $.math_open,
                         $.inline_macro_open,
                     ),
-                    $.paragraph,
+                    $.paragraph_inner,
                 ),
             ),
-
-        // paragraph_break: (_) => token(prec(1, seq(newline, newline_or_eof))),
 
         identifier: (_) => /[A-Za-z][A-Za-z\-]+/,
         attached_modifier_extension: ($) =>
@@ -238,14 +236,14 @@ module.exports = grammar({
                         alias("|", $.free_form_open),
                         repeat1(
                             choice(
-                                $.paragraph,
+                                $.paragraph_inner,
                                 alias(token(prec(1, "\\")), $.punctuation),
                                 alias("|", $.punctuation),
                             ),
                         ),
                         alias("|", $.free_form_close),
                     ),
-                    $.paragraph,
+                    $.paragraph_inner,
                 ),
                 $.bold_close,
                 optional($.attached_modifier_extension),
@@ -259,14 +257,14 @@ module.exports = grammar({
                         alias("|", $.free_form_open),
                         repeat1(
                             choice(
-                                $.paragraph,
+                                $.paragraph_inner,
                                 alias(token(prec(1, "\\")), $.punctuation),
                                 alias("|", $.punctuation),
                             ),
                         ),
                         alias("|", $.free_form_close),
                     ),
-                    $.paragraph,
+                    $.paragraph_inner,
                 ),
                 $.italic_close,
                 optional($.attached_modifier_extension),
@@ -280,14 +278,14 @@ module.exports = grammar({
                         alias("|", $.free_form_open),
                         repeat1(
                             choice(
-                                $.paragraph,
+                                $.paragraph_inner,
                                 alias(token(prec(1, "\\")), $.punctuation),
                                 alias("|", $.punctuation),
                             ),
                         ),
                         alias("|", $.free_form_close),
                     ),
-                    $.paragraph,
+                    $.paragraph_inner,
                 ),
                 $.underline_close,
                 optional($.attached_modifier_extension),
@@ -301,14 +299,14 @@ module.exports = grammar({
                         alias("|", $.free_form_open),
                         repeat1(
                             choice(
-                                $.paragraph,
+                                $.paragraph_inner,
                                 alias(token(prec(1, "\\")), $.punctuation),
                                 alias("|", $.punctuation),
                             ),
                         ),
                         alias("|", $.free_form_close),
                     ),
-                    $.paragraph,
+                    $.paragraph_inner,
                 ),
                 $.strikethrough_close,
                 optional($.attached_modifier_extension),
@@ -322,14 +320,14 @@ module.exports = grammar({
                         alias("|", $.free_form_open),
                         repeat1(
                             choice(
-                                $.paragraph,
+                                $.paragraph_inner,
                                 alias(token(prec(1, "\\")), $.punctuation),
                                 alias("|", $.punctuation),
                             ),
                         ),
                         alias("|", $.free_form_close),
                     ),
-                    $.paragraph,
+                    $.paragraph_inner,
                 ),
                 $.spoiler_close,
                 optional($.attached_modifier_extension),
@@ -343,14 +341,14 @@ module.exports = grammar({
                         alias("|", $.free_form_open),
                         repeat1(
                             choice(
-                                $.paragraph,
+                                $.paragraph_inner,
                                 alias(token(prec(1, "\\")), $.punctuation),
                                 alias("|", $.punctuation),
                             ),
                         ),
                         alias("|", $.free_form_close),
                     ),
-                    $.paragraph,
+                    $.paragraph_inner,
                 ),
                 $.superscript_close,
                 optional($.attached_modifier_extension),
@@ -364,14 +362,14 @@ module.exports = grammar({
                         alias("|", $.free_form_open),
                         repeat1(
                             choice(
-                                $.paragraph,
+                                $.paragraph_inner,
                                 alias(token(prec(1, "\\")), $.punctuation),
                                 alias("|", $.punctuation),
                             ),
                         ),
                         alias("|", $.free_form_close),
                     ),
-                    $.paragraph,
+                    $.paragraph_inner,
                 ),
                 $.subscript_close,
                 optional($.attached_modifier_extension),
@@ -387,14 +385,14 @@ module.exports = grammar({
                             alias("|", $.free_form_open),
                             repeat1(
                                 choice(
-                                    $.verbatim_paragraph,
+                                    $.verbatim_paragraph_inner,
                                     alias(token(prec(1, "\\")), $.punctuation),
                                     alias("|", $.punctuation),
                                 ),
                             ),
                             alias("|", $.free_form_close),
                         ),
-                        $.verbatim_paragraph,
+                        $.verbatim_paragraph_inner,
                     ),
                     $.verbatim_close,
                     optional($.attached_modifier_extension),
@@ -411,14 +409,14 @@ module.exports = grammar({
                             alias("|", $.free_form_open),
                             repeat1(
                                 choice(
-                                    $.verbatim_paragraph,
+                                    $.verbatim_paragraph_inner,
                                     alias(token(prec(1, "\\")), $.punctuation),
                                     alias("|", $.punctuation),
                                 ),
                             ),
                             alias("|", $.free_form_close),
                         ),
-                        $.verbatim_paragraph,
+                        $.verbatim_paragraph_inner,
                     ),
                     $.math_close,
                     optional($.attached_modifier_extension),
@@ -435,14 +433,14 @@ module.exports = grammar({
                             alias("|", $.free_form_open),
                             repeat1(
                                 choice(
-                                    $.verbatim_paragraph,
+                                    $.verbatim_paragraph_inner,
                                     alias(token(prec(1, "\\")), $.punctuation),
                                     alias("|", $.punctuation),
                                 ),
                             ),
                             alias("|", $.free_form_close),
                         ),
-                        $.verbatim_paragraph,
+                        $.verbatim_paragraph_inner,
                     ),
                     $.inline_macro_close,
                     optional($.attached_modifier_extension),
@@ -450,12 +448,8 @@ module.exports = grammar({
             ),
 
         _description: ($) =>
-            seq(
-                "[",
-                field("description", $.description),
-                "]",
-            ),
-        description: ($) => $.paragraph,
+            seq("[", field("description", $.description), "]"),
+        description: ($) => $.paragraph_inner,
 
         _location: ($) =>
             seq(
@@ -565,11 +559,11 @@ module.exports = grammar({
                 seq(
                     $.heading_prefix,
                     whitespace,
-                    alias($.para, $.inline),
+                    alias($.paragraph, $.inline),
                     repeat(
                         choice(
                             $.heading,
-                            alias($.para, $.paragraph),
+                            $.paragraph,
                             $._newline,
                         )
                     )
