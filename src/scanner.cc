@@ -66,6 +66,11 @@ enum TokenType : char {
     INLINE_MACRO_CLOSE,
 
     HEADING,
+    UNORDERED_LIST,
+
+    WEAK_DELIMITING_MODIFIER,
+    DEDENT,
+    INDENT_SEGMENT_END,
 
     ERROR_SENTINEL,
 };
@@ -99,6 +104,7 @@ TokenType char_to_attached_mod(int32_t c) {
 
 struct Scanner {
     TSLexer* lexer;
+    std::unordered_map<char, std::vector<uint16_t>> indents;
     std::unordered_map<TokenType, size_t> attached_modifiers;
 
     bool single_line_mode;
@@ -175,6 +181,7 @@ struct Scanner {
 
         // NOT_CLOSE
         if (valid_symbols[NOT_CLOSE] && valid_symbols[close_token]) {
+            lexer->mark_end(lexer);
             lexer->result_symbol = NOT_CLOSE;
             return true;
         }
@@ -196,6 +203,7 @@ struct Scanner {
         if (!link_mod_left && valid_symbols[NOT_OPEN]) {
             // there can be NOT_OPEN even when BOLD_CLOSE is valid.
             // see att-11 for example
+            lexer->mark_end(lexer);
             lexer->result_symbol = NOT_OPEN;
             return true;
         }
@@ -225,18 +233,45 @@ struct Scanner {
     }
 
     bool scan_detached_modifier(const bool *valid_symbols, int32_t character, TokenType kind) {
+        std::vector<uint16_t>& indent_vector = indents[character];
         size_t count = 1;
         while (lexer->lookahead == character) {
             count++;
             advance();
         }
 
-        if (!is_whitespace(lexer->lookahead))
-            return false;
+        // Every detached modifier must be immediately followed by whitespace. If it is not, return false.
+        if (!is_whitespace(lexer->lookahead)) {
+            // There is an edge case that can be parsed here however - the weak delimiting modifier may
+            // consist of two or more `-` characters, and must be immediately succeeded with a newline.
+            // If those criteria are met, return the `WEAK_DELIMITING_MODIFIER` instead.
+            if (character == '-' && count >= 2 && is_newline(lexer->lookahead)) {
+                // Advance past the newline as well.
+                advance_newline();
 
+                // FIXME: weak delimiting modifier should be able to used with other detached modifiers
+                if (!valid_symbols[INDENT_SEGMENT_END])
+                    indents['*'].pop_back();
+                // When `mark_end()` is called again we essentially move the previous checkpoint to the new "head".
+                lexer->mark_end(lexer);
+                lexer->result_symbol = WEAK_DELIMITING_MODIFIER;
+                return true;
+            }
+
+            return false;
+        }
+
+        if (valid_symbols[DEDENT] && !indent_vector.empty() && count <= indent_vector.back()) {
+            indent_vector.pop_back();
+            lexer->result_symbol = DEDENT;
+            return true;
+        }
+
+        indent_vector.push_back(count);
         lexer->mark_end(lexer);
         lexer->result_symbol = kind;
-        single_line_mode = true;
+        if (kind == HEADING)
+            single_line_mode = true;
         return true;
     }
 
@@ -267,7 +302,7 @@ struct Scanner {
                 attached_modifiers.clear();
                 return true;
             }
-            if (lexer->lookahead == '*') {
+            if (lexer->lookahead == '*' || lexer->lookahead == '-' || lexer->lookahead == '_' || lexer->lookahead == '=') {
                 int32_t character = lexer->lookahead;
                 skip();
                 size_t count = 1;
@@ -275,7 +310,7 @@ struct Scanner {
                     count++;
                     skip();
                 }
-                if (is_whitespace(lexer->lookahead)) {
+                if (iswspace(lexer->lookahead)) {
                     lexer->result_symbol = PARAGRAPH_BREAK;
                     attached_modifiers.clear();
                     return true;
@@ -322,11 +357,14 @@ struct Scanner {
 
         // take one lookahead first as we need at least two lookahead to distinguish
         // detached modifiers from others (e.g. heading_prefix and bold_open)
+        lexer->mark_end(lexer);
         const int32_t character = lexer->lookahead;
         advance();
 
         if (valid_symbols[HEADING] && character == '*' && (lexer->lookahead == '*' || is_whitespace(lexer->lookahead)))
             return scan_detached_modifier(valid_symbols, character, HEADING);
+        if ((valid_symbols[UNORDERED_LIST] || valid_symbols[WEAK_DELIMITING_MODIFIER]) && character == '-' && (lexer->lookahead == '-' || is_whitespace(lexer->lookahead)))
+            return scan_detached_modifier(valid_symbols, character, UNORDERED_LIST);
 
         // TODO: add other detached modifiers
 
@@ -336,6 +374,14 @@ struct Scanner {
 
     void skip() { lexer->advance(lexer, true); }
     void advance() { lexer->advance(lexer, false); }
+    void advance_newline() {
+        if (lexer->lookahead == '\r') {
+            advance();
+            if (lexer->lookahead == '\n' && !lexer->eof(lexer)) advance();
+        } else {
+            advance();
+        }
+    }
 };
 
 extern "C" {
@@ -357,6 +403,18 @@ extern "C" {
         Scanner* scanner = static_cast<Scanner* >(payload);
         size_t total_size = 0;
         buffer[total_size++] = scanner->single_line_mode;
+
+        // NOTE: We cannot use range-based for loops as they are a post C++11 addition. Fun.
+        for (std::unordered_map< char, std::vector<uint16_t> >::iterator kv = scanner->indents.begin(); kv != scanner->indents.end(); ++kv) {
+            uint16_t size = kv->second.size();
+            buffer[total_size] = kv->first;
+
+            std::memcpy(&buffer[total_size + 1], &size, sizeof(size));
+            std::memcpy(&buffer[total_size + 3], kv->second.data(), size * sizeof(size));
+
+            total_size += (size * sizeof(size)) + 3;
+        }
+
         return total_size;
     }
 
@@ -370,5 +428,15 @@ extern "C" {
         }
         size_t head = 0;
         scanner->single_line_mode = buffer[head++];
+
+        while (head < length) {
+            char key = buffer[head];
+            uint16_t len = 0;
+            std::memcpy(&len, &buffer[head + 1], sizeof(len));
+
+            scanner->indents[key].resize(len);
+            std::memcpy(scanner->indents[key].data(), &buffer[head + 3], len * sizeof(uint16_t));
+            head += (len * sizeof(uint16_t)) + 3;
+        }
     }
 }

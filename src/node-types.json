@@ -1,5 +1,19 @@
 [
   {
+    "type": "non_structural",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "horizontal_rule",
+        "named": true
+      },
+      {
+        "type": "paragraph",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "anchor",
     "named": true,
     "fields": {
@@ -249,6 +263,14 @@
         {
           "type": "paragraph",
           "named": true
+        },
+        {
+          "type": "strong_delimiting_modifier",
+          "named": true
+        },
+        {
+          "type": "weak_delimiting_modifier",
+          "named": true
         }
       ]
     }
@@ -256,7 +278,26 @@
   {
     "type": "heading",
     "named": true,
-    "fields": {},
+    "fields": {
+      "title": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "indent_segment",
+            "named": true
+          },
+          {
+            "type": "inline",
+            "named": true
+          },
+          {
+            "type": "slide",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
       "multiple": true,
       "required": true,
@@ -270,11 +311,35 @@
           "named": true
         },
         {
-          "type": "inline",
+          "type": "non_structural",
           "named": true
         },
         {
-          "type": "paragraph",
+          "type": "weak_delimiting_modifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "horizontal_rule",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "indent_segment",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "non_structural",
+          "named": true
+        },
+        {
+          "type": "weak_delimiting_modifier",
           "named": true
         }
       ]
@@ -1064,6 +1129,21 @@
     }
   },
   {
+    "type": "slide",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "non_structural",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "spoiler",
     "named": true,
     "fields": {},
@@ -1252,6 +1332,11 @@
         }
       ]
     }
+  },
+  {
+    "type": "strong_delimiting_modifier",
+    "named": true,
+    "fields": {}
   },
   {
     "type": "title",
@@ -1516,6 +1601,10 @@
     "named": false
   },
   {
+    "type": "::",
+    "named": false
+  },
+  {
     "type": "[",
     "named": false
   },
@@ -1673,6 +1762,10 @@
   },
   {
     "type": "verbatim_open",
+    "named": true
+  },
+  {
+    "type": "weak_delimiting_modifier",
     "named": true
   },
   {

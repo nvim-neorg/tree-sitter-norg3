@@ -54,6 +54,11 @@ module.exports = grammar({
         $.inline_macro_close,
 
         $.heading_prefix,
+        $.unordered_list_prefix,
+
+        $.weak_delimiting_modifier,
+        $._dedent,
+        $._indent_seg_end,
 
         $._error_sentinel,
     ],
@@ -92,7 +97,9 @@ module.exports = grammar({
 
     inline: ($) => [$.paragraph_inner, $.verbatim_paragraph_inner],
 
-    supertypes: (_) => [],
+    supertypes: ($) => [
+        $.non_structural,
+    ],
 
     rules: {
         document: ($) => repeat(
@@ -100,6 +107,12 @@ module.exports = grammar({
                 $.paragraph,
                 $.heading,
                 $._newline,
+                $.strong_delimiting_modifier,
+                // fake weak delimiting modifier
+                alias(
+                    token(seq("--", repeat("-"), newline)),
+                    $.weak_delimiting_modifier
+                ),
             )
         ),
         paragraph: ($) => seq($.paragraph_inner, $.paragraph_break),
@@ -554,20 +567,52 @@ module.exports = grammar({
                 )
             ),
 
+        strong_delimiting_modifier: ($) => seq(token(seq("==", repeat("="))), $._newline),
+        horizontal_rule: ($) => seq(token(prec(1, seq("__", repeat("_")))), $._newline),
         heading: ($) =>
             prec.right(
                 seq(
                     $.heading_prefix,
                     whitespace,
-                    alias($.paragraph, $.inline),
-                    repeat(
+                    field(
+                        "title",
                         choice(
-                            $.heading,
-                            $.paragraph,
+                            alias($.paragraph, $.inline),
+                            $.slide,
+                            $.indent_segment,
+                        ),
+                    ),
+                    repeat(choice($.heading, $.non_structural, $._newline)),
+                    optional(choice($._dedent, $.weak_delimiting_modifier))
+                ),
+            ),
+        non_structural: ($) =>
+            choice(
+                $.paragraph,
+                // TODO: tag
+                $.horizontal_rule,
+            ),
+        slide: ($) =>
+            seq(
+                prec(1, ":"),
+                $._newline,
+                prec.right(repeat1($.non_structural)),
+            ),
+        indent_segment: ($) =>
+            prec.right(
+                seq(
+                    prec(1, "::"),
+                    $._newline,
+                    repeat1(
+                        choice(
+                            $.non_structural,
                             $._newline,
-                        )
+                        ),
+                    ),
+                    optional(
+                        choice($._indent_seg_end, $.weak_delimiting_modifier)
                     )
                 ),
-            )
+            ),
     },
 });
