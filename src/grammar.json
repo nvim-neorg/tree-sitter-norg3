@@ -1526,18 +1526,6 @@
         {
           "type": "STRING",
           "value": "]"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_link_end_flag"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
         }
       ]
     },
@@ -1569,6 +1557,22 @@
               {
                 "type": "SYMBOL",
                 "name": "uri"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "link_target_file"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "link_target_wiki"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "link_target_magic"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "link_target_timestamp"
               }
             ]
           }
@@ -1576,18 +1580,6 @@
         {
           "type": "STRING",
           "value": "}"
-        },
-        {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SYMBOL",
-              "name": "_link_end_flag"
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
         }
       ]
     },
@@ -1601,6 +1593,10 @@
           "value": "[^\\}]+"
         }
       }
+    },
+    "path": {
+      "type": "PATTERN",
+      "value": "[^\\:\\}]+"
     },
     "norg_file": {
       "type": "SEQ",
@@ -1619,8 +1615,15 @@
                   "type": "SEQ",
                   "members": [
                     {
-                      "type": "STRING",
-                      "value": "$"
+                      "type": "TOKEN",
+                      "content": {
+                        "type": "PREC",
+                        "value": 1,
+                        "content": {
+                          "type": "STRING",
+                          "value": "$"
+                        }
+                      }
                     },
                     {
                       "type": "CHOICE",
@@ -1695,13 +1698,8 @@
           "type": "FIELD",
           "name": "path",
           "content": {
-            "type": "ALIAS",
-            "content": {
-              "type": "PATTERN",
-              "value": "[^\\$\\:\\}]+"
-            },
-            "named": true,
-            "value": "norg_file_path"
+            "type": "SYMBOL",
+            "name": "path"
           }
         },
         {
@@ -1723,6 +1721,154 @@
               "type": "BLANK"
             }
           ]
+        }
+      ]
+    },
+    "link_target_file": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "STRING",
+              "value": "/"
+            }
+          },
+          "named": true,
+          "value": "file_prefix"
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PREC",
+            "value": 1,
+            "content": {
+              "type": "PATTERN",
+              "value": "\\p{Zs}+",
+              "flags": "u"
+            }
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "path"
+          }
+        }
+      ]
+    },
+    "link_target_wiki": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "STRING",
+              "value": "?"
+            }
+          },
+          "named": true,
+          "value": "wiki_prefix"
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PREC",
+            "value": 1,
+            "content": {
+              "type": "PATTERN",
+              "value": "\\p{Zs}+",
+              "flags": "u"
+            }
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "path"
+          }
+        }
+      ]
+    },
+    "link_target_magic": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "STRING",
+              "value": "#"
+            }
+          },
+          "named": true,
+          "value": "magic_prefix"
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PREC",
+            "value": 1,
+            "content": {
+              "type": "PATTERN",
+              "value": "\\p{Zs}+",
+              "flags": "u"
+            }
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "path"
+          }
+        }
+      ]
+    },
+    "link_target_timestamp": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "ALIAS",
+          "content": {
+            "type": "TOKEN",
+            "content": {
+              "type": "STRING",
+              "value": "@"
+            }
+          },
+          "named": true,
+          "value": "timestamp_prefix"
+        },
+        {
+          "type": "TOKEN",
+          "content": {
+            "type": "PREC",
+            "value": 1,
+            "content": {
+              "type": "PATTERN",
+              "value": "\\p{Zs}+",
+              "flags": "u"
+            }
+          }
+        },
+        {
+          "type": "FIELD",
+          "name": "value",
+          "content": {
+            "type": "SYMBOL",
+            "name": "path"
+          }
         }
       ]
     },
@@ -2270,10 +2416,6 @@
     {
       "type": "SYMBOL",
       "name": "inline_macro_close"
-    },
-    {
-      "type": "SYMBOL",
-      "name": "_link_end_flag"
     },
     {
       "type": "SYMBOL",

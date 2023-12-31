@@ -54,8 +54,6 @@ module.exports = grammar({
         $.inline_macro_open,
         $.inline_macro_close,
 
-        $._link_end_flag,
-
         $.heading_prefix,
 
         $._error_sentinel,
@@ -439,7 +437,6 @@ module.exports = grammar({
                 "[",
                 field("description", $.description),
                 "]",
-                optional($._link_end_flag),
             ),
         description: ($) => $.paragraph,
 
@@ -450,18 +447,22 @@ module.exports = grammar({
                     $.scope,
                     $.norg_file,
                     $.uri,
+                    $.link_target_file,
+                    $.link_target_wiki,
+                    $.link_target_magic,
+                    $.link_target_timestamp,
                 )),
                 "}",
-                optional($._link_end_flag),
             ),
         uri: (_) => token(prec(-1, /[^\}]+/)),
+        path: (_) => /[^\:\}]+/,
         norg_file: ($) =>
             seq(
                 ":",
                 optional(
                     choice(
                         seq(
-                            "$",
+                            token(prec(1, "$")),
                             choice(
                                 field("root", alias("/", $.current_workspace)),
                                 seq(field("root", alias(/[^\$\/\:\}]+/, $.workspace)), "/"),
@@ -470,9 +471,33 @@ module.exports = grammar({
                         field("root", alias(token(prec(1, "/")), $.file_root))
                     )
                 ),
-                field("path", alias(/[^\$\:\}]+/, $.norg_file_path)),
+                field("path", $.path),
                 ":",
                 optional(field("scope", $.scope)),
+            ),
+        link_target_file: ($) =>
+            seq(
+                alias(token("/"), $.file_prefix),
+                whitespace,
+                field("value", $.path),
+            ),
+        link_target_wiki: ($) =>
+            seq(
+                alias(token("?"), $.wiki_prefix),
+                whitespace,
+                field("value", $.path),
+            ),
+        link_target_magic: ($) =>
+            seq(
+                alias(token("#"), $.magic_prefix),
+                whitespace,
+                field("value", $.path),
+            ),
+        link_target_timestamp: ($) =>
+            seq(
+                alias(token("@"), $.timestamp_prefix),
+                whitespace,
+                field("value", $.path),
             ),
         scope: ($) =>
             seq(
