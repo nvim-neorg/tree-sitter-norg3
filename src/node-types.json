@@ -260,10 +260,6 @@
         {
           "type": "paragraph",
           "named": true
-        },
-        {
-          "type": "whitespace",
-          "named": true
         }
       ]
     }
