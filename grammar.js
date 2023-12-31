@@ -22,7 +22,6 @@ module.exports = grammar({
 
         $.non_open,
         $.non_close,
-        $.non_linkable,
 
         $.bold_open,
         $.bold_close,
@@ -60,6 +59,9 @@ module.exports = grammar({
     ],
 
     conflicts: ($) => [
+        [$._location, $.verbatim],
+        [$._location, $.math],
+        [$._location, $.inline_macro],
         [$.open_conflict, $.verbatim],
         [$.open_conflict, $.math],
         [$.open_conflict, $.inline_macro],
@@ -148,7 +150,7 @@ module.exports = grammar({
                     choice(
                         seq($.whitespace, alias($.non_close, $.punctuation)),
                         seq($.word, alias($.non_open, $.punctuation)),
-                        $.non_linkable,
+                        // $.non_linkable,
                         $.escape_sequence,
                         $.whitespace,
                         $.word,
@@ -165,10 +167,18 @@ module.exports = grammar({
                                 $.spoiler_open,
                                 $.superscript_open,
                                 $.subscript_open,
+                                prec(1, '['),
+                                prec(1, ']'),
+                                "{",
+                                // list of link target prefixes to make conflict
+                                // see link-11 ~ link-17
+                                "/",
+                                "#",
+                                "?",
+                                "=",
                             ),
                             $.punctuation,
                         ),
-                        alias("{", $.punctuation),
                         $.soft_break,
                         seq($.soft_break, alias($.non_close, $.punctuation)),
                     ),

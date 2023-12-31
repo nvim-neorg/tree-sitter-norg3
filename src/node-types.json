@@ -396,10 +396,6 @@
           "named": true
         },
         {
-          "type": "non_linkable",
-          "named": true
-        },
-        {
           "type": "punctuation",
           "named": true
         },
@@ -781,10 +777,6 @@
         },
         {
           "type": "math_open",
-          "named": true
-        },
-        {
-          "type": "non_linkable",
           "named": true
         },
         {
@@ -1464,10 +1456,6 @@
           "named": true
         },
         {
-          "type": "non_linkable",
-          "named": true
-        },
-        {
           "type": "punctuation",
           "named": true
         },
@@ -1605,10 +1593,6 @@
   },
   {
     "type": "math_open",
-    "named": true
-  },
-  {
-    "type": "non_linkable",
     "named": true
   },
   {
