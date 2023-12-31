@@ -40,7 +40,7 @@ free-01: Disallow escape sequence inside
     (paragraph_break)))
 
 ================================================================================
-free-02: Prevent non-free-form inside free-form
+free-02: free-form > non-free-form
 ================================================================================
 *|*|*
 
@@ -59,9 +59,10 @@ free-02: Prevent non-free-form inside free-form
     (bold
       (bold_open)
       (free_form_open)
-      (punctuation)
-      (word)
-      (punctuation)
+      (bold
+        (bold_open)
+        (word)
+        (bold_close))
       (free_form_close)
       (bold_close))
     (paragraph_break)))
@@ -195,7 +196,7 @@ free-10: Verbatim free-form attached modifier
       (free_form_open)
       (whitespace)
       (punctuation)
-      (punctuation)
+      (verbatim_open)
       (word)
       (whitespace)
       (free_form_close)
@@ -222,11 +223,26 @@ free-11: Prevent non-free-form inside free-form (verbatim)
     (verbatim
       (verbatim_open)
       (free_form_open)
-      (punctuation)
+      (verbatim_open)
       (word)
       (punctuation)
       (free_form_close)
       (verbatim_close))
+    (paragraph_break)))
+
+================================================================================
+free-12: free-form close > free-form open
+================================================================================
+*|/|*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (punctuation)
+      (free_form_close)
+      (bold_close))
     (paragraph_break)))
 
 ; vim:ts=2:sw=2:
