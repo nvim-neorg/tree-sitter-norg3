@@ -18,6 +18,22 @@
         "required": false,
         "types": [
           {
+            "type": "link_target_file",
+            "named": true
+          },
+          {
+            "type": "link_target_magic",
+            "named": true
+          },
+          {
+            "type": "link_target_timestamp",
+            "named": true
+          },
+          {
+            "type": "link_target_wiki",
+            "named": true
+          },
+          {
             "type": "norg_file",
             "named": true
           },
@@ -539,6 +555,22 @@
         "required": true,
         "types": [
           {
+            "type": "link_target_file",
+            "named": true
+          },
+          {
+            "type": "link_target_magic",
+            "named": true
+          },
+          {
+            "type": "link_target_timestamp",
+            "named": true
+          },
+          {
+            "type": "link_target_wiki",
+            "named": true
+          },
+          {
             "type": "norg_file",
             "named": true
           },
@@ -606,6 +638,110 @@
         },
         {
           "type": "title",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "link_target_file",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "path",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "file_prefix",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "link_target_magic",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "path",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "magic_prefix",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "link_target_timestamp",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "path",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "timestamp_prefix",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "link_target_wiki",
+    "named": true,
+    "fields": {
+      "value": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "path",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "wiki_prefix",
           "named": true
         }
       ]
@@ -683,7 +819,7 @@
         "required": true,
         "types": [
           {
-            "type": "norg_file_path",
+            "type": "path",
             "named": true
           }
         ]
@@ -1420,6 +1556,10 @@
     "named": true
   },
   {
+    "type": "file_prefix",
+    "named": true
+  },
+  {
     "type": "file_root",
     "named": true
   },
@@ -1456,6 +1596,10 @@
     "named": true
   },
   {
+    "type": "magic_prefix",
+    "named": true
+  },
+  {
     "type": "math_close",
     "named": true
   },
@@ -1468,15 +1612,15 @@
     "named": true
   },
   {
-    "type": "norg_file_path",
-    "named": true
-  },
-  {
     "type": "paragraph_break",
     "named": true
   },
   {
     "type": "param",
+    "named": true
+  },
+  {
+    "type": "path",
     "named": true
   },
   {
@@ -1520,6 +1664,10 @@
     "named": true
   },
   {
+    "type": "timestamp_prefix",
+    "named": true
+  },
+  {
     "type": "underline_close",
     "named": true
   },
@@ -1541,6 +1689,10 @@
   },
   {
     "type": "verbatim_open",
+    "named": true
+  },
+  {
+    "type": "wiki_prefix",
     "named": true
   },
   {

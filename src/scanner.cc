@@ -66,8 +66,6 @@ enum TokenType : char {
     INLINE_MACRO_OPEN,
     INLINE_MACRO_CLOSE,
 
-    LINK_END_FLAG,
-
     HEADING,
 
     ERROR_SENTINEL,
@@ -148,10 +146,6 @@ struct Scanner {
         // the external scanner don't try any recovery
         if (valid_symbols[ERROR_SENTINEL]) {
             return false;
-        }
-
-        if (valid_symbols[LINK_END_FLAG]) {
-            attached_modifiers.clear();
         }
 
         // We return false here to allow the lexer to fall back

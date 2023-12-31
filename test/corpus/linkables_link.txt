@@ -18,7 +18,7 @@ link-01: norg file type target
   (paragraph
     (link
       target: (norg_file
-        path: (norg_file_path)))
+        path: (path)))
     (paragraph_break)))
 
 ================================================================================
@@ -31,7 +31,7 @@ link-02: norg file type target with current workspace root
     (link
       target: (norg_file
         root: (current_workspace)
-        path: (norg_file_path)))
+        path: (path)))
     (paragraph_break)))
 
 ================================================================================
@@ -44,7 +44,7 @@ link-03: norg file type target with workspace root
     (link
       target: (norg_file
         root: (workspace)
-        path: (norg_file_path)))
+        path: (path)))
     (paragraph_break)))
 
 ================================================================================
@@ -57,7 +57,7 @@ link-04: norg file type target with file root
     (link
       target: (norg_file
         root: (file_root)
-        path: (norg_file_path)))
+        path: (path)))
     (paragraph_break)))
 
 ================================================================================
@@ -143,6 +143,28 @@ link-09: LTR rule 1
       (word)
       (verbatim_close))
       (punctuation)
+    (paragraph_break)))
+
+================================================================================
+link-10: don't break attached modifier
+================================================================================
+{* /heading} /italic/
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_heading
+          (heading_prefix)
+          (title
+            (open_conflict
+              (italic_open)
+              (word))))))
+    (whitespace)
+    (italic
+      (italic_open)
+      (word)
+      (italic_close))
     (paragraph_break)))
 
 ; vim:ts=2:sw=2:
