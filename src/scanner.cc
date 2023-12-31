@@ -32,8 +32,8 @@ enum TokenType : char {
 
     PUNCTUATION,
 
-    NON_OPEN,
-    NON_CLOSE,
+    NOT_OPEN,
+    NOT_CLOSE,
 
     BOLD_OPEN,
     BOLD_CLOSE,
@@ -159,7 +159,7 @@ struct Scanner {
      */
     bool scan_attached_modifier(const bool *valid_symbols, int32_t character) {
         bool link_mod_left = false;
-        if (character == ':' && valid_symbols[NON_OPEN]) {
+        if (character == ':' && valid_symbols[NOT_OPEN]) {
             character = lexer->lookahead;
             advance();
             link_mod_left = true;
@@ -173,9 +173,9 @@ struct Scanner {
             || (lexer->lookahead == character))
             return false;
 
-        // NON_CLOSE
-        if (valid_symbols[NON_CLOSE] && valid_symbols[close_token]) {
-            lexer->result_symbol = NON_CLOSE;
+        // NOT_CLOSE
+        if (valid_symbols[NOT_CLOSE] && valid_symbols[close_token]) {
+            lexer->result_symbol = NOT_CLOSE;
             return true;
         }
 
@@ -192,11 +192,11 @@ struct Scanner {
             }
             return true;
         }
-        // NON_OPEN
-        if (!link_mod_left && valid_symbols[NON_OPEN]) {
-            // there can be NON_OPEN even when BOLD_CLOSE is valid.
+        // NOT_OPEN
+        if (!link_mod_left && valid_symbols[NOT_OPEN]) {
+            // there can be NOT_OPEN even when BOLD_CLOSE is valid.
             // see att-11 for example
-            lexer->result_symbol = NON_OPEN;
+            lexer->result_symbol = NOT_OPEN;
             return true;
         }
         // _OPEN

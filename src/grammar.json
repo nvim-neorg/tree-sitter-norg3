@@ -7,13 +7,8 @@
         "type": "CHOICE",
         "members": [
           {
-            "type": "ALIAS",
-            "content": {
-              "type": "SYMBOL",
-              "name": "para"
-            },
-            "named": true,
-            "value": "paragraph"
+            "type": "SYMBOL",
+            "name": "paragraph"
           },
           {
             "type": "SYMBOL",
@@ -26,12 +21,12 @@
         ]
       }
     },
-    "para": {
+    "paragraph": {
       "type": "SEQ",
       "members": [
         {
           "type": "SYMBOL",
-          "name": "paragraph"
+          "name": "paragraph_inner"
         },
         {
           "type": "SYMBOL",
@@ -204,7 +199,7 @@
         ]
       }
     },
-    "paragraph": {
+    "paragraph_inner": {
       "type": "PREC_RIGHT",
       "value": 0,
       "content": {
@@ -223,7 +218,7 @@
                   "type": "ALIAS",
                   "content": {
                     "type": "SYMBOL",
-                    "name": "non_close"
+                    "name": "not_close"
                   },
                   "named": true,
                   "value": "punctuation"
@@ -241,7 +236,7 @@
                   "type": "ALIAS",
                   "content": {
                     "type": "SYMBOL",
-                    "name": "non_open"
+                    "name": "not_open"
                   },
                   "named": true,
                   "value": "punctuation"
@@ -323,7 +318,7 @@
                   "type": "ALIAS",
                   "content": {
                     "type": "SYMBOL",
-                    "name": "non_close"
+                    "name": "not_close"
                   },
                   "named": true,
                   "value": "punctuation"
@@ -334,7 +329,7 @@
         }
       }
     },
-    "verbatim_paragraph": {
+    "verbatim_paragraph_inner": {
       "type": "PREC_RIGHT",
       "value": 0,
       "content": {
@@ -353,7 +348,7 @@
                   "type": "ALIAS",
                   "content": {
                     "type": "SYMBOL",
-                    "name": "non_close"
+                    "name": "not_close"
                   },
                   "named": true,
                   "value": "punctuation"
@@ -371,7 +366,7 @@
                   "type": "ALIAS",
                   "content": {
                     "type": "SYMBOL",
-                    "name": "non_open"
+                    "name": "not_open"
                   },
                   "named": true,
                   "value": "punctuation"
@@ -495,7 +490,7 @@
                   "type": "ALIAS",
                   "content": {
                     "type": "SYMBOL",
-                    "name": "non_close"
+                    "name": "not_close"
                   },
                   "named": true,
                   "value": "punctuation"
@@ -559,7 +554,7 @@
           },
           {
             "type": "SYMBOL",
-            "name": "paragraph"
+            "name": "paragraph_inner"
           }
         ]
       }
@@ -657,7 +652,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "paragraph"
+                        "name": "paragraph_inner"
                       },
                       {
                         "type": "ALIAS",
@@ -700,7 +695,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "paragraph"
+              "name": "paragraph_inner"
             }
           ]
         },
@@ -751,7 +746,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "paragraph"
+                        "name": "paragraph_inner"
                       },
                       {
                         "type": "ALIAS",
@@ -794,7 +789,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "paragraph"
+              "name": "paragraph_inner"
             }
           ]
         },
@@ -845,7 +840,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "paragraph"
+                        "name": "paragraph_inner"
                       },
                       {
                         "type": "ALIAS",
@@ -888,7 +883,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "paragraph"
+              "name": "paragraph_inner"
             }
           ]
         },
@@ -939,7 +934,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "paragraph"
+                        "name": "paragraph_inner"
                       },
                       {
                         "type": "ALIAS",
@@ -982,7 +977,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "paragraph"
+              "name": "paragraph_inner"
             }
           ]
         },
@@ -1033,7 +1028,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "paragraph"
+                        "name": "paragraph_inner"
                       },
                       {
                         "type": "ALIAS",
@@ -1076,7 +1071,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "paragraph"
+              "name": "paragraph_inner"
             }
           ]
         },
@@ -1127,7 +1122,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "paragraph"
+                        "name": "paragraph_inner"
                       },
                       {
                         "type": "ALIAS",
@@ -1170,7 +1165,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "paragraph"
+              "name": "paragraph_inner"
             }
           ]
         },
@@ -1221,7 +1216,7 @@
                     "members": [
                       {
                         "type": "SYMBOL",
-                        "name": "paragraph"
+                        "name": "paragraph_inner"
                       },
                       {
                         "type": "ALIAS",
@@ -1264,7 +1259,7 @@
             },
             {
               "type": "SYMBOL",
-              "name": "paragraph"
+              "name": "paragraph_inner"
             }
           ]
         },
@@ -1318,7 +1313,7 @@
                       "members": [
                         {
                           "type": "SYMBOL",
-                          "name": "verbatim_paragraph"
+                          "name": "verbatim_paragraph_inner"
                         },
                         {
                           "type": "ALIAS",
@@ -1361,7 +1356,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "verbatim_paragraph"
+                "name": "verbatim_paragraph_inner"
               }
             ]
           },
@@ -1416,7 +1411,7 @@
                       "members": [
                         {
                           "type": "SYMBOL",
-                          "name": "verbatim_paragraph"
+                          "name": "verbatim_paragraph_inner"
                         },
                         {
                           "type": "ALIAS",
@@ -1459,7 +1454,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "verbatim_paragraph"
+                "name": "verbatim_paragraph_inner"
               }
             ]
           },
@@ -1514,7 +1509,7 @@
                       "members": [
                         {
                           "type": "SYMBOL",
-                          "name": "verbatim_paragraph"
+                          "name": "verbatim_paragraph_inner"
                         },
                         {
                           "type": "ALIAS",
@@ -1557,7 +1552,7 @@
               },
               {
                 "type": "SYMBOL",
-                "name": "verbatim_paragraph"
+                "name": "verbatim_paragraph_inner"
               }
             ]
           },
@@ -1603,7 +1598,7 @@
     },
     "description": {
       "type": "SYMBOL",
-      "name": "paragraph"
+      "name": "paragraph_inner"
     },
     "_location": {
       "type": "SEQ",
@@ -2220,7 +2215,7 @@
             "type": "ALIAS",
             "content": {
               "type": "SYMBOL",
-              "name": "para"
+              "name": "paragraph"
             },
             "named": true,
             "value": "inline"
@@ -2235,13 +2230,8 @@
                   "name": "heading"
                 },
                 {
-                  "type": "ALIAS",
-                  "content": {
-                    "type": "SYMBOL",
-                    "name": "para"
-                  },
-                  "named": true,
-                  "value": "paragraph"
+                  "type": "SYMBOL",
+                  "name": "paragraph"
                 },
                 {
                   "type": "SYMBOL",
@@ -2411,11 +2401,11 @@
     },
     {
       "type": "SYMBOL",
-      "name": "non_open"
+      "name": "not_open"
     },
     {
       "type": "SYMBOL",
-      "name": "non_close"
+      "name": "not_close"
     },
     {
       "type": "SYMBOL",
@@ -2507,8 +2497,8 @@
     }
   ],
   "inline": [
-    "paragraph",
-    "verbatim_paragraph"
+    "paragraph_inner",
+    "verbatim_paragraph_inner"
   ],
   "supertypes": []
 }
