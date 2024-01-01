@@ -28,7 +28,11 @@ enum TokenType : char {
     WHITESPACE,
 
     PARAGRAPH_BREAK,
+    FAILED_CLOSE,
     NEWLINE,
+    DESC_CLOSE,
+    CURLY_CLOSE,
+    INSIDE_VERBATIM,
 
     PUNCTUATION,
 
@@ -187,7 +191,13 @@ struct Scanner {
         }
 
         // _CLOSE
-        if (attached_modifiers[kind_token] > 0 && valid_symbols[close_token] && !is_word(lexer->lookahead)) {
+        if ((valid_symbols[close_token] || valid_symbols[FAILED_CLOSE]) && !is_word(lexer->lookahead)) {
+            if (
+                !valid_symbols[close_token] && 
+                valid_symbols[FAILED_CLOSE]) {
+                lexer->result_symbol = FAILED_CLOSE;
+                return true;
+            }
             attached_modifiers[kind_token] -= 1;
             lexer->result_symbol = close_token;
             lexer->mark_end(lexer);
@@ -280,7 +290,9 @@ struct Scanner {
             skip();
         if (is_newline(lexer->lookahead)) {
             advance();
-            lexer->mark_end(lexer);
+            if (!valid_symbols[FAILED_CLOSE]) {
+                lexer->mark_end(lexer);
+            }
 
             if (valid_symbols[NEWLINE]) {
                 // cancel single-line, this occurs when heading has slide/indent_segment prefixs
@@ -290,6 +302,10 @@ struct Scanner {
             }
             // when parsing single-line paragraph (aka. title,) return paragraph break immediately
             if (single_line_mode) {
+                if (valid_symbols[FAILED_CLOSE]) {
+                    lexer->result_symbol = FAILED_CLOSE;
+                    return true;
+                }
                 single_line_mode = false;
                 lexer->result_symbol = PARAGRAPH_BREAK;
                 return true;
@@ -298,6 +314,10 @@ struct Scanner {
             while (is_whitespace(lexer->lookahead))
                 skip();
             if (lexer->eof(lexer) || is_newline(lexer->lookahead)) {
+                if (valid_symbols[FAILED_CLOSE]) {
+                    lexer->result_symbol = FAILED_CLOSE;
+                    return true;
+                }
                 lexer->result_symbol = PARAGRAPH_BREAK;
                 attached_modifiers.clear();
                 return true;
@@ -311,6 +331,10 @@ struct Scanner {
                     skip();
                 }
                 if (iswspace(lexer->lookahead)) {
+                    if (valid_symbols[FAILED_CLOSE]) {
+                        lexer->result_symbol = FAILED_CLOSE;
+                        return true;
+                    }
                     lexer->result_symbol = PARAGRAPH_BREAK;
                     attached_modifiers.clear();
                     return true;
@@ -329,6 +353,10 @@ struct Scanner {
         // We return false here to allow the lexer to fall back
         // to the grammar, which allows the existence of `\0`.
         if (lexer->eof(lexer)) {
+            if (valid_symbols[FAILED_CLOSE]) {
+                lexer->result_symbol = FAILED_CLOSE;
+                return true;
+            }
             if (valid_symbols[PARAGRAPH_BREAK]) {
                 lexer->result_symbol = PARAGRAPH_BREAK;
                 return true;
@@ -352,8 +380,32 @@ struct Scanner {
             }
         }
 
+        lexer->mark_end(lexer);
         if (iswspace(lexer->lookahead))
             return scan_newline(valid_symbols);
+
+        if (valid_symbols[INSIDE_VERBATIM] && lexer->lookahead == ']') {
+            advance();
+            lexer->mark_end(lexer);
+            lexer->result_symbol = PUNCTUATION;
+            return true;
+        }
+        if (valid_symbols[FAILED_CLOSE] && (lexer->lookahead == '}' || lexer->lookahead == ']')) {
+            lexer->result_symbol = FAILED_CLOSE;
+            return true;
+        }
+        if (valid_symbols[DESC_CLOSE] && lexer->lookahead == ']') {
+            advance();
+            lexer->mark_end(lexer);
+            lexer->result_symbol = DESC_CLOSE;
+            return true;
+        }
+        if (valid_symbols[CURLY_CLOSE] && lexer->lookahead == '}') {
+            advance();
+            lexer->mark_end(lexer);
+            lexer->result_symbol = CURLY_CLOSE;
+            return true;
+        }
 
         // take one lookahead first as we need at least two lookahead to distinguish
         // detached modifiers from others (e.g. heading_prefix and bold_open)
