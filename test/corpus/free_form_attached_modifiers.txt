@@ -1,0 +1,247 @@
+================================================================================
+free-00: Standalone markup
+================================================================================
+*|word|*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (word)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+free-01: Disallow escape sequence inside
+================================================================================
+*|\|*
+
+*|word\|*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (punctuation)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break))
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (word)
+      (punctuation)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+free-02: free-form > non-free-form
+================================================================================
+*|*|*
+
+*|*word*|*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (punctuation)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break))
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (bold
+        (bold_open)
+        (word)
+        (bold_close))
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+free-03: Prevent free-form inside non-free-form
+================================================================================
+*word *|word|*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (whitespace)
+      (punctuation)
+      (punctuation)
+      (word)
+      (punctuation)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+free-04: Only whitespace
+================================================================================
+*| |*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (whitespace)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+free-05: Whitespace on start
+================================================================================
+*| word|*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (whitespace)
+      (word)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+free-06: Whitespace on end
+================================================================================
+*|word |*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (word)
+      (whitespace)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+free-07: Whitespace on start and end
+================================================================================
+*| word |*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (whitespace)
+      (word)
+      (whitespace)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+free-08: Soft break at start
+================================================================================
+*|
+word|*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (soft_break)
+      (word)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+free-09: Soft break at end
+================================================================================
+*|word
+|*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (word)
+      (soft_break)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+free-10: Verbatim free-form attached modifier
+================================================================================
+`| \`word |`
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (free_form_open)
+      (whitespace)
+      (punctuation)
+      (verbatim_open)
+      (word)
+      (whitespace)
+      (free_form_close)
+      (verbatim_close))
+    (paragraph_break)))
+
+================================================================================
+free-11: Prevent non-free-form inside free-form (verbatim)
+================================================================================
+`|`|`
+
+`|`word`|`
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (free_form_open)
+      (punctuation)
+      (free_form_close)
+      (verbatim_close))
+    (paragraph_break))
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (free_form_open)
+      (verbatim_open)
+      (word)
+      (punctuation)
+      (free_form_close)
+      (verbatim_close))
+    (paragraph_break)))
+
+================================================================================
+free-12: free-form close > free-form open
+================================================================================
+*|/|*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (punctuation)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+; vim:ts=2:sw=2:

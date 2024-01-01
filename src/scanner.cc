@@ -1,7 +1,9 @@
+#include <bitset>
 #include <cwctype>
 #include <iostream>
 #include <algorithm>
 #include <cstring>
+#include <ratio>
 #include <unordered_map>
 #include <vector>
 #include <list>
@@ -25,26 +27,124 @@ using namespace std;
 enum TokenType : char {
     WHITESPACE,
 
+    PARAGRAPH_BREAK,
+    FAILED_CLOSE,
+    NEWLINE,
+    DESC_CLOSE,
+    CURLY_CLOSE,
+    INSIDE_VERBATIM,
+
+    PUNCTUATION,
+
+    NOT_OPEN,
+    NOT_CLOSE,
+
+    BOLD_OPEN,
+    BOLD_CLOSE,
+
+    ITALIC_OPEN,
+    ITALIC_CLOSE,
+
+    UNDERLINE_OPEN,
+    UNDERLINE_CLOSE,
+
+    STRIKETHROUGH_OPEN,
+    STRIKETHROUGH_CLOSE,
+
+    SPOILER_OPEN,
+    SPOILER_CLOSE,
+
+    SUPERSCRIPT_OPEN,
+    SUPERSCRIPT_CLOSE,
+
+    SUBSCRIPT_OPEN,
+    SUBSCRIPT_CLOSE,
+
+    VERBATIM_OPEN,
+    VERBATIM_CLOSE,
+
+    INLINE_MATH_OPEN,
+    INLINE_MATH_CLOSE,
+
+    INLINE_MACRO_OPEN,
+    INLINE_MACRO_CLOSE,
+
     HEADING,
     UNORDERED_LIST,
-    ORDERED_LIST,
-    QUOTE,
 
     WEAK_DELIMITING_MODIFIER,
-
     DEDENT,
+    INDENT_SEGMENT_END,
+
+    ERROR_SENTINEL,
 };
+
+TokenType char_to_attached_mod(int32_t c) {
+    switch (c) {
+        case '*':
+            return BOLD_OPEN;
+        case '/':
+            return ITALIC_OPEN;
+        case '_':
+            return UNDERLINE_OPEN;
+        case '-':
+            return STRIKETHROUGH_OPEN;
+        case '!':
+            return SPOILER_OPEN;
+        case '^':
+            return SUPERSCRIPT_OPEN;
+        case ',':
+            return SUBSCRIPT_OPEN;
+        case '`':
+            return VERBATIM_OPEN;
+        case '$':
+            return INLINE_MATH_OPEN;
+        case '&':
+            return INLINE_MACRO_OPEN;
+    }
+
+    return WHITESPACE;
+}
 
 struct Scanner {
     TSLexer* lexer;
-    // Stores indentation data related to headings, lists and other nestable item types.
-    std::unordered_map< char, std::vector<uint16_t> > indents;
+    std::unordered_map<char, std::vector<uint16_t>> indents;
+    std::unordered_map<TokenType, size_t> attached_modifiers;
+
+    bool single_line_mode;
+
+    Scanner() {
+        attached_modifiers.clear();
+        attached_modifiers[BOLD_OPEN] = 0;
+        attached_modifiers[ITALIC_OPEN] = 0;
+        attached_modifiers[UNDERLINE_OPEN] = 0;
+        attached_modifiers[STRIKETHROUGH_OPEN] = 0;
+        attached_modifiers[SPOILER_OPEN] = 0;
+        attached_modifiers[SUPERSCRIPT_OPEN] = 0;
+        attached_modifiers[SUBSCRIPT_OPEN] = 0;
+        attached_modifiers[VERBATIM_OPEN] = 0;
+        attached_modifiers[INLINE_MATH_OPEN] = 0;
+        attached_modifiers[INLINE_MACRO_OPEN] = 0;
+        single_line_mode = false;
+    }
 
     /**
      * Returns `true` if the character provided is a separator character (but not a newline).
      */
     bool is_whitespace(int32_t character) {
         return iswspace(character) && character != '\n' && character != '\r';
+    }
+    /**
+     * Returns `true` if the character provided is neither whitespace nor punctuation
+     */
+    bool is_word(int32_t character) {
+        return character && !iswspace(character) && !iswpunct(character);
+    }
+    /**
+     * Returns `true` if the character provided is either \n or \r
+     */
+    bool is_newline(int32_t character) {
+        return character == '\n' || character == '\r';
     }
 
     /**
@@ -63,11 +163,206 @@ struct Scanner {
         return -1;
     }
 
+    /**
+     * this function may advance more than one character
+     * put this at the bottom of `scan()`
+     */
+    bool scan_attached_modifier(const bool *valid_symbols, int32_t character) {
+        bool link_mod_left = false;
+        if (character == ':' && valid_symbols[NOT_OPEN]) {
+            character = lexer->lookahead;
+            advance();
+            link_mod_left = true;
+        }
+        const TokenType kind_token = char_to_attached_mod(character);
+        const TokenType close_token = (TokenType)(kind_token + 1);
+        if ((kind_token == 0)
+            // 5th case in link-mod-00
+            || (link_mod_left && valid_symbols[close_token])
+            // repeated modifier
+            || (lexer->lookahead == character))
+            return false;
+
+        // NOT_CLOSE
+        if (valid_symbols[NOT_CLOSE] && valid_symbols[close_token]) {
+            lexer->mark_end(lexer);
+            lexer->result_symbol = NOT_CLOSE;
+            return true;
+        }
+
+        // _CLOSE
+        if ((valid_symbols[close_token] || valid_symbols[FAILED_CLOSE]) && !is_word(lexer->lookahead)) {
+            if (
+                !valid_symbols[close_token] && 
+                valid_symbols[FAILED_CLOSE]) {
+                lexer->result_symbol = FAILED_CLOSE;
+                return true;
+            }
+            attached_modifiers[kind_token] -= 1;
+            lexer->result_symbol = close_token;
+            lexer->mark_end(lexer);
+            if (lexer->lookahead == ':') {
+                advance();
+                if (is_word(lexer->lookahead)) {
+                    lexer->mark_end(lexer);
+                }
+            }
+            return true;
+        }
+        // NOT_OPEN
+        if (!link_mod_left && valid_symbols[NOT_OPEN]) {
+            // there can be NOT_OPEN even when BOLD_CLOSE is valid.
+            // see att-11 for example
+            lexer->mark_end(lexer);
+            lexer->result_symbol = NOT_OPEN;
+            return true;
+        }
+        // _OPEN
+        if (valid_symbols[kind_token] && lexer->lookahead && !iswspace(lexer->lookahead)) {
+            lexer->mark_end(lexer);
+            // solves free-02 and att-16:
+            // check if valid [free-form-]close token follows
+            if (lexer->lookahead == '|')
+                advance();
+            const int32_t next_char = lexer->lookahead;
+            const TokenType next_token = char_to_attached_mod(next_char);
+            if (next_token != 0 && attached_modifiers[next_token]) {
+                advance();
+                if (!lexer->lookahead || !is_word(lexer->lookahead) && lexer->lookahead != next_char) {
+                    lexer->result_symbol = PUNCTUATION;
+                    return true;
+                }
+            }
+
+            attached_modifiers[kind_token] += 1;
+            lexer->result_symbol = kind_token;
+            return true;
+        }
+
+        return false;
+    }
+
+    bool scan_detached_modifier(const bool *valid_symbols, int32_t character, TokenType kind) {
+        std::vector<uint16_t>& indent_vector = indents[character];
+        size_t count = 1;
+        while (lexer->lookahead == character) {
+            count++;
+            advance();
+        }
+
+        // Every detached modifier must be immediately followed by whitespace. If it is not, return false.
+        if (!is_whitespace(lexer->lookahead)) {
+            // There is an edge case that can be parsed here however - the weak delimiting modifier may
+            // consist of two or more `-` characters, and must be immediately succeeded with a newline.
+            // If those criteria are met, return the `WEAK_DELIMITING_MODIFIER` instead.
+            if (character == '-' && count >= 2 && is_newline(lexer->lookahead)) {
+                // Advance past the newline as well.
+                advance_newline();
+
+                // FIXME: weak delimiting modifier should be able to used with other detached modifiers
+                if (!valid_symbols[INDENT_SEGMENT_END])
+                    indents['*'].pop_back();
+                // When `mark_end()` is called again we essentially move the previous checkpoint to the new "head".
+                lexer->mark_end(lexer);
+                lexer->result_symbol = WEAK_DELIMITING_MODIFIER;
+                return true;
+            }
+
+            return false;
+        }
+
+        if (valid_symbols[DEDENT] && !indent_vector.empty() && count <= indent_vector.back()) {
+            indent_vector.pop_back();
+            lexer->result_symbol = DEDENT;
+            return true;
+        }
+
+        indent_vector.push_back(count);
+        lexer->mark_end(lexer);
+        lexer->result_symbol = kind;
+        if (kind == HEADING)
+            single_line_mode = true;
+        return true;
+    }
+
+    bool scan_newline(const bool *valid_symbols) {
+        while (is_whitespace(lexer->lookahead))
+            skip();
+        if (is_newline(lexer->lookahead)) {
+            advance();
+            if (!valid_symbols[FAILED_CLOSE]) {
+                lexer->mark_end(lexer);
+            }
+
+            if (valid_symbols[NEWLINE]) {
+                // cancel single-line, this occurs when heading has slide/indent_segment prefixs
+                single_line_mode = false;
+                lexer->result_symbol = NEWLINE;
+                return true;
+            }
+            // when parsing single-line paragraph (aka. title,) return paragraph break immediately
+            if (single_line_mode) {
+                if (valid_symbols[FAILED_CLOSE]) {
+                    lexer->result_symbol = FAILED_CLOSE;
+                    return true;
+                }
+                single_line_mode = false;
+                lexer->result_symbol = PARAGRAPH_BREAK;
+                return true;
+            }
+
+            while (is_whitespace(lexer->lookahead))
+                skip();
+            if (lexer->eof(lexer) || is_newline(lexer->lookahead)) {
+                if (valid_symbols[FAILED_CLOSE]) {
+                    lexer->result_symbol = FAILED_CLOSE;
+                    return true;
+                }
+                lexer->result_symbol = PARAGRAPH_BREAK;
+                attached_modifiers.clear();
+                return true;
+            }
+            if (lexer->lookahead == '*' || lexer->lookahead == '-' || lexer->lookahead == '_' || lexer->lookahead == '=') {
+                int32_t character = lexer->lookahead;
+                skip();
+                size_t count = 1;
+                while (lexer->lookahead == character) {
+                    count++;
+                    skip();
+                }
+                if (iswspace(lexer->lookahead)) {
+                    if (valid_symbols[FAILED_CLOSE]) {
+                        lexer->result_symbol = FAILED_CLOSE;
+                        return true;
+                    }
+                    lexer->result_symbol = PARAGRAPH_BREAK;
+                    attached_modifiers.clear();
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     bool scan(const bool *valid_symbols) {
+        // the external scanner don't try any recovery
+        if (valid_symbols[ERROR_SENTINEL]) {
+            return false;
+        }
+
         // We return false here to allow the lexer to fall back
         // to the grammar, which allows the existence of `\0`.
-        if (lexer->eof(lexer))
+        if (lexer->eof(lexer)) {
+            if (valid_symbols[FAILED_CLOSE]) {
+                lexer->result_symbol = FAILED_CLOSE;
+                return true;
+            }
+            if (valid_symbols[PARAGRAPH_BREAK]) {
+                lexer->result_symbol = PARAGRAPH_BREAK;
+                return true;
+            }
             return false;
+        }
 
         // If we are at the beginning of a line, parse any whitespace that we encounter.
         // This is then returned as `$._preceding_whitespace`, which is part of the `extras`
@@ -85,87 +380,60 @@ struct Scanner {
             }
         }
 
-        // If the parser expects a heading, list type or quote then attempt to parse said item.
-        if ((valid_symbols[HEADING] && lexer->lookahead == '*') || (valid_symbols[UNORDERED_LIST] && lexer->lookahead == '-') || (valid_symbols[ORDERED_LIST] && lexer->lookahead == '~') || (valid_symbols[QUOTE] && lexer->lookahead == '>')) {
-            int32_t character = lexer->lookahead;
-            std::vector<uint16_t>& indent_vector = indents[lexer->lookahead];
-            size_t count = 0;
+        lexer->mark_end(lexer);
+        if (iswspace(lexer->lookahead))
+            return scan_newline(valid_symbols);
 
-            // We create a "checkpoint" for ourselves here. This allows us to parse as much as we want,
-            // and if we encounter something unexpected (i.e. no whitespace after the parsed characters)
-            // then we can `return false` and fall back to the grammar instead.
+        if (valid_symbols[INSIDE_VERBATIM] && lexer->lookahead == ']') {
+            advance();
             lexer->mark_end(lexer);
-
-            // We may encounter an arbitrary amount of characters, so parse those here.
-            while (lexer->lookahead == character) {
-                count++;
-                advance();
-            }
-
-            // Every detached modifier must be immediately followed by whitespace. If it is not, return false.
-            if (!is_whitespace(lexer->lookahead)) {
-                // There is an edge case that can be parsed here however - the weak delimiting modifier may
-                // consist of two or more `-` characters, and must be immediately succeeded with a newline.
-                // If those criteria are met, return the `WEAK_DELIMITING_MODIFIER` instead.
-                if (character == '-' && count >= 2 && (lexer->lookahead == '\n' || lexer->lookahead == '\r')) {
-                    // Advance past the newline as well.
-                    advance();
-
-                    // When `mark_end()` is called again we essentially move the previous checkpoint to the new "head".
-                    lexer->mark_end(lexer);
-                    lexer->result_symbol = WEAK_DELIMITING_MODIFIER;
-                    return true;
-                }
-
-                return false;
-            }
-
-            // The grammar tells us when it expects certain symbols. If we are expecting a `$._dedent` node
-            // and there is some valid data in our indent vector then we can issue a DEDENT which essentially
-            // terminates the current heading.
-            // Note how this logic is processed only after we parse another object of the same type, say
-            // another heading. This allows us to create a zero-width DEDENT node with the previous checkpoint
-            // that we set at the beginning of this block, then have the lexer be called *again* but since we previously
-            // generated a DEDENT node `valid_symbols[DEDENT]` will be `false` and we will fall through to the
-            // regular heading logic. Another win for ingenuity.
-            //
-            // To illustrate, consider:
-            // * Title
-            // ** Title
-            // * Title
-            //
-            // We parse the first heading and the second heading just fine, but when we parse the last
-            // heading `valid_symbols[DEDENT]` is `true`, the indent vector is not empty and the `count`
-            // (which would be `1` in this case) is less than the last element in the indent vector (`2`,
-            // since our last heading is of level 2). This triggers us to generate a zero width DEDENT node,
-            // terminating the level 2 heading, then the custom lexer is invoked yet again and since we've
-            // already closed the previous heading treesitter no longer expects a DEDENT node and this statement
-            // falls through to the other branch, parsing the level 1 heading.
-            if (valid_symbols[DEDENT] && !indent_vector.empty() && count <= indent_vector.back()) {
-                indent_vector.pop_back();
-                lexer->result_symbol = DEDENT;
-                return true;
-            } else {
-                // We track the indentation level of the object we just parsed by putting it in
-                // the indent vector, update our "head" to be past the thing we just parsed by calling
-                // `mark_end`, then return the node. Simple.
-                indent_vector.push_back(count);
-                lexer->mark_end(lexer);
-                switch (character) {
-                    case '*': lexer->result_symbol = HEADING; break;
-                    case '-': lexer->result_symbol = UNORDERED_LIST; break;
-                    case '~': lexer->result_symbol = ORDERED_LIST; break;
-                    case '>': lexer->result_symbol = QUOTE; break;
-                }
-                return true;
-            }
+            lexer->result_symbol = PUNCTUATION;
+            return true;
+        }
+        if (valid_symbols[FAILED_CLOSE] && (lexer->lookahead == '}' || lexer->lookahead == ']')) {
+            lexer->result_symbol = FAILED_CLOSE;
+            return true;
+        }
+        if (valid_symbols[DESC_CLOSE] && lexer->lookahead == ']') {
+            advance();
+            lexer->mark_end(lexer);
+            lexer->result_symbol = DESC_CLOSE;
+            return true;
+        }
+        if (valid_symbols[CURLY_CLOSE] && lexer->lookahead == '}') {
+            advance();
+            lexer->mark_end(lexer);
+            lexer->result_symbol = CURLY_CLOSE;
+            return true;
         }
 
-        return false;
+        // take one lookahead first as we need at least two lookahead to distinguish
+        // detached modifiers from others (e.g. heading_prefix and bold_open)
+        lexer->mark_end(lexer);
+        const int32_t character = lexer->lookahead;
+        advance();
+
+        if (valid_symbols[HEADING] && character == '*' && (lexer->lookahead == '*' || is_whitespace(lexer->lookahead)))
+            return scan_detached_modifier(valid_symbols, character, HEADING);
+        if ((valid_symbols[UNORDERED_LIST] || valid_symbols[WEAK_DELIMITING_MODIFIER]) && character == '-' && (lexer->lookahead == '-' || is_whitespace(lexer->lookahead)))
+            return scan_detached_modifier(valid_symbols, character, UNORDERED_LIST);
+
+        // TODO: add other detached modifiers
+
+        // this should be end of scan because attached modifiers need more than two lookaheads
+        return scan_attached_modifier(valid_symbols, character);
     }
 
     void skip() { lexer->advance(lexer, true); }
     void advance() { lexer->advance(lexer, false); }
+    void advance_newline() {
+        if (lexer->lookahead == '\r') {
+            advance();
+            if (lexer->lookahead == '\n' && !lexer->eof(lexer)) advance();
+        } else {
+            advance();
+        }
+    }
 };
 
 extern "C" {
@@ -184,24 +452,9 @@ extern "C" {
 
     unsigned tree_sitter_norg_external_scanner_serialize(void *payload,
             char *buffer) {
-        Scanner* scanner = static_cast<Scanner*>(payload);
-
+        Scanner* scanner = static_cast<Scanner* >(payload);
         size_t total_size = 0;
-
-        // The serialization format feels like magic initially but is quite simple.
-        // We must somehow serialize a complex data type like a hashmap into a single
-        // array of (by default) 1024 bytes of data.
-        //
-        // We do this by unravelling each element of the hashmap into a format that looks
-        // like this:
-        //
-        // <char> <vector-size> <data>
-        //
-        // Where `char` is the key of the unordered map entry and `vector-size` is the size
-        // of the data contained within the value of the hashmap entry.
-        //
-        // This data can be stored contiguously in memory without needing terminator characters
-        // or the like thanks to the `vector-size` element.
+        buffer[total_size++] = scanner->single_line_mode;
 
         // NOTE: We cannot use range-based for loops as they are a post C++11 addition. Fun.
         for (std::unordered_map< char, std::vector<uint16_t> >::iterator kv = scanner->indents.begin(); kv != scanner->indents.end(); ++kv) {
@@ -220,17 +473,13 @@ extern "C" {
     void tree_sitter_norg_external_scanner_deserialize(void *payload,
             const char *buffer,
             unsigned length) {
-        if (length == 0)
-            return;
-
         Scanner* scanner = static_cast<Scanner*>(payload);
-
-        // See the serialization function to understand how the format is specified.
-        // This function is simple in that it extracts the data out of the serialization
-        // format and puts it back into the correct C++ containers, all while trying really
-        // hard not to leak any memory :p
-
+        if (length == 0) {
+            scanner->attached_modifiers.clear();
+            return;
+        }
         size_t head = 0;
+        scanner->single_line_mode = buffer[head++];
 
         while (head < length) {
             char key = buffer[head];

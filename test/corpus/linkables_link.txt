@@ -1,0 +1,319 @@
+================================================================================
+link-00: Standalone link
+================================================================================
+{word}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (uri))
+    (paragraph_break)))
+
+================================================================================
+link-01: norg file type target
+================================================================================
+{:word:}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (norg_file
+        path: (path)))
+    (paragraph_break)))
+
+================================================================================
+link-02: norg file type target with current workspace root
+================================================================================
+{:$/word:}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (norg_file
+        root: (current_workspace)
+        path: (path)))
+    (paragraph_break)))
+
+================================================================================
+link-03: norg file type target with workspace root
+================================================================================
+{:$word/word:}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (norg_file
+        root: (workspace)
+        path: (path)))
+    (paragraph_break)))
+
+================================================================================
+link-04: norg file type target with file root
+================================================================================
+{:/word:}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (norg_file
+        root: (file_root)
+        path: (path)))
+    (paragraph_break)))
+
+================================================================================
+link-05: scope type target (heading)
+================================================================================
+{** word}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_heading
+          (heading_prefix)
+          (title
+            (word)))))
+    (paragraph_break)))
+
+================================================================================
+link-06: scope type target (footnote)
+================================================================================
+{^ word}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_footnote
+          (footnote_prefix)
+          (title
+            (word)))))
+    (paragraph_break)))
+
+================================================================================
+link-07: scope type target (definition)
+================================================================================
+{$ word}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_definition
+          (definition_prefix)
+          (title
+            (word)))))
+    (paragraph_break)))
+
+================================================================================
+link-08: multiple scoped target
+================================================================================
+{* word : ** word : ^ word}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_heading
+          (heading_prefix)
+          (title
+            (word)))
+        (link_scope_heading
+          (heading_prefix)
+          (title
+            (word)))
+        (link_scope_footnote
+          (footnote_prefix)
+          (title
+            (word)))))
+    (paragraph_break)))
+
+================================================================================
+link-09: LTR rule 1
+================================================================================
+`{* heading`}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (punctuation)
+      (punctuation)
+      (whitespace)
+      (word)
+      (verbatim_close))
+      (punctuation)
+    (paragraph_break)))
+
+================================================================================
+link-10: don't break attached modifier
+================================================================================
+{* /heading} /italic/
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_heading
+          (heading_prefix)
+          (title
+            (open_conflict
+              (italic_open)
+              (word))))))
+    (whitespace)
+    (italic
+      (italic_open)
+      (word)
+      (italic_close))
+    (paragraph_break)))
+
+================================================================================
+link-11: Verbatim > link
+================================================================================
+`{* word}`
+
+{* `word}`}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (punctuation)
+      (punctuation)
+      (whitespace)
+      (word)
+      (punctuation)
+      (verbatim_close))
+    (paragraph_break))
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_heading
+          (heading_prefix)
+          (title
+            (open_conflict
+              (verbatim_open)
+              (word))))))
+    (open_conflict
+      (verbatim_open)
+      (punctuation))
+    (paragraph_break)))
+
+================================================================================
+link-12: free-form verbatim > link
+================================================================================
+{* `|word}|`}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_heading
+          (heading_prefix)
+          (title
+            (verbatim
+              (verbatim_open)
+              (free_form_open)
+              (word)
+              (punctuation)
+              (free_form_close)
+              (verbatim_close))))))
+    (paragraph_break)))
+
+================================================================================
+link-12: escape sequence > link
+================================================================================
+{* word\}}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_heading
+          (heading_prefix)
+          (title
+            (word)
+            (escape_sequence)))))
+    (paragraph_break)))
+
+================================================================================
+link-13: punctuation > link
+================================================================================
+{* word}}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_heading
+          (heading_prefix)
+          (title
+            (word)))))
+    (punctuation)
+    (paragraph_break)))
+
+================================================================================
+link-14: verbatim > link wiki target prefix
+================================================================================
+`{? word}`
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (punctuation)
+      (punctuation)
+      (whitespace)
+      (word)
+      (punctuation)
+      (verbatim_close))
+    (paragraph_break)))
+
+================================================================================
+link-15: link wiki target prefix > unclosed verbatim
+================================================================================
+`{? word}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (open_conflict
+      (verbatim_open)
+      (link
+        target: (link_target_wiki
+          (wiki_prefix)
+          value: (path))))
+    (paragraph_break)))
+
+================================================================================
+link-16: verbatim > link file target prefix
+================================================================================
+`{/ word}`
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (punctuation)
+      (punctuation)
+      (whitespace)
+      (word)
+      (punctuation)
+      (verbatim_close))
+    (paragraph_break)))
+
+================================================================================
+link-17: link file target prefix > unclosed verbatim
+================================================================================
+`{/ word}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (open_conflict
+      (verbatim_open)
+      (link
+        target: (link_target_file
+          (file_prefix)
+          value: (path))))
+    (paragraph_break)))
+
+; vim:ts=2:sw=2:
