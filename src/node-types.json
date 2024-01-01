@@ -1,5 +1,51 @@
 [
   {
+    "type": "att_mod",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "bold",
+        "named": true
+      },
+      {
+        "type": "inline_macro",
+        "named": true
+      },
+      {
+        "type": "italic",
+        "named": true
+      },
+      {
+        "type": "math",
+        "named": true
+      },
+      {
+        "type": "spoiler",
+        "named": true
+      },
+      {
+        "type": "strikethrough",
+        "named": true
+      },
+      {
+        "type": "subscript",
+        "named": true
+      },
+      {
+        "type": "superscript",
+        "named": true
+      },
+      {
+        "type": "underline",
+        "named": true
+      },
+      {
+        "type": "verbatim",
+        "named": true
+      }
+    ]
+  },
+  {
     "type": "non_structural",
     "named": true,
     "subtypes": [
@@ -91,11 +137,11 @@
           "named": true
         },
         {
-          "type": "attached_modifier_extension",
+          "type": "att_mod",
           "named": true
         },
         {
-          "type": "bold",
+          "type": "attached_modifier_extension",
           "named": true
         },
         {
@@ -119,19 +165,7 @@
           "named": true
         },
         {
-          "type": "inline_macro",
-          "named": true
-        },
-        {
-          "type": "italic",
-          "named": true
-        },
-        {
           "type": "link",
-          "named": true
-        },
-        {
-          "type": "math",
           "named": true
         },
         {
@@ -144,22 +178,6 @@
         },
         {
           "type": "soft_break",
-          "named": true
-        },
-        {
-          "type": "spoiler",
-          "named": true
-        },
-        {
-          "type": "strikethrough",
-          "named": true
-        },
-        {
-          "type": "underline",
-          "named": true
-        },
-        {
-          "type": "verbatim",
           "named": true
         },
         {
@@ -186,7 +204,7 @@
           "named": true
         },
         {
-          "type": "bold",
+          "type": "att_mod",
           "named": true
         },
         {
@@ -194,19 +212,7 @@
           "named": true
         },
         {
-          "type": "inline_macro",
-          "named": true
-        },
-        {
-          "type": "italic",
-          "named": true
-        },
-        {
           "type": "link",
-          "named": true
-        },
-        {
-          "type": "math",
           "named": true
         },
         {
@@ -219,22 +225,6 @@
         },
         {
           "type": "soft_break",
-          "named": true
-        },
-        {
-          "type": "spoiler",
-          "named": true
-        },
-        {
-          "type": "strikethrough",
-          "named": true
-        },
-        {
-          "type": "underline",
-          "named": true
-        },
-        {
-          "type": "verbatim",
           "named": true
         },
         {
@@ -358,7 +348,7 @@
           "named": true
         },
         {
-          "type": "bold",
+          "type": "att_mod",
           "named": true
         },
         {
@@ -366,19 +356,7 @@
           "named": true
         },
         {
-          "type": "inline_macro",
-          "named": true
-        },
-        {
-          "type": "italic",
-          "named": true
-        },
-        {
           "type": "link",
-          "named": true
-        },
-        {
-          "type": "math",
           "named": true
         },
         {
@@ -395,22 +373,6 @@
         },
         {
           "type": "soft_break",
-          "named": true
-        },
-        {
-          "type": "spoiler",
-          "named": true
-        },
-        {
-          "type": "strikethrough",
-          "named": true
-        },
-        {
-          "type": "underline",
-          "named": true
-        },
-        {
-          "type": "verbatim",
           "named": true
         },
         {
@@ -496,11 +458,11 @@
           "named": true
         },
         {
-          "type": "attached_modifier_extension",
+          "type": "att_mod",
           "named": true
         },
         {
-          "type": "bold",
+          "type": "attached_modifier_extension",
           "named": true
         },
         {
@@ -516,14 +478,6 @@
           "named": true
         },
         {
-          "type": "inline_macro",
-          "named": true
-        },
-        {
-          "type": "italic",
-          "named": true
-        },
-        {
           "type": "italic_close",
           "named": true
         },
@@ -536,10 +490,6 @@
           "named": true
         },
         {
-          "type": "math",
-          "named": true
-        },
-        {
           "type": "open_conflict",
           "named": true
         },
@@ -549,22 +499,6 @@
         },
         {
           "type": "soft_break",
-          "named": true
-        },
-        {
-          "type": "spoiler",
-          "named": true
-        },
-        {
-          "type": "strikethrough",
-          "named": true
-        },
-        {
-          "type": "underline",
-          "named": true
-        },
-        {
-          "type": "verbatim",
           "named": true
         },
         {
@@ -924,7 +858,7 @@
           "named": true
         },
         {
-          "type": "bold",
+          "type": "att_mod",
           "named": true
         },
         {
@@ -936,15 +870,7 @@
           "named": true
         },
         {
-          "type": "inline_macro",
-          "named": true
-        },
-        {
           "type": "inline_macro_open",
-          "named": true
-        },
-        {
-          "type": "italic",
           "named": true
         },
         {
@@ -953,10 +879,6 @@
         },
         {
           "type": "link",
-          "named": true
-        },
-        {
-          "type": "math",
           "named": true
         },
         {
@@ -976,15 +898,7 @@
           "named": true
         },
         {
-          "type": "spoiler",
-          "named": true
-        },
-        {
           "type": "spoiler_open",
-          "named": true
-        },
-        {
-          "type": "strikethrough",
           "named": true
         },
         {
@@ -1000,15 +914,7 @@
           "named": true
         },
         {
-          "type": "underline",
-          "named": true
-        },
-        {
           "type": "underline_open",
-          "named": true
-        },
-        {
-          "type": "verbatim",
           "named": true
         },
         {
@@ -1039,7 +945,7 @@
           "named": true
         },
         {
-          "type": "bold",
+          "type": "att_mod",
           "named": true
         },
         {
@@ -1047,19 +953,7 @@
           "named": true
         },
         {
-          "type": "inline_macro",
-          "named": true
-        },
-        {
-          "type": "italic",
-          "named": true
-        },
-        {
           "type": "link",
-          "named": true
-        },
-        {
-          "type": "math",
           "named": true
         },
         {
@@ -1076,22 +970,6 @@
         },
         {
           "type": "soft_break",
-          "named": true
-        },
-        {
-          "type": "spoiler",
-          "named": true
-        },
-        {
-          "type": "strikethrough",
-          "named": true
-        },
-        {
-          "type": "underline",
-          "named": true
-        },
-        {
-          "type": "verbatim",
           "named": true
         },
         {
@@ -1156,11 +1034,11 @@
           "named": true
         },
         {
-          "type": "attached_modifier_extension",
+          "type": "att_mod",
           "named": true
         },
         {
-          "type": "bold",
+          "type": "attached_modifier_extension",
           "named": true
         },
         {
@@ -1176,19 +1054,7 @@
           "named": true
         },
         {
-          "type": "inline_macro",
-          "named": true
-        },
-        {
-          "type": "italic",
-          "named": true
-        },
-        {
           "type": "link",
-          "named": true
-        },
-        {
-          "type": "math",
           "named": true
         },
         {
@@ -1204,27 +1070,11 @@
           "named": true
         },
         {
-          "type": "spoiler",
-          "named": true
-        },
-        {
           "type": "spoiler_close",
           "named": true
         },
         {
           "type": "spoiler_open",
-          "named": true
-        },
-        {
-          "type": "strikethrough",
-          "named": true
-        },
-        {
-          "type": "underline",
-          "named": true
-        },
-        {
-          "type": "verbatim",
           "named": true
         },
         {
@@ -1251,11 +1101,11 @@
           "named": true
         },
         {
-          "type": "attached_modifier_extension",
+          "type": "att_mod",
           "named": true
         },
         {
-          "type": "bold",
+          "type": "attached_modifier_extension",
           "named": true
         },
         {
@@ -1271,19 +1121,7 @@
           "named": true
         },
         {
-          "type": "inline_macro",
-          "named": true
-        },
-        {
-          "type": "italic",
-          "named": true
-        },
-        {
           "type": "link",
-          "named": true
-        },
-        {
-          "type": "math",
           "named": true
         },
         {
@@ -1299,27 +1137,11 @@
           "named": true
         },
         {
-          "type": "spoiler",
-          "named": true
-        },
-        {
-          "type": "strikethrough",
-          "named": true
-        },
-        {
           "type": "strikethrough_close",
           "named": true
         },
         {
           "type": "strikethrough_open",
-          "named": true
-        },
-        {
-          "type": "underline",
-          "named": true
-        },
-        {
-          "type": "verbatim",
           "named": true
         },
         {
@@ -1339,19 +1161,23 @@
     "fields": {}
   },
   {
-    "type": "title",
+    "type": "subscript",
     "named": true,
     "fields": {},
     "children": {
       "multiple": true,
-      "required": false,
+      "required": true,
       "types": [
         {
           "type": "anchor",
           "named": true
         },
         {
-          "type": "bold",
+          "type": "att_mod",
+          "named": true
+        },
+        {
+          "type": "attached_modifier_extension",
           "named": true
         },
         {
@@ -1359,19 +1185,15 @@
           "named": true
         },
         {
-          "type": "inline_macro",
+          "type": "free_form_close",
           "named": true
         },
         {
-          "type": "italic",
+          "type": "free_form_open",
           "named": true
         },
         {
           "type": "link",
-          "named": true
-        },
-        {
-          "type": "math",
           "named": true
         },
         {
@@ -1387,19 +1209,125 @@
           "named": true
         },
         {
-          "type": "spoiler",
+          "type": "subscript_close",
           "named": true
         },
         {
-          "type": "strikethrough",
+          "type": "subscript_open",
           "named": true
         },
         {
-          "type": "underline",
+          "type": "whitespace",
           "named": true
         },
         {
-          "type": "verbatim",
+          "type": "word",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "superscript",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "anchor",
+          "named": true
+        },
+        {
+          "type": "att_mod",
+          "named": true
+        },
+        {
+          "type": "attached_modifier_extension",
+          "named": true
+        },
+        {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "free_form_close",
+          "named": true
+        },
+        {
+          "type": "free_form_open",
+          "named": true
+        },
+        {
+          "type": "link",
+          "named": true
+        },
+        {
+          "type": "open_conflict",
+          "named": true
+        },
+        {
+          "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "soft_break",
+          "named": true
+        },
+        {
+          "type": "superscript_close",
+          "named": true
+        },
+        {
+          "type": "superscript_open",
+          "named": true
+        },
+        {
+          "type": "whitespace",
+          "named": true
+        },
+        {
+          "type": "word",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "title",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "anchor",
+          "named": true
+        },
+        {
+          "type": "att_mod",
+          "named": true
+        },
+        {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "link",
+          "named": true
+        },
+        {
+          "type": "open_conflict",
+          "named": true
+        },
+        {
+          "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "soft_break",
           "named": true
         },
         {
@@ -1426,11 +1354,11 @@
           "named": true
         },
         {
-          "type": "attached_modifier_extension",
+          "type": "att_mod",
           "named": true
         },
         {
-          "type": "bold",
+          "type": "attached_modifier_extension",
           "named": true
         },
         {
@@ -1446,19 +1374,7 @@
           "named": true
         },
         {
-          "type": "inline_macro",
-          "named": true
-        },
-        {
-          "type": "italic",
-          "named": true
-        },
-        {
           "type": "link",
-          "named": true
-        },
-        {
-          "type": "math",
           "named": true
         },
         {
@@ -1474,27 +1390,11 @@
           "named": true
         },
         {
-          "type": "spoiler",
-          "named": true
-        },
-        {
-          "type": "strikethrough",
-          "named": true
-        },
-        {
-          "type": "underline",
-          "named": true
-        },
-        {
           "type": "underline_close",
           "named": true
         },
         {
           "type": "underline_open",
-          "named": true
-        },
-        {
-          "type": "verbatim",
           "named": true
         },
         {

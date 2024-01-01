@@ -16,7 +16,11 @@ module.exports = grammar({
         $._preceding_whitespace,
 
         $.paragraph_break,
+        $._failed_close,
         $._newline,
+        $.desc_close,
+        $.link_close,
+        $.inside_verbatim,
 
         $.punctuation,
 
@@ -98,6 +102,7 @@ module.exports = grammar({
     inline: ($) => [$.paragraph_inner, $.verbatim_paragraph_inner],
 
     supertypes: ($) => [
+        $.att_mod,
         $.non_structural,
     ],
 
@@ -139,42 +144,43 @@ module.exports = grammar({
             prec.right(
                 repeat1(
                     choice(
-                        seq($.whitespace, alias($.not_close, $.punctuation)),
-                        seq($.word, alias($.not_open, $.punctuation)),
-                        $.whitespace,
-                        $.word,
-                        $.punctuation,
-                        $.bold,
-                        $.italic,
-                        $.underline,
-                        $.strikethrough,
-                        $.spoiler,
-                        // $.superscript,
-                        // $.subscript,
-                        $.verbatim,
-                        $.inline_macro,
-                        $.math,
+                        $._general,
+
+                        $.att_mod,
                         $.open_conflict,
+
                         $.anchor,
                         $.link,
-                        $.escape_sequence,
-                        $.soft_break,
-                        seq($.soft_break, alias($.not_close, $.punctuation)),
                     ),
                 ),
+            ),
+        att_mod: ($) =>
+            choice(
+                $.bold,
+                $.italic,
+                $.underline,
+                $.strikethrough,
+                $.spoiler,
+                $.superscript,
+                $.subscript,
+                $.verbatim,
+                $.inline_macro,
+                $.math,
+            ),
+        _general: ($) =>
+            choice(
+                seq($.whitespace, optional(alias($.not_close, $.punctuation))),
+                seq($.word, optional(alias($.not_open, $.punctuation))),
+                $.punctuation,
+                $.escape_sequence,
+                seq($.soft_break, optional(alias($.not_close, $.punctuation))),
             ),
 
         verbatim_paragraph_inner: ($) =>
             prec.right(
                 repeat1(
                     choice(
-                        seq($.whitespace, alias($.not_close, $.punctuation)),
-                        seq($.word, alias($.not_open, $.punctuation)),
-                        // $.not_linkable,
-                        $.escape_sequence,
-                        $.whitespace,
-                        $.word,
-                        $.punctuation,
+                        $._general,
                         $.verbatim_open,
                         $.math_open,
                         $.inline_macro_open,
@@ -188,7 +194,7 @@ module.exports = grammar({
                                 $.superscript_open,
                                 $.subscript_open,
                                 prec(1, '['),
-                                prec(1, ']'),
+                                $.inside_verbatim,
                                 "{",
                                 // list of link target prefixes to make conflict
                                 // see link-11 ~ link-17
@@ -199,15 +205,11 @@ module.exports = grammar({
                             ),
                             $.punctuation,
                         ),
-                        $.soft_break,
-                        seq($.soft_break, alias($.not_close, $.punctuation)),
                     ),
                 ),
             ),
 
         open_conflict: ($) =>
-            prec.dynamic(
-                -1,
                 seq(
                     choice(
                         $.bold_open,
@@ -222,8 +224,8 @@ module.exports = grammar({
                         $.inline_macro_open,
                     ),
                     $.paragraph_inner,
+                    $._failed_close,
                 ),
-            ),
 
         identifier: (_) => /[A-Za-z][A-Za-z\-]+/,
         attached_modifier_extension: ($) =>
@@ -461,7 +463,12 @@ module.exports = grammar({
             ),
 
         _description: ($) =>
-            seq("[", field("description", $.description), "]"),
+            seq(
+                "[",
+                field("description", $.description),
+                alias($.desc_close, "]"),
+                // "]"
+            ),
         description: ($) => $.paragraph_inner,
 
         _location: ($) =>
@@ -476,10 +483,10 @@ module.exports = grammar({
                     $.link_target_magic,
                     $.link_target_timestamp,
                 )),
-                "}",
+                alias($.link_close, "}"),
             ),
         uri: (_) => token(prec(-1, /[^\}]+/)),
-        path: (_) => /[^\:\}]+/,
+        path: (_) => /[^:\}]+/,
         norg_file: ($) =>
             seq(
                 ":",
@@ -489,7 +496,7 @@ module.exports = grammar({
                             token(prec(1, "$")),
                             choice(
                                 field("root", alias("/", $.current_workspace)),
-                                seq(field("root", alias(/[^\$\/\:\}]+/, $.workspace)), "/"),
+                                seq(field("root", alias(/[^\$\/:\}]+/, $.workspace)), "/"),
                             )
                         ),
                         field("root", alias(token(prec(1, "/")), $.file_root))
