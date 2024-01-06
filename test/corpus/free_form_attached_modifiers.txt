@@ -59,10 +59,9 @@ free-02: free-form > non-free-form
     (bold
       (bold_open)
       (free_form_open)
-      (bold
-        (bold_open)
-        (word)
-        (bold_close))
+      (punctuation)
+      (word)
+      (punctuation)
       (free_form_close)
       (bold_close))
     (paragraph_break)))
@@ -195,7 +194,7 @@ free-10: Verbatim free-form attached modifier
       (free_form_open)
       (whitespace)
       (punctuation)
-      (verbatim_open)
+      (punctuation)
       (word)
       (whitespace)
       (free_form_close)
@@ -222,7 +221,7 @@ free-11: Prevent non-free-form inside free-form (verbatim)
     (verbatim
       (verbatim_open)
       (free_form_open)
-      (verbatim_open)
+      (punctuation)
       (word)
       (punctuation)
       (free_form_close)
@@ -239,7 +238,77 @@ free-12: free-form close > free-form open
     (bold
       (bold_open)
       (free_form_open)
-      (punctuation)
+      (open_conflict
+        (italic_open))
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+; TODO: this fails
+================================================================================
+free-13: unclosed free form is allowed inside complete markup??
+================================================================================
+*/|*
+--------------------------------------------------------------------------------
+(document
+  (ERROR
+    (bold_open)
+    (italic_open)
+    (free_form_open)
+    (punctuation)))
+
+================================================================================
+free-14: unclosed attached modifier inside free-form
+================================================================================
+*|/word|*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (open_conflict
+        (italic_open)
+        (word))
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+free-15: open_conflict inside fake free-form
+================================================================================
+*/word|*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (open_conflict
+        (italic_open)
+        (word)
+        (punctuation))
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+free-16: don't close open_conflict on fake closer
+================================================================================
+*|/word *word* word|*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (open_conflict
+        (italic_open)
+        (word)
+        (whitespace)
+        (punctuation)
+        (word)
+        (punctuation)
+        (whitespace)
+        (word))
       (free_form_close)
       (bold_close))
     (paragraph_break)))

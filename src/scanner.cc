@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <vector>
 #include <list>
+#include <deque>
 
 #include "tree_sitter/parser.h"
 
@@ -39,6 +40,9 @@ enum TokenType : char {
     NOT_OPEN,
     NOT_CLOSE,
 
+    FREE_FORM_OPEN,
+    FREE_FORM_CLOSE,
+
     BOLD_OPEN,
     BOLD_CLOSE,
 
@@ -59,6 +63,9 @@ enum TokenType : char {
 
     SUBSCRIPT_OPEN,
     SUBSCRIPT_CLOSE,
+
+    INLINE_COMMENT_OPEN,
+    INLINE_COMMENT_CLOSE,
 
     VERBATIM_OPEN,
     VERBATIM_CLOSE,
@@ -95,6 +102,8 @@ TokenType char_to_attached_mod(int32_t c) {
             return SUPERSCRIPT_OPEN;
         case ',':
             return SUBSCRIPT_OPEN;
+        case '%':
+            return INLINE_COMMENT_OPEN;
         case '`':
             return VERBATIM_OPEN;
         case '$':
@@ -108,23 +117,12 @@ TokenType char_to_attached_mod(int32_t c) {
 
 struct Scanner {
     TSLexer* lexer;
-    std::unordered_map<char, std::vector<uint16_t>> indents;
-    std::unordered_map<TokenType, size_t> attached_modifiers;
+    std::unordered_map< char, std::vector<uint16_t> > indents;
+    std::deque<TokenType> att_deque;
 
     bool single_line_mode;
 
     Scanner() {
-        attached_modifiers.clear();
-        attached_modifiers[BOLD_OPEN] = 0;
-        attached_modifiers[ITALIC_OPEN] = 0;
-        attached_modifiers[UNDERLINE_OPEN] = 0;
-        attached_modifiers[STRIKETHROUGH_OPEN] = 0;
-        attached_modifiers[SPOILER_OPEN] = 0;
-        attached_modifiers[SUPERSCRIPT_OPEN] = 0;
-        attached_modifiers[SUBSCRIPT_OPEN] = 0;
-        attached_modifiers[VERBATIM_OPEN] = 0;
-        attached_modifiers[INLINE_MATH_OPEN] = 0;
-        attached_modifiers[INLINE_MACRO_OPEN] = 0;
         single_line_mode = false;
     }
 
@@ -163,6 +161,48 @@ struct Scanner {
         return -1;
     }
 
+    bool did_open(TokenType kind) {
+        return std::find(att_deque.begin(), att_deque.end(), kind) != att_deque.end();
+    }
+
+    /**
+     * we parse free_form_close from here to return `_failed_close` before
+     */
+    bool scan_free_form_close(const bool *valid_symbols, int32_t character) {
+        const TokenType kind_token = char_to_attached_mod(lexer->lookahead);
+        const TokenType close_token = (TokenType)(kind_token + 1);
+        if (kind_token != 0
+            && (valid_symbols[FREE_FORM_CLOSE]
+                || valid_symbols[FAILED_CLOSE] && did_open(FREE_FORM_OPEN))
+            && did_open(kind_token)
+            // && attached_modifiers[kind_token]
+        ) {
+            if (!valid_symbols[FAILED_CLOSE]) lexer->mark_end(lexer);
+            advance();
+            if (!is_word(lexer->lookahead)) {
+                if (valid_symbols[FAILED_CLOSE]) {
+                    const TokenType fail_type = att_deque.front();
+                    att_deque.pop_front();
+                    lexer->result_symbol = FAILED_CLOSE;
+                    return true;
+                }
+                if (valid_symbols[FREE_FORM_CLOSE] && att_deque.front() == FREE_FORM_OPEN && att_deque[1] == kind_token) {
+                    lexer->result_symbol = FREE_FORM_CLOSE;
+                    att_deque.pop_front();
+                    return true;
+                }
+            }
+            return false;
+        }
+        if (valid_symbols[FREE_FORM_OPEN]) {
+            lexer->mark_end(lexer);
+            lexer->result_symbol = FREE_FORM_OPEN;
+            att_deque.push_front(FREE_FORM_OPEN);
+            return true;
+        }
+        return false;
+    }
+
     /**
      * this function may advance more than one character
      * put this at the bottom of `scan()`
@@ -184,21 +224,44 @@ struct Scanner {
             return false;
 
         // NOT_CLOSE
-        if (valid_symbols[NOT_CLOSE] && valid_symbols[close_token]) {
+        if (valid_symbols[NOT_CLOSE] && valid_symbols[close_token]
+            && !valid_symbols[kind_token]
+        ) {
             lexer->mark_end(lexer);
             lexer->result_symbol = NOT_CLOSE;
             return true;
         }
 
         // _CLOSE
-        if ((valid_symbols[close_token] || valid_symbols[FAILED_CLOSE]) && !is_word(lexer->lookahead)) {
-            if (
-                !valid_symbols[close_token] && 
-                valid_symbols[FAILED_CLOSE]) {
+        const bool valid_failed_close = valid_symbols[FAILED_CLOSE]
+            && att_deque.front() != kind_token;
+        const bool valid_att_close = valid_symbols[close_token];
+        if (
+            !is_word(lexer->lookahead) &&
+            !valid_symbols[NOT_CLOSE] &&
+            did_open(kind_token) &&
+            (valid_att_close || valid_failed_close)
+        ) {
+            if (valid_failed_close && (kind_token < VERBATIM_OPEN)
+                && att_deque[1] != FREE_FORM_OPEN
+            ) {
+                const TokenType fail_type = att_deque.front();
+                att_deque.pop_front();
+                // std::cout << "pop" << std::endl;
                 lexer->result_symbol = FAILED_CLOSE;
                 return true;
             }
-            attached_modifiers[kind_token] -= 1;
+            // pop until matching kind
+            // this doesn't happen in most cases, but when there was non-verbatim
+            // opener in completed verbatim, parser should remove those from stack
+            while (att_deque.front() != kind_token) {
+                // don't skip FREE_FORM here
+                if (att_deque.front() == FREE_FORM_OPEN) {
+                    return false;
+                }
+                att_deque.pop_front();
+            }
+            att_deque.pop_front();
             lexer->result_symbol = close_token;
             lexer->mark_end(lexer);
             if (lexer->lookahead == ':') {
@@ -207,6 +270,12 @@ struct Scanner {
                     lexer->mark_end(lexer);
                 }
             }
+            // if (att_deque.front() == kind_token) {
+            //     return true;
+            // } else {
+                // std::cout << "faaail" << std::endl;
+            //     return false;
+            // }
             return true;
         }
         // NOT_OPEN
@@ -218,15 +287,26 @@ struct Scanner {
             return true;
         }
         // _OPEN
-        if (valid_symbols[kind_token] && lexer->lookahead && !iswspace(lexer->lookahead)) {
+        const bool can_open = (att_deque.empty() || !did_open(kind_token));
+        if (
+            // this is needed for att-25
+            // but causes lot of problems like att-24
+            // search from att_deque instead
+            // attached_modifiers[kind_token] == 0 &&
+            can_open &&
+            valid_symbols[kind_token] && lexer->lookahead && !iswspace(lexer->lookahead)
+        ) {
             lexer->mark_end(lexer);
-            // solves free-02 and att-16:
-            // check if valid [free-form-]close token follows
-            if (lexer->lookahead == '|')
-                advance();
+            // // solves free-02 and att-16:
+            // // check if valid [free-form-]close token follows
+            // bool is_free_form = false;
+            // if (lexer->lookahead == '|') {
+            //     is_free_form  = true;
+            //     skip();
+            // }
             const int32_t next_char = lexer->lookahead;
             const TokenType next_token = char_to_attached_mod(next_char);
-            if (next_token != 0 && attached_modifiers[next_token]) {
+            if (next_token != 0 && did_open(next_token)) {
                 advance();
                 if (!lexer->lookahead || !is_word(lexer->lookahead) && lexer->lookahead != next_char) {
                     lexer->result_symbol = PUNCTUATION;
@@ -234,7 +314,7 @@ struct Scanner {
                 }
             }
 
-            attached_modifiers[kind_token] += 1;
+            att_deque.push_front(kind_token);
             lexer->result_symbol = kind_token;
             return true;
         }
@@ -303,6 +383,8 @@ struct Scanner {
             // when parsing single-line paragraph (aka. title,) return paragraph break immediately
             if (single_line_mode) {
                 if (valid_symbols[FAILED_CLOSE]) {
+                    const TokenType fail_type = att_deque.front();
+                    att_deque.pop_front();
                     lexer->result_symbol = FAILED_CLOSE;
                     return true;
                 }
@@ -315,11 +397,13 @@ struct Scanner {
                 skip();
             if (lexer->eof(lexer) || is_newline(lexer->lookahead)) {
                 if (valid_symbols[FAILED_CLOSE]) {
+                    const TokenType fail_type = att_deque.front();
+                    att_deque.pop_front();
                     lexer->result_symbol = FAILED_CLOSE;
                     return true;
                 }
                 lexer->result_symbol = PARAGRAPH_BREAK;
-                attached_modifiers.clear();
+                att_deque.clear();
                 return true;
             }
             if (lexer->lookahead == '*' || lexer->lookahead == '-' || lexer->lookahead == '_' || lexer->lookahead == '=') {
@@ -332,11 +416,13 @@ struct Scanner {
                 }
                 if (iswspace(lexer->lookahead)) {
                     if (valid_symbols[FAILED_CLOSE]) {
+                        const TokenType fail_type = att_deque.front();
+                        att_deque.pop_front();
                         lexer->result_symbol = FAILED_CLOSE;
                         return true;
                     }
                     lexer->result_symbol = PARAGRAPH_BREAK;
-                    attached_modifiers.clear();
+                    att_deque.clear();
                     return true;
                 }
             }
@@ -346,9 +432,9 @@ struct Scanner {
 
     bool scan(const bool *valid_symbols) {
         // the external scanner don't try any recovery
-        if (valid_symbols[ERROR_SENTINEL]) {
-            return false;
-        }
+        // if (valid_symbols[ERROR_SENTINEL]) {
+        //     return false;
+        // }
 
         // We return false here to allow the lexer to fall back
         // to the grammar, which allows the existence of `\0`.
@@ -384,27 +470,41 @@ struct Scanner {
         if (iswspace(lexer->lookahead))
             return scan_newline(valid_symbols);
 
-        if (valid_symbols[INSIDE_VERBATIM] && lexer->lookahead == ']') {
+        if (valid_symbols[INSIDE_VERBATIM] && (lexer->lookahead == ']' || lexer->lookahead == '}')) {
             advance();
             lexer->mark_end(lexer);
             lexer->result_symbol = PUNCTUATION;
             return true;
         }
-        if (valid_symbols[FAILED_CLOSE] && (lexer->lookahead == '}' || lexer->lookahead == ']')) {
-            lexer->result_symbol = FAILED_CLOSE;
-            return true;
+        if (lexer->lookahead == ']') {
+            if (valid_symbols[DESC_CLOSE]) {
+                advance();
+                lexer->mark_end(lexer);
+                lexer->result_symbol = DESC_CLOSE;
+                return true;
+            }
+            if (valid_symbols[FAILED_CLOSE]) {
+                const TokenType fail_type = att_deque.front();
+                att_deque.pop_front();
+                lexer->result_symbol = FAILED_CLOSE;
+                return true;
+            }
+            return false;
         }
-        if (valid_symbols[DESC_CLOSE] && lexer->lookahead == ']') {
-            advance();
-            lexer->mark_end(lexer);
-            lexer->result_symbol = DESC_CLOSE;
-            return true;
-        }
-        if (valid_symbols[CURLY_CLOSE] && lexer->lookahead == '}') {
-            advance();
-            lexer->mark_end(lexer);
-            lexer->result_symbol = CURLY_CLOSE;
-            return true;
+        if (lexer->lookahead == '}') {
+            if (valid_symbols[CURLY_CLOSE]) {
+                advance();
+                lexer->mark_end(lexer);
+                lexer->result_symbol = CURLY_CLOSE;
+                return true;
+            }
+            if (valid_symbols[FAILED_CLOSE]) {
+                const TokenType fail_type = att_deque.front();
+                att_deque.pop_front();
+                lexer->result_symbol = FAILED_CLOSE;
+                return true;
+            }
+            return false;
         }
 
         // take one lookahead first as we need at least two lookahead to distinguish
@@ -420,7 +520,10 @@ struct Scanner {
 
         // TODO: add other detached modifiers
 
-        // this should be end of scan because attached modifiers need more than two lookaheads
+        if (character == '|')
+            return scan_free_form_close(valid_symbols, character);
+
+        // this should be end of scan() because attached modifiers need more than two lookaheads
         return scan_attached_modifier(valid_symbols, character);
     }
 
@@ -454,6 +557,13 @@ extern "C" {
             char *buffer) {
         Scanner* scanner = static_cast<Scanner* >(payload);
         size_t total_size = 0;
+        buffer[total_size++] = scanner->att_deque.size();
+
+        for (std::deque<TokenType>::iterator v = scanner->att_deque.begin(); v != scanner->att_deque.end(); ++v) {
+            TokenType a = *v;
+            buffer[total_size++] = a;
+        }
+
         buffer[total_size++] = scanner->single_line_mode;
 
         // NOTE: We cannot use range-based for loops as they are a post C++11 addition. Fun.
@@ -475,10 +585,16 @@ extern "C" {
             unsigned length) {
         Scanner* scanner = static_cast<Scanner*>(payload);
         if (length == 0) {
-            scanner->attached_modifiers.clear();
+            scanner->att_deque.clear();
             return;
         }
+        scanner->att_deque.clear();
         size_t head = 0;
+        size_t d_size = buffer[head++];
+        while (head < d_size+1) {
+            scanner->att_deque.push_back((TokenType)(buffer[head++]));
+        }
+
         scanner->single_line_mode = buffer[head++];
 
         while (head < length) {
