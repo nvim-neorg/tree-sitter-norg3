@@ -356,13 +356,13 @@ att-15: haard test verbatims
   (paragraph
     (inline_macro
       (inline_macro_open)
-      (math_open)
+      (punctuation)
       (word)
       (whitespace)
-      (verbatim_open)
+      (punctuation)
       (word)
       (whitespace)
-      (math_open)
+      (punctuation)
       (word)
       (punctuation)
       (whitespace)
@@ -396,9 +396,8 @@ att-16.1: valid markup after unclosed markup and invalid close modifier
       (bold_open)
       (italic
         (italic_open)
-        (open_conflict
-          (bold_open)
-          (word))
+        (punctuation)
+        (word)
         (italic_close)))
     (paragraph_break))
   (paragraph
@@ -435,12 +434,12 @@ att-18: hard test verbatim & non-verbatim
     (verbatim
       (verbatim_open)
       (punctuation)
-      (math_open)
       (punctuation)
       (punctuation)
       (punctuation)
       (punctuation)
-      (inline_macro_open)
+      (punctuation)
+      (punctuation)
       (word)
       (punctuation)
       (punctuation)
@@ -543,15 +542,19 @@ att-23: LTR rule 5
       (punctuation)
       (word)
       (verbatim_close))
-    (punctuation)
-    (punctuation)
-    (punctuation)
-    (punctuation)
-    (punctuation)
+    (open_conflict
+      (spoiler_open)
+      (open_conflict
+        (strikethrough_open)
+        (open_conflict
+          (underline_open)
+          (open_conflict
+            (italic_open)
+            (punctuation)))))
     (paragraph_break)))
 
 ================================================================================
-att-24: partially reset attached modifier after closing
+att-24: reset unclosed attached modifier after closing parent markup
 ================================================================================
 */word* /word/
 --------------------------------------------------------------------------------
@@ -568,6 +571,24 @@ att-24: partially reset attached modifier after closing
       (italic_open)
       (word)
       (italic_close))
+    (paragraph_break)))
+
+================================================================================
+att-25: don't try pre-opened markup inside open_conflict
+================================================================================
+*/word *word*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (open_conflict
+        (italic_open)
+        (word)
+        (whitespace)
+        (punctuation)
+        (word))
+      (bold_close))
     (paragraph_break)))
 
 ; vim:ts=2:sw=2:

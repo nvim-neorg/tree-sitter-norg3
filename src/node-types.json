@@ -419,19 +419,11 @@
           "named": true
         },
         {
-          "type": "math_open",
-          "named": true
-        },
-        {
           "type": "punctuation",
           "named": true
         },
         {
           "type": "soft_break",
-          "named": true
-        },
-        {
-          "type": "verbatim_open",
           "named": true
         },
         {
@@ -767,10 +759,6 @@
           "named": true
         },
         {
-          "type": "inline_macro_open",
-          "named": true
-        },
-        {
           "type": "math_close",
           "named": true
         },
@@ -784,10 +772,6 @@
         },
         {
           "type": "soft_break",
-          "named": true
-        },
-        {
-          "type": "verbatim_open",
           "named": true
         },
         {
@@ -1433,14 +1417,6 @@
           "named": true
         },
         {
-          "type": "inline_macro_open",
-          "named": true
-        },
-        {
-          "type": "math_open",
-          "named": true
-        },
-        {
           "type": "punctuation",
           "named": true
         },
@@ -1554,6 +1530,14 @@
   },
   {
     "type": "heading_prefix",
+    "named": true
+  },
+  {
+    "type": "inline_comment_close",
+    "named": true
+  },
+  {
+    "type": "inline_comment_open",
     "named": true
   },
   {

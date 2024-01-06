@@ -93,4 +93,19 @@ anchor-04: reset attached modifier after destination
       (bold_close))
     (paragraph_break)))
 
+; FIXME: this fails
+; ================================================================================
+; anchor-05: anchor after unclosed verbatim
+; ================================================================================
+; `[word]
+; --------------------------------------------------------------------------------
+; (document
+;   (paragraph
+;     (open_conflict
+;       (verbatim_open)
+;       (anchor
+;         description: (description
+;             (word))))
+;     (paragraph_break)))
+
 ; vim:ts=2:sw=2:

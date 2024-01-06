@@ -191,12 +191,11 @@ link-11: Verbatim > link
         (link_scope_heading
           (heading_prefix)
           (title
-            (open_conflict
+            (verbatim
               (verbatim_open)
-              (word))))))
-    (open_conflict
-      (verbatim_open)
-      (punctuation))
+              (word)
+              (punctuation)
+              (verbatim_close))))))
     (paragraph_break)))
 
 ================================================================================
