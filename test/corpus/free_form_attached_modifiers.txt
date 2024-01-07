@@ -293,7 +293,7 @@ free-15: open_conflict inside fake free-form
 ================================================================================
 free-16: don't close open_conflict on fake closer
 ================================================================================
-*|/word *word* word|*
+*|/_word *word* word|*
 --------------------------------------------------------------------------------
 (document
   (paragraph
@@ -302,13 +302,15 @@ free-16: don't close open_conflict on fake closer
       (free_form_open)
       (open_conflict
         (italic_open)
-        (word)
-        (whitespace)
-        (punctuation)
-        (word)
-        (punctuation)
-        (whitespace)
-        (word))
+        (open_conflict
+          (underline_open)
+          (word)
+          (whitespace)
+          (punctuation)
+          (word)
+          (punctuation)
+          (whitespace)
+          (word)))
       (free_form_close)
       (bold_close))
     (paragraph_break)))
