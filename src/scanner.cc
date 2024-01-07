@@ -162,7 +162,15 @@ struct Scanner {
     }
 
     bool did_open(TokenType kind) {
-        return std::find(att_deque.begin(), att_deque.end(), kind) != att_deque.end();
+        return !att_deque.empty() && std::find(att_deque.begin(), att_deque.end(), kind) != att_deque.end();
+    }
+    /**
+     * @brief Check if attached modifier is opened as free-form
+     */
+    bool is_free(TokenType kind) {
+        // HACK: don't use `auto` this is C++11 spec
+        auto iter = std::find(att_deque.begin(), att_deque.end(), kind);
+        return iter != att_deque.begin() && *(--iter) == FREE_FORM_OPEN;
     }
 
     /**
@@ -175,7 +183,6 @@ struct Scanner {
             && (valid_symbols[FREE_FORM_CLOSE]
                 || valid_symbols[FAILED_CLOSE] && did_open(FREE_FORM_OPEN))
             && did_open(kind_token)
-            // && attached_modifiers[kind_token]
         ) {
             if (!valid_symbols[FAILED_CLOSE]) lexer->mark_end(lexer);
             advance();
@@ -218,32 +225,22 @@ struct Scanner {
         const TokenType close_token = (TokenType)(kind_token + 1);
         if ((kind_token == 0)
             // 5th case in link-mod-00
-            || (link_mod_left && valid_symbols[close_token])
+            || (link_mod_left && did_open(kind_token))
             // repeated modifier
             || (lexer->lookahead == character))
             return false;
 
-        // NOT_CLOSE
-        if (valid_symbols[NOT_CLOSE] && valid_symbols[close_token]
-            && !valid_symbols[kind_token]
-        ) {
-            lexer->mark_end(lexer);
-            lexer->result_symbol = NOT_CLOSE;
-            return true;
-        }
-
         // _CLOSE
-        const bool valid_failed_close = valid_symbols[FAILED_CLOSE]
-            && att_deque.front() != kind_token;
-        const bool valid_att_close = valid_symbols[close_token];
-        if (
-            !is_word(lexer->lookahead) &&
-            !valid_symbols[NOT_CLOSE] &&
-            did_open(kind_token) &&
-            (valid_att_close || valid_failed_close)
+        const bool valid_failed_close = valid_symbols[FAILED_CLOSE] && att_deque.front() != kind_token;
+        if (!valid_symbols[NOT_CLOSE]
+            && (valid_symbols[close_token] || valid_failed_close)
+            && !is_word(lexer->lookahead)
+            && did_open(kind_token)
         ) {
-            if (valid_failed_close && (kind_token < VERBATIM_OPEN)
-                && att_deque[1] != FREE_FORM_OPEN
+            if (valid_failed_close
+                && (kind_token < VERBATIM_OPEN)
+                // check if its' not free-form markup to check free-16
+                && !is_free(kind_token)
             ) {
                 const TokenType fail_type = att_deque.front();
                 att_deque.pop_front();
@@ -270,40 +267,15 @@ struct Scanner {
                     lexer->mark_end(lexer);
                 }
             }
-            // if (att_deque.front() == kind_token) {
-            //     return true;
-            // } else {
-                // std::cout << "faaail" << std::endl;
-            //     return false;
-            // }
-            return true;
-        }
-        // NOT_OPEN
-        if (!link_mod_left && valid_symbols[NOT_OPEN]) {
-            // there can be NOT_OPEN even when BOLD_CLOSE is valid.
-            // see att-11 for example
-            lexer->mark_end(lexer);
-            lexer->result_symbol = NOT_OPEN;
             return true;
         }
         // _OPEN
-        const bool can_open = (att_deque.empty() || !did_open(kind_token));
-        if (
-            // this is needed for att-25
-            // but causes lot of problems like att-24
-            // search from att_deque instead
-            // attached_modifiers[kind_token] == 0 &&
-            can_open &&
-            valid_symbols[kind_token] && lexer->lookahead && !iswspace(lexer->lookahead)
+        if ((link_mod_left || !valid_symbols[NOT_OPEN])
+            && valid_symbols[kind_token]
+            && !did_open(kind_token)
+            && lexer->lookahead && !iswspace(lexer->lookahead)
         ) {
             lexer->mark_end(lexer);
-            // // solves free-02 and att-16:
-            // // check if valid [free-form-]close token follows
-            // bool is_free_form = false;
-            // if (lexer->lookahead == '|') {
-            //     is_free_form  = true;
-            //     skip();
-            // }
             const int32_t next_char = lexer->lookahead;
             const TokenType next_token = char_to_attached_mod(next_char);
             if (next_token != 0 && did_open(next_token)) {
