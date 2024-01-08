@@ -968,6 +968,11 @@
     }
   },
   {
+    "type": "punctuation",
+    "named": false,
+    "fields": {}
+  },
+  {
     "type": "scope",
     "named": true,
     "fields": {},
@@ -1393,6 +1398,11 @@
     }
   },
   {
+    "type": "uri",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "verbatim",
     "named": true,
     "fields": {},
@@ -1445,6 +1455,11 @@
   },
   {
     "type": "whitespace",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "word",
     "named": true,
     "fields": {}
   },
@@ -1581,10 +1596,6 @@
     "named": true
   },
   {
-    "type": "punctuation",
-    "named": true
-  },
-  {
     "type": "soft_break",
     "named": true
   },
@@ -1633,10 +1644,6 @@
     "named": true
   },
   {
-    "type": "uri",
-    "named": true
-  },
-  {
     "type": "value",
     "named": true
   },
@@ -1654,10 +1661,6 @@
   },
   {
     "type": "wiki_prefix",
-    "named": true
-  },
-  {
-    "type": "word",
     "named": true
   },
   {
