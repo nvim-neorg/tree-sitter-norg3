@@ -354,7 +354,7 @@ struct Scanner {
             }
             // when parsing single-line paragraph (aka. title,) return paragraph break immediately
             if (single_line_mode) {
-                if (valid_symbols[FAILED_CLOSE]) {
+                if (valid_symbols[FAILED_CLOSE] && !att_deque.empty()) {
                     const TokenType fail_type = att_deque.front();
                     att_deque.pop_front();
                     lexer->result_symbol = FAILED_CLOSE;
@@ -368,7 +368,7 @@ struct Scanner {
             while (is_whitespace(lexer->lookahead))
                 skip();
             if (lexer->eof(lexer) || is_newline(lexer->lookahead)) {
-                if (valid_symbols[FAILED_CLOSE]) {
+                if (valid_symbols[FAILED_CLOSE] && !att_deque.empty()) {
                     const TokenType fail_type = att_deque.front();
                     att_deque.pop_front();
                     lexer->result_symbol = FAILED_CLOSE;
@@ -387,7 +387,7 @@ struct Scanner {
                     skip();
                 }
                 if (iswspace(lexer->lookahead)) {
-                    if (valid_symbols[FAILED_CLOSE]) {
+                    if (valid_symbols[FAILED_CLOSE] && !att_deque.empty()) {
                         const TokenType fail_type = att_deque.front();
                         att_deque.pop_front();
                         lexer->result_symbol = FAILED_CLOSE;
@@ -411,7 +411,7 @@ struct Scanner {
         // We return false here to allow the lexer to fall back
         // to the grammar, which allows the existence of `\0`.
         if (lexer->eof(lexer)) {
-            if (valid_symbols[FAILED_CLOSE]) {
+            if (valid_symbols[FAILED_CLOSE] && !att_deque.empty()) {
                 lexer->result_symbol = FAILED_CLOSE;
                 return true;
             }
@@ -455,7 +455,7 @@ struct Scanner {
                 lexer->result_symbol = DESC_CLOSE;
                 return true;
             }
-            if (valid_symbols[FAILED_CLOSE]) {
+            if (valid_symbols[FAILED_CLOSE] && !att_deque.empty()) {
                 const TokenType fail_type = att_deque.front();
                 att_deque.pop_front();
                 lexer->result_symbol = FAILED_CLOSE;
@@ -470,7 +470,7 @@ struct Scanner {
                 lexer->result_symbol = CURLY_CLOSE;
                 return true;
             }
-            if (valid_symbols[FAILED_CLOSE]) {
+            if (valid_symbols[FAILED_CLOSE] && !att_deque.empty()) {
                 const TokenType fail_type = att_deque.front();
                 att_deque.pop_front();
                 lexer->result_symbol = FAILED_CLOSE;

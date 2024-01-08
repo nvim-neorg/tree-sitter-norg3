@@ -315,4 +315,32 @@ link-17: link file target prefix > unclosed verbatim
           value: (path))))
     (paragraph_break)))
 
+================================================================================
+link-18: verbatim > unclosed URI link
+================================================================================
+`{word}`
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (punctuation)
+      (word)
+      (punctuation)
+      (verbatim_close))
+    (paragraph_break)))
+
+================================================================================
+link-19: URI link > unclosed verbatim
+================================================================================
+`{word}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (open_conflict
+      (verbatim_open)
+      (link
+        target: (uri)))
+    (paragraph_break)))
+
 ; vim:ts=2:sw=2:
