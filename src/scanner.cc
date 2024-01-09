@@ -89,6 +89,22 @@ enum TokenType : char {
     ERROR_MODE,
 };
 
+enum Action {
+    ACCEPT,
+    FAIL,
+    SCAN_SKIP, // "SKIP" conflicts with <parser.h>
+};
+
+#define TRY_SCAN(action) \
+    switch (action) {\
+        case SCAN_SKIP:\
+            break;\
+        case ACCEPT:\
+            return true;\
+        case FAIL:\
+            return false;\
+    }
+
 TokenType char_to_attached_mod(int32_t c) {
     switch (c) {
         case '*':
@@ -118,21 +134,32 @@ TokenType char_to_attached_mod(int32_t c) {
     return WHITESPACE;
 }
 
+TokenType char_to_detached_mod(int32_t c) {
+    switch (c) {
+        case '*':
+            return HEADING;
+        case '-':
+            return UNORDERED_LIST;
+    }
+
+    return WHITESPACE;
+}
+
 /**
-    * Returns `true` if the character provided is a separator character (but not a newline).
-    */
+ * Returns `true` if the character provided is a separator character (but not a newline).
+ */
 bool is_whitespace(int32_t character) {
     return iswspace(character) && character != '\n' && character != '\r';
 }
 /**
-    * Returns `true` if the character provided is neither whitespace nor punctuation
-    */
+ * Returns `true` if the character provided is neither whitespace nor punctuation
+ */
 bool is_word(int32_t character) {
     return character && !iswspace(character) && !iswpunct(character);
 }
 /**
-    * Returns `true` if the character provided is either \n or \r
-    */
+ * Returns `true` if the character provided is either \n or \r
+ */
 bool is_newline(int32_t character) {
     return character == '\n' || character == '\r';
 }
@@ -279,7 +306,56 @@ struct Scanner {
         return false;
     }
 
-    bool scan_detached_modifier(const bool *valid_symbols, int32_t character, TokenType kind) {
+    bool scan_linkable_close(const bool *valid_symbols, TokenType kind) {
+        if (valid_symbols[kind]) {
+            advance();
+            lexer->mark_end(lexer);
+            lexer->result_symbol = kind;
+            att_deque.pop_front();
+            return true;
+        }
+        if (is_markup_active((TokenType)(kind - 1))
+            && valid_symbols[FAILED_CLOSE]
+        ) {
+            const TokenType fail_type = att_deque.front();
+            att_deque.pop_front();
+            lexer->result_symbol = FAILED_CLOSE;
+            return true;
+        }
+        return false;
+    }
+    Action scan_linkables(const bool *valid_symbols) {
+        if (lexer->lookahead == '[' && valid_symbols[DESC_OPEN]) {
+            advance();
+            lexer->mark_end(lexer);
+            lexer->result_symbol = DESC_OPEN;
+            att_deque.push_front(DESC_OPEN);
+            return ACCEPT;
+        }
+        if (lexer->lookahead == '{' && valid_symbols[TARGET_OPEN]) {
+            advance();
+            lexer->mark_end(lexer);
+            lexer->result_symbol = TARGET_OPEN;
+            att_deque.push_front(TARGET_OPEN);
+            return ACCEPT;
+        }
+        if (!valid_symbols[FLAG_INSIDE_VERBATIM] && !att_deque.empty()) {
+            if (lexer->lookahead == ']')
+                return scan_linkable_close(valid_symbols, DESC_CLOSE) ? ACCEPT : FAIL;
+            if (lexer->lookahead == '}')
+                return scan_linkable_close(valid_symbols, TARGET_CLOSE) ? ACCEPT : FAIL;
+        }
+        return SCAN_SKIP;
+    }
+
+    Action scan_detached_modifier(const bool *valid_symbols, int32_t character) {
+        const TokenType kind = char_to_detached_mod(character);
+        const bool is_weak_deli_valid = character == '-' && valid_symbols[WEAK_DELIMITING_MODIFIER];
+        if (kind == 0
+            || !(valid_symbols[kind] || is_weak_deli_valid)
+            || !(lexer->lookahead == character || is_whitespace(lexer->lookahead))
+        ) return SCAN_SKIP;
+
         std::vector<uint16_t>& indent_vector = indents[character];
         size_t count = 1;
         while (lexer->lookahead == character) {
@@ -302,24 +378,23 @@ struct Scanner {
                 // When `mark_end()` is called again we essentially move the previous checkpoint to the new "head".
                 lexer->mark_end(lexer);
                 lexer->result_symbol = WEAK_DELIMITING_MODIFIER;
-                return true;
+                return ACCEPT;
             }
 
-            return false;
+            return FAIL;
         }
 
         if (valid_symbols[DEDENT] && !indent_vector.empty() && count <= indent_vector.back()) {
             indent_vector.pop_back();
             lexer->result_symbol = DEDENT;
-            return true;
+            return ACCEPT;
         }
 
         indent_vector.push_back(count);
         lexer->mark_end(lexer);
         lexer->result_symbol = kind;
-        if (kind == HEADING)
-            single_line_mode = true;
-        return true;
+        single_line_mode = (kind == HEADING);
+        return ACCEPT;
     }
 
     bool scan_newline(const bool *valid_symbols) {
@@ -361,7 +436,7 @@ struct Scanner {
                 att_deque.clear();
                 return true;
             }
-            if (lexer->lookahead == '*' || lexer->lookahead == '-' || lexer->lookahead == '_' || lexer->lookahead == '=') {
+            if (char_to_detached_mod(lexer->lookahead) != 0 || lexer->lookahead == '_' || lexer->lookahead == '=') {
                 int32_t character = lexer->lookahead;
                 skip();
                 size_t count = 1;
@@ -386,10 +461,8 @@ struct Scanner {
     }
 
     bool scan(const bool *valid_symbols) {
-        // the external scanner don't try any recovery
-        // if (valid_symbols[ERROR_MODE]) {
-        //     return false;
-        // }
+        // check if parser is in error-recovery mode
+        const bool error_mode = valid_symbols[ERROR_MODE];
 
         // We return false here to allow the lexer to fall back
         // to the grammar, which allows the existence of `\0`.
@@ -411,87 +484,28 @@ struct Scanner {
         // odd errors with preceding whitespace like ` @end`, where `@end` isn't parsed because
         // a `$._whitespace` is encountered, causing the parser to continue parsing as if everything
         // were a `$.paragraph_segment`.
-        if (lexer->get_column(lexer) == 0) {
-            if (is_whitespace(lexer->lookahead)) {
-                while (is_whitespace(lexer->lookahead))
-                    advance();
+        if (lexer->get_column(lexer) == 0 && is_whitespace(lexer->lookahead)) {
+            while (is_whitespace(lexer->lookahead))
+                advance();
 
-                lexer->result_symbol = WHITESPACE;
-                return true;
-            }
+            lexer->result_symbol = WHITESPACE;
+            return true;
         }
 
         lexer->mark_end(lexer);
         if (iswspace(lexer->lookahead))
             return scan_newline(valid_symbols);
 
-        if (lexer->lookahead == '[' || lexer->lookahead == '{') {
-            if (lexer->lookahead == '[' && valid_symbols[DESC_OPEN]) {
-                advance();
-                lexer->mark_end(lexer);
-                lexer->result_symbol = DESC_OPEN;
-                att_deque.push_front(DESC_OPEN);
-                return true;
-            }
-            if (lexer->lookahead == '{' && valid_symbols[TARGET_OPEN]) {
-                advance();
-                lexer->mark_end(lexer);
-                lexer->result_symbol = TARGET_OPEN;
-                att_deque.push_front(TARGET_OPEN);
-                return true;
-            }
-            return false;
-        }
-        if ((lexer->lookahead == ']' || lexer->lookahead == '}') && !att_deque.empty()) {
-            if (valid_symbols[FLAG_INSIDE_VERBATIM])
-                return false;
-            if (lexer->lookahead == ']' && valid_symbols[DESC_CLOSE]) {
-                advance();
-                lexer->mark_end(lexer);
-                lexer->result_symbol = DESC_CLOSE;
-                att_deque.pop_front();
-                return true;
-            }
-            if (lexer->lookahead == '}' && valid_symbols[TARGET_CLOSE]) {
-                advance();
-                lexer->mark_end(lexer);
-                lexer->result_symbol = TARGET_CLOSE;
-                att_deque.pop_front();
-                return true;
-            }
-            if (lexer->lookahead == ']'
-                && is_markup_active(DESC_OPEN)
-                && valid_symbols[FAILED_CLOSE]
-            ) {
-                const TokenType fail_type = att_deque.front();
-                att_deque.pop_front();
-                lexer->result_symbol = FAILED_CLOSE;
-                return true;
-            }
-            if (lexer->lookahead == '}'
-                && is_markup_active(TARGET_OPEN)
-                && valid_symbols[FAILED_CLOSE]
-            ) {
-                const TokenType fail_type = att_deque.front();
-                att_deque.pop_front();
-                lexer->result_symbol = FAILED_CLOSE;
-                return true;
-            }
-            return false;
-        }
+        TRY_SCAN(scan_linkables(valid_symbols));
 
         // take one lookahead first as we need at least two lookahead to distinguish
         // detached modifiers from others (e.g. heading_prefix and bold_open)
-        lexer->mark_end(lexer);
         const int32_t character = lexer->lookahead;
         advance();
 
-        if (valid_symbols[HEADING] && character == '*' && (lexer->lookahead == '*' || is_whitespace(lexer->lookahead)))
-            return scan_detached_modifier(valid_symbols, character, HEADING);
-        if ((valid_symbols[UNORDERED_LIST] || valid_symbols[WEAK_DELIMITING_MODIFIER]) && character == '-' && (lexer->lookahead == '-' || is_whitespace(lexer->lookahead)))
-            return scan_detached_modifier(valid_symbols, character, UNORDERED_LIST);
+        TRY_SCAN(scan_detached_modifier(valid_symbols, character));
 
-        // TODO: add other detached modifiers
+        // TODO: add tags
 
         if (character == '|')
             return scan_free_form_close(valid_symbols, character);
