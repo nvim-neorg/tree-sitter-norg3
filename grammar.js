@@ -27,11 +27,14 @@ module.exports = grammar({
         $.paragraph_break,
         $._newline,
         $._failed_close,
-        $.desc_close,
-        $.target_close,
         $.__inside_verbatim,
 
         $._punctuation,
+
+        $.desc_open,
+        $.desc_close,
+        $.target_open,
+        $.target_close,
 
         $.not_open,
         $.not_close,
@@ -218,8 +221,10 @@ module.exports = grammar({
                                 $.verbatim_open,
                                 $.math_open,
                                 $.inline_macro_open,
-                                "[",
-                                "{",
+                                // "[",
+                                // "{",
+                                $.target_open,
+                                $.desc_open,
                                 ":",
                                 $.__inside_verbatim,
                                 // list of link target prefixes to make conflict
@@ -428,7 +433,8 @@ module.exports = grammar({
 
         _link_description: ($) =>
             seq(
-                "[",
+                // "[",
+                alias($.desc_open, "["),
                 field("description", $.description),
                 alias($.desc_close, "]"),
             ),
@@ -436,7 +442,8 @@ module.exports = grammar({
 
         _link_target: ($) =>
             seq(
-                "{",
+                // "{",
+                alias($.target_open, "{"),
                 field("target", choice(
                     $.scope,
                     $.norg_file,
