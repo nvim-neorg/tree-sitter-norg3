@@ -267,7 +267,6 @@ module.exports = grammar({
                     choice(
                         $.paragraph_inner,
                         alias(token(prec(1, "\\")), $.punctuation),
-                        // alias("|", $.punctuation),
                     )
                 ),
                 $.free_form_close,
@@ -321,17 +320,7 @@ module.exports = grammar({
             seq(
                 $.strikethrough_open,
                 choice(
-                    seq(
-                        alias("|", $.free_form_open),
-                        repeat(
-                            choice(
-                                $.paragraph_inner,
-                                alias(token(prec(1, "\\")), $.punctuation),
-                                alias("|", $.punctuation),
-                            ),
-                        ),
-                        alias("|", $.free_form_close),
-                    ),
+                    $._free_form,
                     $.paragraph_inner,
                 ),
                 $.strikethrough_close,
@@ -427,10 +416,8 @@ module.exports = grammar({
         _description: ($) =>
             seq(
                 "[",
-                // alias($.desc_open, "["),
                 field("description", $.description),
                 alias($.desc_close, "]"),
-                // "]"
             ),
         description: ($) => $.paragraph_inner,
 
