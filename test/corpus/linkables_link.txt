@@ -343,4 +343,90 @@ link-19: URI link > unclosed verbatim
         target: (uri)))
     (paragraph_break)))
 
+================================================================================
+link-20: non-verbatim precedence
+================================================================================
+{* heading *Object }*}
+
+{* heading *|Object }|*}
+--------------------------------------------------------------------------------
+; NOTE: *Object {}* is just error
+(document
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_heading
+          (heading_prefix)
+          (title
+            (word)
+            (whitespace)
+            (open_conflict
+              (bold_open)
+              (word)
+              (whitespace))))))
+    (open_conflict
+      (bold_open))
+    (punctuation)
+    (paragraph_break))
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_heading
+          (heading_prefix)
+          (title
+            (word)
+            (whitespace)
+            (bold
+              (bold_open)
+              (free_form_open)
+              (word)
+              (whitespace)
+              (punctuation)
+              (free_form_close)
+              (bold_close))))))
+    (paragraph_break)))
+
+================================================================================
+link-21: verbatim precedence
+================================================================================
+{* heading `Object {}`}
+
+{* heading `|Object {}|`}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_heading
+          (heading_prefix)
+          (title
+            (word)
+            (whitespace)
+            (verbatim
+              (verbatim_open)
+              (word)
+              (whitespace)
+              (punctuation)
+              (punctuation)
+              (verbatim_close))))))
+    (paragraph_break))
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_heading
+          (heading_prefix)
+          (title
+            (word)
+            (whitespace)
+            (verbatim
+              (verbatim_open)
+              (free_form_open)
+              (word)
+              (whitespace)
+              (punctuation)
+              (punctuation)
+              (free_form_close)
+              (verbatim_close))))))
+    (paragraph_break)))
+
 ; vim:ts=2:sw=2:

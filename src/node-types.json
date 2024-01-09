@@ -1,10 +1,14 @@
 [
   {
-    "type": "att_mod",
+    "type": "attached_modifiers",
     "named": true,
     "subtypes": [
       {
         "type": "bold",
+        "named": true
+      },
+      {
+        "type": "inline_comment",
         "named": true
       },
       {
@@ -137,11 +141,11 @@
           "named": true
         },
         {
-          "type": "att_mod",
+          "type": "attached_modifier_extension",
           "named": true
         },
         {
-          "type": "attached_modifier_extension",
+          "type": "attached_modifiers",
           "named": true
         },
         {
@@ -204,7 +208,7 @@
           "named": true
         },
         {
-          "type": "att_mod",
+          "type": "attached_modifiers",
           "named": true
         },
         {
@@ -251,7 +255,7 @@
           "named": true
         },
         {
-          "type": "paragraph",
+          "type": "non_structural",
           "named": true
         },
         {
@@ -312,11 +316,6 @@
     }
   },
   {
-    "type": "horizontal_rule",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "indent_segment",
     "named": true,
     "fields": {},
@@ -348,7 +347,7 @@
           "named": true
         },
         {
-          "type": "att_mod",
+          "type": "attached_modifiers",
           "named": true
         },
         {
@@ -365,6 +364,73 @@
         },
         {
           "type": "paragraph_break",
+          "named": true
+        },
+        {
+          "type": "punctuation",
+          "named": true
+        },
+        {
+          "type": "soft_break",
+          "named": true
+        },
+        {
+          "type": "whitespace",
+          "named": true
+        },
+        {
+          "type": "word",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "inline_comment",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "anchor",
+          "named": true
+        },
+        {
+          "type": "attached_modifier_extension",
+          "named": true
+        },
+        {
+          "type": "attached_modifiers",
+          "named": true
+        },
+        {
+          "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "free_form_close",
+          "named": true
+        },
+        {
+          "type": "free_form_open",
+          "named": true
+        },
+        {
+          "type": "inline_comment_close",
+          "named": true
+        },
+        {
+          "type": "inline_comment_open",
+          "named": true
+        },
+        {
+          "type": "link",
+          "named": true
+        },
+        {
+          "type": "open_conflict",
           "named": true
         },
         {
@@ -450,11 +516,11 @@
           "named": true
         },
         {
-          "type": "att_mod",
+          "type": "attached_modifier_extension",
           "named": true
         },
         {
-          "type": "attached_modifier_extension",
+          "type": "attached_modifiers",
           "named": true
         },
         {
@@ -842,7 +908,7 @@
           "named": true
         },
         {
-          "type": "att_mod",
+          "type": "attached_modifiers",
           "named": true
         },
         {
@@ -851,6 +917,10 @@
         },
         {
           "type": "escape_sequence",
+          "named": true
+        },
+        {
+          "type": "inline_comment_open",
           "named": true
         },
         {
@@ -929,7 +999,7 @@
           "named": true
         },
         {
-          "type": "att_mod",
+          "type": "attached_modifiers",
           "named": true
         },
         {
@@ -969,7 +1039,7 @@
   },
   {
     "type": "punctuation",
-    "named": false,
+    "named": true,
     "fields": {}
   },
   {
@@ -1023,11 +1093,11 @@
           "named": true
         },
         {
-          "type": "att_mod",
+          "type": "attached_modifier_extension",
           "named": true
         },
         {
-          "type": "attached_modifier_extension",
+          "type": "attached_modifiers",
           "named": true
         },
         {
@@ -1090,11 +1160,11 @@
           "named": true
         },
         {
-          "type": "att_mod",
+          "type": "attached_modifier_extension",
           "named": true
         },
         {
-          "type": "attached_modifier_extension",
+          "type": "attached_modifiers",
           "named": true
         },
         {
@@ -1145,11 +1215,6 @@
     }
   },
   {
-    "type": "strong_delimiting_modifier",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "subscript",
     "named": true,
     "fields": {},
@@ -1162,11 +1227,11 @@
           "named": true
         },
         {
-          "type": "att_mod",
+          "type": "attached_modifier_extension",
           "named": true
         },
         {
-          "type": "attached_modifier_extension",
+          "type": "attached_modifiers",
           "named": true
         },
         {
@@ -1229,11 +1294,11 @@
           "named": true
         },
         {
-          "type": "att_mod",
+          "type": "attached_modifier_extension",
           "named": true
         },
         {
-          "type": "attached_modifier_extension",
+          "type": "attached_modifiers",
           "named": true
         },
         {
@@ -1296,7 +1361,7 @@
           "named": true
         },
         {
-          "type": "att_mod",
+          "type": "attached_modifiers",
           "named": true
         },
         {
@@ -1343,11 +1408,11 @@
           "named": true
         },
         {
-          "type": "att_mod",
+          "type": "attached_modifier_extension",
           "named": true
         },
         {
-          "type": "attached_modifier_extension",
+          "type": "attached_modifiers",
           "named": true
         },
         {
@@ -1454,11 +1519,6 @@
     }
   },
   {
-    "type": "whitespace",
-    "named": true,
-    "fields": {}
-  },
-  {
     "type": "word",
     "named": true,
     "fields": {}
@@ -1548,6 +1608,10 @@
     "named": true
   },
   {
+    "type": "horizontal_rule",
+    "named": true
+  },
+  {
     "type": "inline_comment_close",
     "named": true
   },
@@ -1616,6 +1680,10 @@
     "named": true
   },
   {
+    "type": "strong_delimiting_modifier",
+    "named": true
+  },
+  {
     "type": "subscript_close",
     "named": true
   },
@@ -1657,6 +1725,10 @@
   },
   {
     "type": "weak_delimiting_modifier",
+    "named": true
+  },
+  {
+    "type": "whitespace",
     "named": true
   },
   {

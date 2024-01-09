@@ -29,11 +29,11 @@ enum TokenType : char {
     WHITESPACE,
 
     PARAGRAPH_BREAK,
-    FAILED_CLOSE,
     NEWLINE,
+    FAILED_CLOSE,
     DESC_CLOSE,
-    CURLY_CLOSE,
-    INSIDE_VERBATIM,
+    TARGET_CLOSE,
+    FLAG_INSIDE_VERBATIM,
 
     PUNCTUATION,
 
@@ -81,9 +81,9 @@ enum TokenType : char {
 
     WEAK_DELIMITING_MODIFIER,
     DEDENT,
-    INDENT_SEGMENT_END,
+    FLAG_INDENT_SEGMENT_END,
 
-    ERROR_SENTINEL,
+    ERROR_MODE,
 };
 
 TokenType char_to_attached_mod(int32_t c) {
@@ -138,32 +138,15 @@ struct Scanner {
     TSLexer* lexer;
     std::unordered_map< char, std::vector<uint16_t> > indents;
     std::deque<TokenType> att_deque;
-
     bool single_line_mode;
 
-    Scanner() {
-        single_line_mode = false;
-    }
-
     /**
-     * @brief Searches through a range of valid symbols.
-     *
-     * @param valid_symbols Usually `valid_symbols` that were passed to you in the `scan` function.
-     * @param start The beginning index to start search (inclusive).
-     * @param end The end index of the search (inclusive).
+     * @brief Check if attached modifier is opened
      */
-    int32_t get_valid_symbol(const bool* valid_symbols, size_t start, size_t end) {
-        for (; start <= end; start++) {
-            if (valid_symbols[start])
-                return start;
-        }
-
-        return -1;
-    }
-
     bool is_markup_active(TokenType kind) {
         return !att_deque.empty() && std::find(att_deque.begin(), att_deque.end(), kind) != att_deque.end();
     }
+
     /**
      * @brief Check if attached modifier is opened as free-form
      */
@@ -311,7 +294,7 @@ struct Scanner {
                 advance_newline();
 
                 // FIXME: weak delimiting modifier should be able to used with other detached modifiers
-                if (!valid_symbols[INDENT_SEGMENT_END])
+                if (!valid_symbols[FLAG_INDENT_SEGMENT_END])
                     indents['*'].pop_back();
                 // When `mark_end()` is called again we essentially move the previous checkpoint to the new "head".
                 lexer->mark_end(lexer);
@@ -340,10 +323,8 @@ struct Scanner {
         while (is_whitespace(lexer->lookahead))
             skip();
         if (is_newline(lexer->lookahead)) {
-            advance();
-            if (!valid_symbols[FAILED_CLOSE]) {
-                lexer->mark_end(lexer);
-            }
+            advance_newline();
+            if (!valid_symbols[FAILED_CLOSE]) lexer->mark_end(lexer);
 
             if (valid_symbols[NEWLINE]) {
                 // cancel single-line, this occurs when heading has slide/indent_segment prefixs
@@ -403,7 +384,7 @@ struct Scanner {
 
     bool scan(const bool *valid_symbols) {
         // the external scanner don't try any recovery
-        // if (valid_symbols[ERROR_SENTINEL]) {
+        // if (valid_symbols[ERROR_MODE]) {
         //     return false;
         // }
 
@@ -441,32 +422,19 @@ struct Scanner {
         if (iswspace(lexer->lookahead))
             return scan_newline(valid_symbols);
 
-        if (valid_symbols[INSIDE_VERBATIM] && (lexer->lookahead == ']' || lexer->lookahead == '}')) {
-            advance();
-            lexer->mark_end(lexer);
-            lexer->result_symbol = PUNCTUATION;
-            return true;
-        }
-        if (lexer->lookahead == ']') {
-            if (valid_symbols[DESC_CLOSE]) {
+        if (lexer->lookahead == ']' || lexer->lookahead == '}') {
+            if (valid_symbols[FLAG_INSIDE_VERBATIM])
+                return false;
+            if (lexer->lookahead == ']' && valid_symbols[DESC_CLOSE]) {
                 advance();
                 lexer->mark_end(lexer);
                 lexer->result_symbol = DESC_CLOSE;
                 return true;
             }
-            if (valid_symbols[FAILED_CLOSE] && !att_deque.empty()) {
-                const TokenType fail_type = att_deque.front();
-                att_deque.pop_front();
-                lexer->result_symbol = FAILED_CLOSE;
-                return true;
-            }
-            return false;
-        }
-        if (lexer->lookahead == '}') {
-            if (valid_symbols[CURLY_CLOSE]) {
+            if (lexer->lookahead == '}' && valid_symbols[TARGET_CLOSE]) {
                 advance();
                 lexer->mark_end(lexer);
-                lexer->result_symbol = CURLY_CLOSE;
+                lexer->result_symbol = TARGET_CLOSE;
                 return true;
             }
             if (valid_symbols[FAILED_CLOSE] && !att_deque.empty()) {
