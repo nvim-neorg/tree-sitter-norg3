@@ -164,7 +164,8 @@
         },
         {
           "type": "PATTERN",
-          "value": "[^\\n\\r\\p{Z}\\p{L}\\p{N}]"
+          "value": "[^\\n\\r\\p{Z}\\p{L}\\p{N}]",
+          "flags": "u"
         },
         {
           "type": "SYMBOL",
@@ -187,7 +188,8 @@
         "value": 1,
         "content": {
           "type": "PATTERN",
-          "value": "\\p{Zs}+"
+          "value": "\\p{Zs}+",
+          "flags": "u"
         }
       }
     },
@@ -204,7 +206,8 @@
               "members": [
                 {
                   "type": "PATTERN",
-                  "value": "\\p{Zs}+"
+                  "value": "\\p{Zs}+",
+                  "flags": "u"
                 },
                 {
                   "type": "BLANK"
@@ -513,7 +516,7 @@
                   },
                   {
                     "type": "SYMBOL",
-                    "name": "inside_verbatim"
+                    "name": "_inside_verbatim"
                   },
                   {
                     "type": "STRING",
@@ -1519,7 +1522,8 @@
             "value": 1,
             "content": {
               "type": "PATTERN",
-              "value": "\\p{Zs}+"
+              "value": "\\p{Zs}+",
+              "flags": "u"
             }
           }
         },
@@ -1555,7 +1559,8 @@
             "value": 1,
             "content": {
               "type": "PATTERN",
-              "value": "\\p{Zs}+"
+              "value": "\\p{Zs}+",
+              "flags": "u"
             }
           }
         },
@@ -1591,7 +1596,8 @@
             "value": 1,
             "content": {
               "type": "PATTERN",
-              "value": "\\p{Zs}+"
+              "value": "\\p{Zs}+",
+              "flags": "u"
             }
           }
         },
@@ -1627,7 +1633,8 @@
             "value": 1,
             "content": {
               "type": "PATTERN",
-              "value": "\\p{Zs}+"
+              "value": "\\p{Zs}+",
+              "flags": "u"
             }
           }
         },
@@ -1715,7 +1722,8 @@
             "value": 1,
             "content": {
               "type": "PATTERN",
-              "value": "\\p{Zs}+"
+              "value": "\\p{Zs}+",
+              "flags": "u"
             }
           }
         },
@@ -1773,7 +1781,8 @@
             "value": 1,
             "content": {
               "type": "PATTERN",
-              "value": "\\p{Zs}+"
+              "value": "\\p{Zs}+",
+              "flags": "u"
             }
           }
         },
@@ -1831,7 +1840,8 @@
             "value": 1,
             "content": {
               "type": "PATTERN",
-              "value": "\\p{Zs}+"
+              "value": "\\p{Zs}+",
+              "flags": "u"
             }
           }
         },
@@ -1973,7 +1983,8 @@
               "value": 1,
               "content": {
                 "type": "PATTERN",
-                "value": "\\p{Zs}+"
+                "value": "\\p{Zs}+",
+                "flags": "u"
               }
             }
           },
@@ -2324,7 +2335,7 @@
     },
     {
       "type": "SYMBOL",
-      "name": "inside_verbatim"
+      "name": "_inside_verbatim"
     },
     {
       "type": "SYMBOL",
