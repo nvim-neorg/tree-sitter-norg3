@@ -1,0 +1,142 @@
+================================================================================
+deli-00: Strong delimiting modifier between paragraph
+================================================================================
+word
+word
+==
+word
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (word)
+    (soft_break)
+    (word)
+    (paragraph_break))
+  (strong_delimiting_modifier)
+  (paragraph
+    (word)
+    (paragraph_break)))
+
+================================================================================
+deli-01: Weak delimiting modifier between paragraph
+================================================================================
+word
+word
+--
+word
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (word)
+    (soft_break)
+    (word)
+    (paragraph_break))
+  (weak_delimiting_modifier)
+  (paragraph
+    (word)
+    (paragraph_break)))
+
+================================================================================
+deli-02: Horizontal rule between paragraph
+================================================================================
+word
+word
+__
+word
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (word)
+    (soft_break)
+    (word)
+    (paragraph_break))
+  (horizontal_rule)
+  (paragraph
+    (word)
+    (paragraph_break)))
+
+================================================================================
+deli-03: Strong delimiting modifier after heading
+================================================================================
+* heading
+** heading
+   paragraph
+   ===
+paragraph
+--------------------------------------------------------------------------------
+(document
+  (heading
+    (heading_prefix)
+    (inline
+      (word)
+      (paragraph_break))
+      (heading
+        (heading_prefix)
+        (inline
+          (word)
+          (paragraph_break))
+          (paragraph
+            (word)
+            (paragraph_break))))
+  (strong_delimiting_modifier)
+  (paragraph
+    (word)
+    (paragraph_break)))
+
+================================================================================
+deli-04: Weak delimiting modifier after heading
+================================================================================
+* heading
+** heading
+   paragraph
+   ---
+  paragraph
+--------------------------------------------------------------------------------
+(document
+  (heading
+    (heading_prefix)
+    (inline
+      (word)
+      (paragraph_break))
+    (heading
+      (heading_prefix)
+      (inline
+        (word)
+        (paragraph_break))
+      (paragraph
+        (word)
+        (paragraph_break))
+      (weak_delimiting_modifier))
+    (paragraph
+      (word)
+      (paragraph_break))))
+
+================================================================================
+deli-05: Horizontal rule after heading
+================================================================================
+* heading
+** heading
+   paragraph
+   ___
+  paragraph
+--------------------------------------------------------------------------------
+(document
+  (heading
+    (heading_prefix)
+    (inline
+      (word)
+      (paragraph_break))
+    (heading
+      (heading_prefix)
+      (inline
+        (word)
+        (paragraph_break))
+      (paragraph
+        (word)
+        (paragraph_break))
+      (horizontal_rule)
+      (paragraph
+        (word)
+        (paragraph_break)))))
+
+; vim:ts=2:sw=2:

@@ -93,8 +93,6 @@ anchor-04: reset attached modifier after destination
       (bold_close))
     (paragraph_break)))
 
-; FIXME: this fails
-; fix this by rewrite on verbatim conflict
 ================================================================================
 anchor-05: anchor after unclosed verbatim
 ================================================================================
@@ -107,6 +105,80 @@ anchor-05: anchor after unclosed verbatim
       (anchor
         description: (description
             (word))))
+    (paragraph_break)))
+
+================================================================================
+anchor-06: non-verbatim precedence
+================================================================================
+[mention *Array ]*]
+
+[mention *|Array ]|*]
+--------------------------------------------------------------------------------
+; NOTE: *Array []* is just error
+(document
+  (paragraph
+    (anchor
+      description: (description
+        (word)
+        (whitespace)
+        (open_conflict
+          (bold_open)
+          (word)
+          (whitespace))))
+    (open_conflict
+      (bold_open))
+    (punctuation)
+    (paragraph_break))
+  (paragraph
+    (anchor
+      description: (description
+        (word)
+        (whitespace)
+        (bold
+          (bold_open)
+          (free_form_open)
+          (word)
+          (whitespace)
+          (punctuation)
+          (free_form_close)
+          (bold_close))))
+    (paragraph_break)))
+
+================================================================================
+anchor-07: verbatim precedence
+================================================================================
+[mention `Array []`]
+
+[mention `|Array []|`]
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (anchor
+      description: (description
+        (word)
+        (whitespace)
+        (verbatim
+          (verbatim_open)
+          (word)
+          (whitespace)
+          (punctuation)
+          (punctuation)
+          (verbatim_close))))
+    (paragraph_break))
+  (paragraph
+    (anchor
+      description: (description
+        (word)
+        (whitespace)
+        (verbatim
+          (verbatim_open)
+          (free_form_open)
+          (word)
+          (whitespace)
+          (punctuation)
+          (punctuation)
+          (free_form_close)
+          (verbatim_close))))
     (paragraph_break)))
 
 ; vim:ts=2:sw=2:
