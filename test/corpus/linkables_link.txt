@@ -365,8 +365,8 @@ link-20: non-verbatim precedence
               (word)
               (whitespace))))))
     (open_conflict
-      (bold_open))
-    (punctuation)
+      (bold_open)
+      (punctuation))
     (paragraph_break))
   (paragraph
     (link
@@ -426,6 +426,40 @@ link-21: verbatim precedence
               (punctuation)
               (punctuation)
               (free_form_close)
+              (verbatim_close))))))
+    (paragraph_break)))
+
+================================================================================
+link-22: closing modifier without opening modifier (1)
+================================================================================
+*word}*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (punctuation)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+link-23: closing modifier without opening modifier (2)
+================================================================================
+{* heading `}`}
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (link
+      target: (scope
+        (link_scope_heading
+          (heading_prefix)
+          (title
+            (word)
+            (whitespace)
+            (verbatim
+              (verbatim_open)
+              (punctuation)
               (verbatim_close))))))
     (paragraph_break)))
 

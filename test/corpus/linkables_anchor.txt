@@ -126,8 +126,8 @@ anchor-06: non-verbatim precedence
           (word)
           (whitespace))))
     (open_conflict
-      (bold_open))
-    (punctuation)
+      (bold_open)
+      (punctuation))
     (paragraph_break))
   (paragraph
     (anchor
@@ -178,6 +178,37 @@ anchor-07: verbatim precedence
           (punctuation)
           (punctuation)
           (free_form_close)
+          (verbatim_close))))
+    (paragraph_break)))
+
+================================================================================
+anchor-08: closing modifier without opening modifier (1)
+================================================================================
+*word]*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (word)
+      (punctuation)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+anchor-09: closing modifier without opening modifier (2)
+================================================================================
+[mention `]`]
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (anchor
+      description: (description
+        (word)
+        (whitespace)
+        (verbatim
+          (verbatim_open)
+          (punctuation)
           (verbatim_close))))
     (paragraph_break)))
 

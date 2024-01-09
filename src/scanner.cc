@@ -31,11 +31,14 @@ enum TokenType : char {
     PARAGRAPH_BREAK,
     NEWLINE,
     FAILED_CLOSE,
-    DESC_CLOSE,
-    TARGET_CLOSE,
     FLAG_INSIDE_VERBATIM,
 
     PUNCTUATION,
+
+    DESC_OPEN,
+    DESC_CLOSE,
+    TARGET_OPEN,
+    TARGET_CLOSE,
 
     NOT_OPEN,
     NOT_CLOSE,
@@ -422,22 +425,53 @@ struct Scanner {
         if (iswspace(lexer->lookahead))
             return scan_newline(valid_symbols);
 
-        if (lexer->lookahead == ']' || lexer->lookahead == '}') {
+        if (lexer->lookahead == '[' || lexer->lookahead == '{') {
+            if (lexer->lookahead == '[' && valid_symbols[DESC_OPEN]) {
+                advance();
+                lexer->mark_end(lexer);
+                lexer->result_symbol = DESC_OPEN;
+                att_deque.push_front(DESC_OPEN);
+                return true;
+            }
+            if (lexer->lookahead == '{' && valid_symbols[TARGET_OPEN]) {
+                advance();
+                lexer->mark_end(lexer);
+                lexer->result_symbol = TARGET_OPEN;
+                att_deque.push_front(TARGET_OPEN);
+                return true;
+            }
+            return false;
+        }
+        if ((lexer->lookahead == ']' || lexer->lookahead == '}') && !att_deque.empty()) {
             if (valid_symbols[FLAG_INSIDE_VERBATIM])
                 return false;
             if (lexer->lookahead == ']' && valid_symbols[DESC_CLOSE]) {
                 advance();
                 lexer->mark_end(lexer);
                 lexer->result_symbol = DESC_CLOSE;
+                att_deque.pop_front();
                 return true;
             }
             if (lexer->lookahead == '}' && valid_symbols[TARGET_CLOSE]) {
                 advance();
                 lexer->mark_end(lexer);
                 lexer->result_symbol = TARGET_CLOSE;
+                att_deque.pop_front();
                 return true;
             }
-            if (valid_symbols[FAILED_CLOSE] && !att_deque.empty()) {
+            if (lexer->lookahead == ']'
+                && is_markup_active(DESC_OPEN)
+                && valid_symbols[FAILED_CLOSE]
+            ) {
+                const TokenType fail_type = att_deque.front();
+                att_deque.pop_front();
+                lexer->result_symbol = FAILED_CLOSE;
+                return true;
+            }
+            if (lexer->lookahead == '}'
+                && is_markup_active(TARGET_OPEN)
+                && valid_symbols[FAILED_CLOSE]
+            ) {
                 const TokenType fail_type = att_deque.front();
                 att_deque.pop_front();
                 lexer->result_symbol = FAILED_CLOSE;
