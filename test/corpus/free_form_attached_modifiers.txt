@@ -315,4 +315,36 @@ free-16: don't close open_conflict on fake closer
       (bold_close))
     (paragraph_break)))
 
+================================================================================
+free-17: proper close free-form (non-verbatim)
+================================================================================
+*|word||*
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (bold
+      (bold_open)
+      (free_form_open)
+      (word)
+      (punctuation)
+      (free_form_close)
+      (bold_close))
+    (paragraph_break)))
+
+================================================================================
+free-18: proper close free-form (verbatim)
+================================================================================
+`|word||`
+--------------------------------------------------------------------------------
+(document
+  (paragraph
+    (verbatim
+      (verbatim_open)
+      (free_form_open)
+      (word)
+      (punctuation)
+      (free_form_close)
+      (verbatim_close))
+    (paragraph_break)))
+
 ; vim:ts=2:sw=2:
