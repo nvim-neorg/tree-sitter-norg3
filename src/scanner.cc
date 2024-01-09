@@ -115,6 +115,25 @@ TokenType char_to_attached_mod(int32_t c) {
     return WHITESPACE;
 }
 
+/**
+    * Returns `true` if the character provided is a separator character (but not a newline).
+    */
+bool is_whitespace(int32_t character) {
+    return iswspace(character) && character != '\n' && character != '\r';
+}
+/**
+    * Returns `true` if the character provided is neither whitespace nor punctuation
+    */
+bool is_word(int32_t character) {
+    return character && !iswspace(character) && !iswpunct(character);
+}
+/**
+    * Returns `true` if the character provided is either \n or \r
+    */
+bool is_newline(int32_t character) {
+    return character == '\n' || character == '\r';
+}
+
 struct Scanner {
     TSLexer* lexer;
     std::unordered_map< char, std::vector<uint16_t> > indents;
@@ -124,25 +143,6 @@ struct Scanner {
 
     Scanner() {
         single_line_mode = false;
-    }
-
-    /**
-     * Returns `true` if the character provided is a separator character (but not a newline).
-     */
-    bool is_whitespace(int32_t character) {
-        return iswspace(character) && character != '\n' && character != '\r';
-    }
-    /**
-     * Returns `true` if the character provided is neither whitespace nor punctuation
-     */
-    bool is_word(int32_t character) {
-        return character && !iswspace(character) && !iswpunct(character);
-    }
-    /**
-     * Returns `true` if the character provided is either \n or \r
-     */
-    bool is_newline(int32_t character) {
-        return character == '\n' || character == '\r';
     }
 
     /**
@@ -161,13 +161,13 @@ struct Scanner {
         return -1;
     }
 
-    bool did_open(TokenType kind) {
+    bool is_markup_active(TokenType kind) {
         return !att_deque.empty() && std::find(att_deque.begin(), att_deque.end(), kind) != att_deque.end();
     }
     /**
      * @brief Check if attached modifier is opened as free-form
      */
-    bool is_free(TokenType kind) {
+    bool is_free_form(TokenType kind) {
         // HACK: don't use `auto` this is C++11 spec
         auto iter = std::find(att_deque.begin(), att_deque.end(), kind);
         return iter != att_deque.begin() && *(--iter) == FREE_FORM_OPEN;
@@ -181,8 +181,8 @@ struct Scanner {
         const TokenType close_token = (TokenType)(kind_token + 1);
         if (kind_token != 0
             && (valid_symbols[FREE_FORM_CLOSE]
-                || valid_symbols[FAILED_CLOSE] && did_open(FREE_FORM_OPEN))
-            && did_open(kind_token)
+                || valid_symbols[FAILED_CLOSE] && is_markup_active(FREE_FORM_OPEN))
+            && is_markup_active(kind_token)
         ) {
             if (!valid_symbols[FAILED_CLOSE]) lexer->mark_end(lexer);
             advance();
@@ -223,9 +223,9 @@ struct Scanner {
         }
         const TokenType kind_token = char_to_attached_mod(character);
         const TokenType close_token = (TokenType)(kind_token + 1);
-        if ((kind_token == 0)
+        if (kind_token == 0
             // 5th case in link-mod-00
-            || (link_mod_left && did_open(kind_token))
+            || (link_mod_left && is_markup_active(kind_token))
             // repeated modifier
             || (lexer->lookahead == character))
             return false;
@@ -235,16 +235,15 @@ struct Scanner {
         if (!valid_symbols[NOT_CLOSE]
             && (valid_symbols[close_token] || valid_failed_close)
             && !is_word(lexer->lookahead)
-            && did_open(kind_token)
+            && is_markup_active(kind_token)
         ) {
             if (valid_failed_close
                 && (kind_token < VERBATIM_OPEN)
                 // check if its' not free-form markup to check free-16
-                && !is_free(kind_token)
+                && !is_free_form(kind_token)
             ) {
                 const TokenType fail_type = att_deque.front();
                 att_deque.pop_front();
-                // std::cout << "pop" << std::endl;
                 lexer->result_symbol = FAILED_CLOSE;
                 return true;
             }
@@ -272,13 +271,13 @@ struct Scanner {
         // _OPEN
         if ((link_mod_left || !valid_symbols[NOT_OPEN])
             && valid_symbols[kind_token]
-            && !did_open(kind_token)
+            && !is_markup_active(kind_token)
             && lexer->lookahead && !iswspace(lexer->lookahead)
         ) {
             lexer->mark_end(lexer);
             const int32_t next_char = lexer->lookahead;
             const TokenType next_token = char_to_attached_mod(next_char);
-            if (next_token != 0 && did_open(next_token)) {
+            if (next_token != 0 && is_markup_active(next_token)) {
                 advance();
                 if (!lexer->lookahead || !is_word(lexer->lookahead) && lexer->lookahead != next_char) {
                     lexer->result_symbol = PUNCTUATION;

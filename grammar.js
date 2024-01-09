@@ -13,8 +13,6 @@ module.exports = grammar({
     // Tell treesitter we want to handle whitespace ourselves
     extras: ($) => [
         $._preceding_whitespace,
-        // NOTE: someone who thought about this is genious
-        // $._failed_close,
     ],
     externals: ($) => [
         $._preceding_whitespace,
@@ -24,7 +22,7 @@ module.exports = grammar({
         $._newline,
         $.desc_close,
         $.link_close,
-        $.inside_verbatim,
+        $._inside_verbatim,
 
         $._punctuation,
 
@@ -208,12 +206,10 @@ module.exports = grammar({
                                 $.verbatim_open,
                                 $.math_open,
                                 $.inline_macro_open,
-                                // prec(1, $.not_open),
-                                // prec(1, '['),
                                 "[",
                                 "{",
                                 ":",
-                                $.inside_verbatim,
+                                $._inside_verbatim,
                                 // list of link target prefixes to make conflict
                                 // see link-11 ~ link-17
                                 "/",
