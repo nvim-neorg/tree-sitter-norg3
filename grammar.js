@@ -3,6 +3,22 @@
 const newline = choice("\n", "\r", "\r\n");
 const whitespace = token(prec(1, /\p{Zs}+/u));
 
+const ATTACHED_MODIFIERS = [
+    "bold",
+    "italic",
+    "underline",
+    "strikethrough",
+    "spoiler",
+    "superscript",
+    "subscript",
+    "inline_comment",
+];
+const VERBATIM_ATTACHED_MODIFIERS = [
+    "verbatim",
+    "math",
+    "inline_macro",
+];
+
 /// General TODOS:
 //  - Abstract repeating patterns (e.g. nestable detached modifiers) into Javascript functions.
 //  - Make every node have an alias($.node, $.node_prefix). Only some currently do.
@@ -89,30 +105,11 @@ module.exports = grammar({
         [$.open_conflict, $.verbatim],
         [$.open_conflict, $.math],
         [$.open_conflict, $.inline_macro],
-        [$.open_conflict, $.bold, $.verbatim],
-        [$.open_conflict, $.bold, $.math],
-        [$.open_conflict, $.bold, $.inline_macro],
-        [$.open_conflict, $.italic, $.verbatim],
-        [$.open_conflict, $.italic, $.math],
-        [$.open_conflict, $.italic, $.inline_macro],
-        [$.open_conflict, $.underline, $.verbatim],
-        [$.open_conflict, $.underline, $.math],
-        [$.open_conflict, $.underline, $.inline_macro],
-        [$.open_conflict, $.strikethrough, $.verbatim],
-        [$.open_conflict, $.strikethrough, $.math],
-        [$.open_conflict, $.strikethrough, $.inline_macro],
-        [$.open_conflict, $.spoiler, $.verbatim],
-        [$.open_conflict, $.spoiler, $.math],
-        [$.open_conflict, $.spoiler, $.inline_macro],
-        [$.open_conflict, $.superscript, $.verbatim],
-        [$.open_conflict, $.superscript, $.math],
-        [$.open_conflict, $.superscript, $.inline_macro],
-        [$.open_conflict, $.subscript, $.verbatim],
-        [$.open_conflict, $.subscript, $.math],
-        [$.open_conflict, $.subscript, $.inline_macro],
-        [$.open_conflict, $.inline_comment, $.verbatim],
-        [$.open_conflict, $.inline_comment, $.math],
-        [$.open_conflict, $.inline_comment, $.inline_macro],
+        ...ATTACHED_MODIFIERS.map((kind) => [
+            [$.open_conflict, $[kind], $.verbatim],
+            [$.open_conflict, $[kind], $.math],
+            [$.open_conflict, $[kind], $.inline_macro],
+        ]).flat(),
         [$._link_description, $.verbatim],
         [$._link_description, $.math],
         [$._link_description, $.inline_macro],
@@ -128,6 +125,7 @@ module.exports = grammar({
     supertypes: ($) => [
         $.attached_modifiers,
         $.non_structural,
+        // $.tag,
     ],
 
     rules: {
@@ -182,17 +180,8 @@ module.exports = grammar({
             ),
         attached_modifiers: ($) =>
             choice(
-                $.bold,
-                $.italic,
-                $.underline,
-                $.strikethrough,
-                $.spoiler,
-                $.superscript,
-                $.subscript,
-                $.inline_comment,
-                $.verbatim,
-                $.inline_macro,
-                $.math,
+                ...ATTACHED_MODIFIERS.map((kind) => $[kind]),
+                ...VERBATIM_ATTACHED_MODIFIERS.map((kind) => $[kind]),
             ),
         _general: ($) =>
             choice(
@@ -207,28 +196,17 @@ module.exports = grammar({
             prec.right(
                 repeat1(
                     choice(
+                        $.__inside_verbatim,
                         $._general,
                         alias(
                             choice(
-                                $.bold_open,
-                                $.italic_open,
-                                $.underline_open,
-                                $.strikethrough_open,
-                                $.spoiler_open,
-                                $.superscript_open,
-                                $.subscript_open,
-                                $.inline_comment_open,
-                                $.verbatim_open,
-                                $.math_open,
-                                $.inline_macro_open,
-                                // "[",
-                                // "{",
+                                ...ATTACHED_MODIFIERS.map((kind) => $[kind + "_open"]),
+                                ...VERBATIM_ATTACHED_MODIFIERS.map((kind) => $[kind + "_open"]),
                                 $.target_open,
                                 $.desc_open,
-                                ":",
-                                $.__inside_verbatim,
                                 // list of link target prefixes to make conflict
                                 // see link-11 ~ link-17
+                                ":",
                                 "/",
                                 "#",
                                 "?",
@@ -245,17 +223,8 @@ module.exports = grammar({
             prec.dynamic(-1,
                 seq(
                     choice(
-                        $.bold_open,
-                        $.italic_open,
-                        $.underline_open,
-                        $.strikethrough_open,
-                        $.spoiler_open,
-                        $.superscript_open,
-                        $.subscript_open,
-                        $.inline_comment_open,
-                        $.verbatim_open,
-                        $.math_open,
-                        $.inline_macro_open,
+                        ...ATTACHED_MODIFIERS.map((kind) => $[kind + "_open"]),
+                        ...VERBATIM_ATTACHED_MODIFIERS.map((kind) => $[kind + "_open"]),
                     ),
                     optional($.paragraph_inner),
                     $._failed_close,
@@ -301,139 +270,22 @@ module.exports = grammar({
                 ),
                 alias("|", $.free_form_close),
             ),
-        bold: ($) =>
-            seq(
-                $.bold_open,
-                choice(
-                    $._free_form,
-                    $.paragraph_inner,
-                ),
-                $.bold_close,
-                optional($.attached_modifier_extension),
-            ),
 
-        italic: ($) =>
-            seq(
-                $.italic_open,
-                choice(
-                    $._free_form,
-                    $.paragraph_inner,
-                ),
-                $.italic_close,
-                optional($.attached_modifier_extension),
-            ),
+        bold: gen_attached_modifier("bold"),
+        italic: gen_attached_modifier("italic"),
+        underline: gen_attached_modifier("underline"),
+        strikethrough: gen_attached_modifier("strikethrough"),
+        spoiler: gen_attached_modifier("spoiler"),
+        superscript: gen_attached_modifier("superscript"),
+        subscript: gen_attached_modifier("subscript"),
+        inline_comment: gen_attached_modifier("inline_comment"),
 
-        underline: ($) =>
-            seq(
-                $.underline_open,
-                choice(
-                    $._free_form,
-                    $.paragraph_inner,
-                ),
-                $.underline_close,
-                optional($.attached_modifier_extension),
-            ),
-
-        strikethrough: ($) =>
-            seq(
-                $.strikethrough_open,
-                choice(
-                    $._free_form,
-                    $.paragraph_inner,
-                ),
-                $.strikethrough_close,
-                optional($.attached_modifier_extension),
-            ),
-
-        spoiler: ($) =>
-            seq(
-                $.spoiler_open,
-                choice(
-                    $._free_form,
-                    $.paragraph_inner,
-                ),
-                $.spoiler_close,
-                optional($.attached_modifier_extension),
-            ),
-
-        superscript: ($) =>
-            seq(
-                $.superscript_open,
-                choice(
-                    $._free_form,
-                    $.paragraph_inner,
-                ),
-                $.superscript_close,
-                optional($.attached_modifier_extension),
-            ),
-
-        subscript: ($) =>
-            seq(
-                $.subscript_open,
-                choice(
-                    $._free_form,
-                    $.paragraph_inner,
-                ),
-                $.subscript_close,
-                optional($.attached_modifier_extension),
-            ),
-
-        inline_comment: ($) =>
-            seq(
-                $.inline_comment_open,
-                choice(
-                    $._free_form,
-                    $.paragraph_inner,
-                ),
-                $.inline_comment_close,
-                optional($.attached_modifier_extension),
-            ),
-
-        verbatim: ($) =>
-            prec.right(
-                -1,
-                seq(
-                    $.verbatim_open,
-                    choice(
-                        $._verbatim_free_form,
-                        $.verbatim_paragraph_inner,
-                    ),
-                    $.verbatim_close,
-                    optional($.attached_modifier_extension),
-                ),
-            ),
-
-        math: ($) =>
-            prec.right(
-                -1,
-                seq(
-                    $.math_open,
-                    choice(
-                        $._verbatim_free_form,
-                        $.verbatim_paragraph_inner,
-                    ),
-                    $.math_close,
-                    optional($.attached_modifier_extension),
-                ),
-            ),
-
-        inline_macro: ($) =>
-            prec.right(
-                -1,
-                seq(
-                    $.inline_macro_open,
-                    choice(
-                        $._verbatim_free_form,
-                        $.verbatim_paragraph_inner,
-                    ),
-                    $.inline_macro_close,
-                    optional($.attached_modifier_extension),
-                ),
-            ),
+        verbatim: gen_verbatim_attached_modifier("verbatim"),
+        math: gen_verbatim_attached_modifier("math"),
+        inline_macro: gen_verbatim_attached_modifier("inline_macro"),
 
         _link_description: ($) =>
             seq(
-                // "[",
                 alias($.desc_open, "["),
                 field("description", $.description),
                 alias($.desc_close, "]"),
@@ -442,7 +294,6 @@ module.exports = grammar({
 
         _link_target: ($) =>
             seq(
-                // "{",
                 alias($.target_open, "{"),
                 field("target", choice(
                     $.scope,
@@ -572,8 +423,12 @@ module.exports = grammar({
             choice(
                 $.paragraph,
                 // TODO: tag
+                // $.tag,
                 $.horizontal_rule,
             ),
+        // tag: ($) =>
+        //     choice(
+        //     ),
         slide: ($) =>
             seq(
                 prec(1, ":"),
@@ -598,3 +453,38 @@ module.exports = grammar({
             ),
     },
 });
+
+/**
+ * @param {string} kind
+ */
+function gen_attached_modifier(kind) {
+    return (/** @type GrammarSymbols<any> */ $) =>
+        seq(
+            $[kind + "_open"],
+            choice(
+                $._free_form,
+                $.paragraph_inner,
+            ),
+            $[kind + "_close"],
+            optional($.attached_modifier_extension),
+        )
+}
+
+/**
+ * @param {string} kind
+ */
+function gen_verbatim_attached_modifier(kind) {
+    return (/** @type GrammarSymbols<any> */ $) =>
+        prec.right(
+            -1,
+            seq(
+                $[kind + "_open"],
+                choice(
+                    $._verbatim_free_form,
+                    $.verbatim_paragraph_inner,
+                ),
+                $[kind + "_close"],
+                optional($.attached_modifier_extension),
+            ),
+        )
+}

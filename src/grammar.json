@@ -369,11 +369,11 @@
         },
         {
           "type": "SYMBOL",
-          "name": "inline_macro"
+          "name": "math"
         },
         {
           "type": "SYMBOL",
-          "name": "math"
+          "name": "inline_macro"
         }
       ]
     },
@@ -482,6 +482,10 @@
           "members": [
             {
               "type": "SYMBOL",
+              "name": "__inside_verbatim"
+            },
+            {
+              "type": "SYMBOL",
               "name": "_general"
             },
             {
@@ -544,10 +548,6 @@
                   {
                     "type": "STRING",
                     "value": ":"
-                  },
-                  {
-                    "type": "SYMBOL",
-                    "name": "__inside_verbatim"
                   },
                   {
                     "type": "STRING",
