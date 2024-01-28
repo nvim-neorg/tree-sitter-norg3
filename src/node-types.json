@@ -60,6 +60,28 @@
       {
         "type": "paragraph",
         "named": true
+      },
+      {
+        "type": "tag",
+        "named": true
+      }
+    ]
+  },
+  {
+    "type": "tag",
+    "named": true,
+    "subtypes": [
+      {
+        "type": "infirm_tag",
+        "named": true
+      },
+      {
+        "type": "strong_carryover_tag",
+        "named": true
+      },
+      {
+        "type": "weak_carryover_tag",
+        "named": true
       }
     ]
   },
@@ -329,6 +351,25 @@
         },
         {
           "type": "weak_delimiting_modifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "infirm_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "param",
           "named": true
         }
       ]
@@ -1039,7 +1080,7 @@
   },
   {
     "type": "punctuation",
-    "named": false,
+    "named": true,
     "fields": {}
   },
   {
@@ -1209,6 +1250,25 @@
         },
         {
           "type": "word",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "strong_carryover_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "param",
           "named": true
         }
       ]
@@ -1519,12 +1579,35 @@
     }
   },
   {
+    "type": "weak_carryover_tag",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "param",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "word",
     "named": true,
     "fields": {}
   },
   {
     "type": " : ",
+    "named": false
+  },
+  {
+    "type": "#",
     "named": false
   },
   {
@@ -1540,7 +1623,15 @@
     "named": false
   },
   {
+    "type": "+",
+    "named": false
+  },
+  {
     "type": ",",
+    "named": false
+  },
+  {
+    "type": ".",
     "named": false
   },
   {
@@ -1609,6 +1700,10 @@
   },
   {
     "type": "horizontal_rule",
+    "named": true
+  },
+  {
+    "type": "identifier",
     "named": true
   },
   {

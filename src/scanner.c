@@ -345,14 +345,14 @@ bool scan_newline(Scanner *self, const bool *valid_symbols) {
                 lex_set_result(FAILED_CLOSE);
                 return true;
             }
-            LOG("paragraph break in eof or double newline\n");
+            LOG("paragraph break by eof or double newline\n");
             lex_set_result(PARAGRAPH_BREAK);
             vec_u32_clear(&self->att_stack);
             return true;
         }
-        if (char_to_detached_mod(lex_next) != 0 || lex_next == '_' || lex_next == '=') {
-            const int32_t character = lex_next;
-            lex_skip();
+        const int32_t character = lex_next;
+        lex_skip();
+        if (char_to_detached_mod(character) != 0 || character == '_' || character == '=') {
             size_t count = 1;
             while (lex_next == character) {
                 count++;
@@ -364,11 +364,29 @@ bool scan_newline(Scanner *self, const bool *valid_symbols) {
                     lex_set_result(FAILED_CLOSE);
                     return true;
                 }
-                LOG("paragraph break in detached mod\n");
+                LOG("paragraph break by detached modifier\n");
                 lex_set_result(PARAGRAPH_BREAK);
                 vec_u32_clear(&self->att_stack);
                 return true;
             }
+        }
+        if ((character == '#'
+            || character == '+'
+            || character == '.'
+            || character == '|'
+            || character == '@'
+            || character == '=')
+            && is_word(lex_next)
+        ) {
+            if (valid_symbols[FAILED_CLOSE] && !vec_u32_empty(&self->att_stack)) {
+                const token_type fail_type = vec_u32_pop(&self->att_stack);
+                lex_set_result(FAILED_CLOSE);
+                return true;
+            }
+            LOG("paragraph break by tag prefix\n");
+            lex_set_result(PARAGRAPH_BREAK);
+            vec_u32_clear(&self->att_stack);
+            return true;
         }
     }
     return false;
