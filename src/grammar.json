@@ -173,8 +173,7 @@
         },
         {
           "type": "PATTERN",
-          "value": "[^\\n\\r\\p{Z}\\p{L}\\p{N}]",
-          "flags": "u"
+          "value": "[^\\n\\r\\p{Z}\\p{L}\\p{N}]"
         },
         {
           "type": "SYMBOL",
@@ -202,8 +201,7 @@
             "value": 1,
             "content": {
               "type": "PATTERN",
-              "value": "\\p{Zs}+",
-              "flags": "u"
+              "value": "\\p{Zs}+"
             }
           }
         }
@@ -227,8 +225,7 @@
                     "value": 1,
                     "content": {
                       "type": "PATTERN",
-                      "value": "\\p{Zs}+",
-                      "flags": "u"
+                      "value": "\\p{Zs}+"
                     }
                   }
                 },
@@ -1511,8 +1508,7 @@
             "value": 1,
             "content": {
               "type": "PATTERN",
-              "value": "\\p{Zs}+",
-              "flags": "u"
+              "value": "\\p{Zs}+"
             }
           }
         },
@@ -1548,8 +1544,7 @@
             "value": 1,
             "content": {
               "type": "PATTERN",
-              "value": "\\p{Zs}+",
-              "flags": "u"
+              "value": "\\p{Zs}+"
             }
           }
         },
@@ -1585,8 +1580,7 @@
             "value": 1,
             "content": {
               "type": "PATTERN",
-              "value": "\\p{Zs}+",
-              "flags": "u"
+              "value": "\\p{Zs}+"
             }
           }
         },
@@ -1622,8 +1616,7 @@
             "value": 1,
             "content": {
               "type": "PATTERN",
-              "value": "\\p{Zs}+",
-              "flags": "u"
+              "value": "\\p{Zs}+"
             }
           }
         },
@@ -1711,8 +1704,7 @@
             "value": 1,
             "content": {
               "type": "PATTERN",
-              "value": "\\p{Zs}+",
-              "flags": "u"
+              "value": "\\p{Zs}+"
             }
           }
         },
@@ -1770,8 +1762,7 @@
             "value": 1,
             "content": {
               "type": "PATTERN",
-              "value": "\\p{Zs}+",
-              "flags": "u"
+              "value": "\\p{Zs}+"
             }
           }
         },
@@ -1829,8 +1820,7 @@
             "value": 1,
             "content": {
               "type": "PATTERN",
-              "value": "\\p{Zs}+",
-              "flags": "u"
+              "value": "\\p{Zs}+"
             }
           }
         },
@@ -2006,8 +1996,7 @@
               "value": 1,
               "content": {
                 "type": "PATTERN",
-                "value": "\\p{Zs}+",
-                "flags": "u"
+                "value": "\\p{Zs}+"
               }
             }
           },
