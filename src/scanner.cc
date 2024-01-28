@@ -420,6 +420,7 @@ struct Scanner {
                 }
                 single_line_mode = false;
                 lexer->result_symbol = PARAGRAPH_BREAK;
+                att_deque.clear();
                 return true;
             }
 
@@ -437,7 +438,7 @@ struct Scanner {
                 return true;
             }
             if (char_to_detached_mod(lexer->lookahead) != 0 || lexer->lookahead == '_' || lexer->lookahead == '=') {
-                int32_t character = lexer->lookahead;
+                const int32_t character = lexer->lookahead;
                 skip();
                 size_t count = 1;
                 while (lexer->lookahead == character) {
@@ -468,11 +469,14 @@ struct Scanner {
         // to the grammar, which allows the existence of `\0`.
         if (lexer->eof(lexer)) {
             if (valid_symbols[FAILED_CLOSE] && !att_deque.empty()) {
+                const TokenType fail_type = att_deque.front();
+                att_deque.pop_front();
                 lexer->result_symbol = FAILED_CLOSE;
                 return true;
             }
             if (valid_symbols[PARAGRAPH_BREAK]) {
                 lexer->result_symbol = PARAGRAPH_BREAK;
+                att_deque.clear();
                 return true;
             }
             return false;

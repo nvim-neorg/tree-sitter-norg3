@@ -244,18 +244,21 @@ free-12: free-form close > free-form open
       (bold_close))
     (paragraph_break)))
 
-; TODO: this fails
 ================================================================================
-free-13: unclosed free form is allowed inside complete markup??
+free-13: unclosed free form breaks complete markup
 ================================================================================
 */|*
 --------------------------------------------------------------------------------
 (document
-  (ERROR
-    (bold_open)
-    (italic_open)
-    (free_form_open)
-    (punctuation)))
+  (paragraph
+    (open_conflict
+      (bold_open)
+      (open_conflict
+        (italic_open)
+        (ERROR
+          (free_form_open)
+          (punctuation))))
+    (paragraph_break)))
 
 ================================================================================
 free-14: unclosed attached modifier inside free-form
