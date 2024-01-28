@@ -153,6 +153,12 @@ module.exports = grammar({
             token(repeat1('`')),
             token(repeat1('&')),
             token(repeat1('$')),
+            // '#',
+            // '+',
+            // '.',
+            // '|',
+            // '@',
+            // '=',
             /[^\n\r\p{Z}\p{L}\p{N}]/u,
             $._punctuation
         ),
@@ -430,44 +436,79 @@ module.exports = grammar({
                 $.strong_carryover_tag,
                 $.weak_carryover_tag,
                 $.infirm_tag,
-                // TODO: more
+                $.standard_ranged_tag,
+                $.verbatim_ranged_tag,
+                $.macro_ranged_tag,
             ),
         strong_carryover_tag: ($) =>
             seq(
-                prec(1, '#'),
+                token(prec(1, '#')),
                 $.identifier,
-                repeat(
-                    seq(
-                        whitespace,
-                        alias($.identifier, $.param),
-                    )
-                ),
+                repeat(seq(whitespace, field('param', $.identifier))),
                 $._newline,
             ),
         weak_carryover_tag: ($) =>
             seq(
-                prec(1, '+'),
+                token(prec(1, '+')),
                 $.identifier,
-                repeat(
-                    seq(
-                        whitespace,
-                        alias($.identifier, $.param),
-                    )
-                ),
+                repeat(seq(whitespace, field('param', $.identifier))),
                 $._newline,
             ),
         infirm_tag: ($) =>
             seq(
-                prec(1, '.'),
+                token(prec(1, '.')),
                 $.identifier,
-                repeat(
-                    seq(
-                        whitespace,
-                        alias($.identifier, $.param),
-                    )
-                ),
+                repeat(seq(whitespace, field('param', $.identifier))),
                 $._newline,
             ),
+        standard_ranged_tag: ($) =>
+            seq(
+                token(prec(1, '|')),
+                $.identifier,
+                repeat(seq(whitespace, field('param', $.identifier))),
+                $._newline,
+                repeat(
+                    choice(
+                        $.heading,
+                        $.non_structural,
+                        $.strong_delimiting_modifier,
+                        $._newline,
+                    )
+                ),
+                token(prec(1, '|end')),
+                $._newline,
+            ),
+        verbatim_ranged_tag: ($) =>
+            seq(
+                token(prec(1, '@')),
+                $.identifier,
+                repeat(seq(whitespace, field('param', $.identifier))),
+                $._newline,
+                optional(
+                    field(
+                        'content',
+                        $.verbatim_lines,
+                    )
+                ),
+                token(prec(1, '@end')),
+                $._newline,
+            ),
+        macro_ranged_tag: ($) =>
+            seq(
+                prec(1, '='),
+                $.identifier,
+                repeat(seq(whitespace, field('param', $.identifier))),
+                $._newline,
+                optional(
+                    field(
+                        'content',
+                        $.verbatim_lines,
+                    )
+                ),
+                token(prec(1, '=end')),
+                $._newline,
+            ),
+        verbatim_lines: ($) => repeat1(seq(optional(/.*/), $._newline)),
         slide: ($) =>
             seq(
                 prec(1, ":"),

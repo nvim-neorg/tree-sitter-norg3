@@ -76,7 +76,19 @@
         "named": true
       },
       {
+        "type": "macro_ranged_tag",
+        "named": true
+      },
+      {
+        "type": "standard_ranged_tag",
+        "named": true
+      },
+      {
         "type": "strong_carryover_tag",
+        "named": true
+      },
+      {
+        "type": "verbatim_ranged_tag",
         "named": true
       },
       {
@@ -359,17 +371,24 @@
   {
     "type": "infirm_tag",
     "named": true,
-    "fields": {},
+    "fields": {
+      "param": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
           "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "param",
           "named": true
         }
       ]
@@ -842,6 +861,42 @@
     }
   },
   {
+    "type": "macro_ranged_tag",
+    "named": true,
+    "fields": {
+      "content": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "verbatim_lines",
+            "named": true
+          }
+        ]
+      },
+      "param": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "math",
     "named": true,
     "fields": {},
@@ -1189,6 +1244,44 @@
     }
   },
   {
+    "type": "standard_ranged_tag",
+    "named": true,
+    "fields": {
+      "param": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "heading",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "non_structural",
+          "named": true
+        },
+        {
+          "type": "strong_delimiting_modifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "strikethrough",
     "named": true,
     "fields": {},
@@ -1258,17 +1351,24 @@
   {
     "type": "strong_carryover_tag",
     "named": true,
-    "fields": {},
+    "fields": {
+      "param": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
           "type": "identifier",
-          "named": true
-        },
-        {
-          "type": "param",
           "named": true
         }
       ]
@@ -1579,19 +1679,67 @@
     }
   },
   {
-    "type": "weak_carryover_tag",
+    "type": "verbatim_lines",
     "named": true,
-    "fields": {},
+    "fields": {}
+  },
+  {
+    "type": "verbatim_ranged_tag",
+    "named": true,
+    "fields": {
+      "content": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "verbatim_lines",
+            "named": true
+          }
+        ]
+      },
+      "param": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
           "type": "identifier",
           "named": true
-        },
+        }
+      ]
+    }
+  },
+  {
+    "type": "weak_carryover_tag",
+    "named": true,
+    "fields": {
+      "param": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "identifier",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
         {
-          "type": "param",
+          "type": "identifier",
           "named": true
         }
       ]
@@ -1644,6 +1792,22 @@
   },
   {
     "type": "::",
+    "named": false
+  },
+  {
+    "type": "=",
+    "named": false
+  },
+  {
+    "type": "=end",
+    "named": false
+  },
+  {
+    "type": "@",
+    "named": false
+  },
+  {
+    "type": "@end",
     "named": false
   },
   {
@@ -1836,6 +2000,14 @@
   },
   {
     "type": "{",
+    "named": false
+  },
+  {
+    "type": "|",
+    "named": false
+  },
+  {
+    "type": "|end",
     "named": false
   },
   {
