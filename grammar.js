@@ -125,7 +125,7 @@ module.exports = grammar({
     supertypes: ($) => [
         $.attached_modifiers,
         $.non_structural,
-        // $.tag,
+        $.tag,
     ],
 
     rules: {
@@ -422,13 +422,52 @@ module.exports = grammar({
         non_structural: ($) =>
             choice(
                 $.paragraph,
-                // TODO: tag
-                // $.tag,
+                $.tag,
                 $.horizontal_rule,
             ),
-        // tag: ($) =>
-        //     choice(
-        //     ),
+        tag: ($) =>
+            choice(
+                $.strong_carryover_tag,
+                $.weak_carryover_tag,
+                $.infirm_tag,
+                // TODO: more
+            ),
+        strong_carryover_tag: ($) =>
+            seq(
+                prec(1, '#'),
+                $.identifier,
+                repeat(
+                    seq(
+                        whitespace,
+                        alias($.identifier, $.param),
+                    )
+                ),
+                $._newline,
+            ),
+        weak_carryover_tag: ($) =>
+            seq(
+                prec(1, '+'),
+                $.identifier,
+                repeat(
+                    seq(
+                        whitespace,
+                        alias($.identifier, $.param),
+                    )
+                ),
+                $._newline,
+            ),
+        infirm_tag: ($) =>
+            seq(
+                prec(1, '.'),
+                $.identifier,
+                repeat(
+                    seq(
+                        whitespace,
+                        alias($.identifier, $.param),
+                    )
+                ),
+                $._newline,
+            ),
         slide: ($) =>
             seq(
                 prec(1, ":"),
