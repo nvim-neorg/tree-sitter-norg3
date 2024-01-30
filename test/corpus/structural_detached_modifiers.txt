@@ -1,0 +1,89 @@
+================================================================================
+heading-00: hard test
+================================================================================
+*** heading
+|example
+* heading
+** heading
+* heading
+***** heading
+** heading
+|example
+****** heading
+* heading
+|end
+|example
+===
+---
+|end
+paragraph
+** heading
+|end
+*** heading
+--------------------------------------------------------------------------------
+(document
+  (heading
+    (heading_prefix)
+    title: (inline
+      (word)
+      (paragraph_break))
+    (standard_ranged_tag
+      (identifier)
+      (heading
+        (heading_prefix)
+        title: (inline
+          (word)
+          (paragraph_break))
+        (heading
+          (heading_prefix)
+          title: (inline
+            (word)
+            (paragraph_break))))
+      (heading
+        (heading_prefix)
+        title: (inline
+          (word)
+          (paragraph_break))
+        (heading
+          (heading_prefix)
+          title: (inline
+            (word)
+            (paragraph_break)))
+        (heading
+          (heading_prefix)
+          title: (inline
+            (word)
+            (paragraph_break))
+          (standard_ranged_tag
+            (identifier)
+            (heading
+              (heading_prefix)
+              title: (inline
+                (word)
+                (paragraph_break)))
+            (heading
+              (heading_prefix)
+              title: (inline
+                (word)
+                (paragraph_break))))
+          (standard_ranged_tag
+            (identifier)
+            (strong_delimiting_modifier)
+            (weak_delimiting_modifier))
+          (paragraph
+            (word)
+            (paragraph_break)))
+        (heading
+          (heading_prefix)
+          title: (inline
+            (word)
+            (paragraph_break))))))
+  (heading
+    (heading_prefix)
+    title: (inline
+      (word)
+      (paragraph_break))))
+
+; TODO: add more tests
+
+; vim:ts=2:sw=2:
