@@ -76,27 +76,18 @@ static void vec_u32_push(struct vec_u32* self, uint32_t value) {
 	if (self->len + 1 > self->cap) {
 		self->cap = self->len + 8;
 		self->vec = realloc(self->vec, sizeof(uint32_t) * self->cap);
-		if (self->vec == NULL) {
-			fprintf(stderr, "vec_u32_push: malloc failed\n");
-			exit(EXIT_FAILURE);
-		}
+        assert(self->vec != NULL, "vec_u32_push: malloc failed\n");
 	}
 	self->vec[self->len++] = value;
 }
 static uint32_t vec_u32_pop(struct vec_u32* self) {
 	assert(self != NULL, "vec_u32_pop");
-	if (self->len < 1) {
-        fprintf(stderr, "vec_u32_pop: empty vec\n");
-        exit(EXIT_FAILURE);
-	}
+    assert(!(self->len < 1), "vec_u32_pop: empty vec\n");
 	return self->vec[self->len--];
 }
 static uint32_t vec_u32_back(struct vec_u32* self) {
 	assert(self != NULL, "vec_u32_back");
-	if (self->len < 1) {
-        fprintf(stderr, "vec_u32_back: empty vec\n");
-        exit(EXIT_FAILURE);
-	}
+    assert(!(self->len < 1), "vec_u32_back: empty vec\n");
 	return self->vec[self->len - 1];
 }
 static uint32_t vec_u32_back_or(struct vec_u32* self, uint32_t fallback) {
@@ -137,10 +128,7 @@ static size_t vec_u32_deserialize(struct vec_u32* self, const char* buffer) {
 	if (self->len > self->cap) {
 		self->cap = self->len;
 		self->vec = realloc(self->vec, sizeof(uint32_t) * self->cap);
-		if (self->vec == NULL) {
-			fprintf(stderr, "vec_u32_deserialize: malloc failed\n");
-			exit(EXIT_FAILURE);
-		}
+        assert(self->vec != NULL, "vec_u32_deserialize: malloc failed\n");
 	}
 	if (self->len > 0) {
 		memcpy(self->vec, buffer + read, self->len * sizeof *self->vec);
@@ -274,7 +262,10 @@ token_type char_to_detached_mod(int32_t c) {
  * Returns `true` if the character provided is neither whitespace nor punctuation
  */
 bool is_word(int32_t character) {
-    return character && !iswspace(character) && !iswpunct(character);
+    // return character && !iswspace(character) && !iswpunct(character);
+    // HACK: `iswpunct()` can't be used in wasm
+    // TODO(boltless): rewrite this temporary solution.
+    return character && (('a' <= character && character <= 'z') || ('A' <= character && character <= 'Z'));
 }
 /**
  * Returns `true` if the character provided is either \n or \r
