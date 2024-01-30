@@ -2425,11 +2425,14 @@
           ]
         },
         {
-          "type": "PREC",
-          "value": 1,
+          "type": "TOKEN",
           "content": {
-            "type": "STRING",
-            "value": "@end"
+            "type": "PREC",
+            "value": 1,
+            "content": {
+              "type": "STRING",
+              "value": "@end"
+            }
           }
         },
         {
@@ -2501,11 +2504,14 @@
           ]
         },
         {
-          "type": "PREC",
-          "value": 1,
+          "type": "TOKEN",
           "content": {
-            "type": "STRING",
-            "value": "=end"
+            "type": "PREC",
+            "value": 1,
+            "content": {
+              "type": "STRING",
+              "value": "=end"
+            }
           }
         },
         {
