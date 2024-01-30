@@ -97,6 +97,8 @@ module.exports = grammar({
         $.weak_delimiting_modifier,
         $._dedent,
         $.__indent_seg_end,
+        $.std_ranged_tag_prefix,
+        $.std_ranged_tag_end,
 
         $._error_sentinel,
     ],
@@ -120,7 +122,7 @@ module.exports = grammar({
 
     precedences: () => [],
 
-    inline: ($) => [$.paragraph_inner, $.verbatim_paragraph_inner],
+    inline: ($) => [$.paragraph_inner, $.verbatim_paragraph_inner, $.document_content],
 
     supertypes: ($) => [
         $.attached_modifiers,
@@ -129,7 +131,8 @@ module.exports = grammar({
     ],
 
     rules: {
-        document: ($) => repeat(
+        document: ($) => repeat($.document_content),
+        document_content: ($) => 
             choice(
                 $.heading,
                 $.non_structural,
@@ -140,8 +143,7 @@ module.exports = grammar({
                     token(seq(repeat2("-"), newline)),
                     $.weak_delimiting_modifier
                 ),
-            )
-        ),
+            ),
         paragraph: ($) => seq($.paragraph_inner, $.paragraph_break),
 
         punctuation: ($) => choice(
@@ -463,19 +465,12 @@ module.exports = grammar({
             ),
         standard_ranged_tag: ($) =>
             seq(
-                token(prec(1, '|')),
+                alias($.std_ranged_tag_prefix, '|'),
                 $.identifier,
                 repeat(seq(whitespace, field('param', $.identifier))),
                 $._newline,
-                repeat(
-                    choice(
-                        $.heading,
-                        $.non_structural,
-                        $.strong_delimiting_modifier,
-                        $._newline,
-                    )
-                ),
-                token(prec(1, '|end')),
+                repeat($.document_content),
+                alias($.std_ranged_tag_end, '|end'),
                 $._newline,
             ),
         verbatim_ranged_tag: ($) =>

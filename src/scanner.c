@@ -83,7 +83,7 @@ static void vec_u32_push(struct vec_u32* self, uint32_t value) {
 static uint32_t vec_u32_pop(struct vec_u32* self) {
 	assert(self != NULL, "vec_u32_pop");
     assert(!(self->len < 1), "vec_u32_pop: empty vec\n");
-	return self->vec[self->len--];
+	return self->vec[--self->len];
 }
 static uint32_t vec_u32_back(struct vec_u32* self) {
 	assert(self != NULL, "vec_u32_back");
@@ -99,6 +99,12 @@ static uint32_t vec_u32_back_or(struct vec_u32* self, uint32_t fallback) {
 }
 static bool vec_u32_empty(struct vec_u32* self) {
     return (self->len == 0);
+}
+static void vec_u32_pop_until(struct vec_u32* self, uint32_t value) {
+    while (true) {
+        if (vec_u32_empty(self)) return;
+        if (vec_u32_pop(self) == value) return;
+    }
 }
 static bool vec_u32_has(struct vec_u32* self, const uint32_t kind) {
 	assert(self != NULL, "vec_u32_has");
@@ -200,6 +206,8 @@ enum token_type {
     WEAK_DELIMITING_MODIFIER,
     DEDENT,
     FLAG_INDENT_SEGMENT_END,
+    STD_RANGED_PREFIX,
+    STD_RANGED_END,
 
     ERROR_MODE,
 };
@@ -447,7 +455,7 @@ Action scan_detached_modifier(Scanner *self, const bool *valid_symbols, const in
         // There is an edge case that can be parsed here however - the weak delimiting modifier may
         // consist of two or more `-` characters, and must be immediately succeeded with a newline.
         // If those criteria are met, return the `WEAK_DELIMITING_MODIFIER` instead.
-        if (character == '-' && count >= 2 && is_newline(lex_next)) {
+        if (character == '-' && count >= 2 && is_newline(lex_next) && valid_symbols[WEAK_DELIMITING_MODIFIER]) {
             // Advance past the newline as well.
             lex_advance_newline();
 
@@ -631,6 +639,29 @@ bool scan(Scanner *self, const bool *valid_symbols) {
 
     const int32_t character = lex_next;
     lex_advance();
+
+    if (character == '|' && !iswspace(lex_next) && (valid_symbols[STD_RANGED_PREFIX] || valid_symbols[STD_RANGED_END])) {
+        lex_mark_end();
+        // TODO(boltless): find better format for matching string
+        if (lex_next == 'e') {
+            lex_advance();
+            if (lex_next == 'n') {
+                lex_advance();
+                if (lex_next == 'd') {
+                    lex_advance();
+                    if (iswspace(lex_next)) {
+                        lex_mark_end();
+                        vec_u32_pop_until(&self->indent_heading, 0);
+                        lex_set_result(STD_RANGED_END);
+                        return true;
+                    }
+                }
+            }
+        }
+        vec_u32_push(&self->indent_heading, 0);
+        lex_set_result(STD_RANGED_PREFIX);
+        return true;
+    }
 
     TRY_SCAN(scan_detached_modifier(self, valid_symbols, character));
 
